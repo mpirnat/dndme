@@ -44,8 +44,10 @@ class TurnManager:
     def generate_turns(self):
         while self.initiative:
             self.round_number += 1
-            turn_order = list(reversed(sorted(self.initiative.items())))
-            for turn, combatants in turn_order:
+            for initiative_roll, combatants in self.turn_order:
                 for combatant in combatants:
-                    yield self.round_number, turn, combatant
+                    yield self.round_number, initiative_roll, combatant
 
+    @property
+    def turn_order(self):
+        return list(reversed(sorted(self.initiative.iteinitiative_roll)))
