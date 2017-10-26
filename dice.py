@@ -26,4 +26,4 @@ def roll_dice(times, sides, modifier=0, dice_mult=1, total_mult=1):
     """
     randint = random.randint
     dice_result = sum(map(lambda x: randint(1, sides), range(times)))
-    return all_mult * (dice_mult * dice_result + modifier)
+    return total_mult * (dice_mult * dice_result + modifier)
