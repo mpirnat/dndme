@@ -50,4 +50,4 @@ class TurnManager:
 
     @property
     def turn_order(self):
-        return list(reversed(sorted(self.initiative.iteinitiative_roll)))
+        return list(reversed(sorted(self.initiative.items())))
