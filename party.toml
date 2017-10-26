@@ -1,0 +1,72 @@
+[Sariel]
+name = "Sariel"
+race = "Elf"
+class = "Ranger"
+level = 4
+max_hp = 32
+cur_hp = 32
+ac = 16
+perception = 15
+darkvision = true
+status = "Normal"
+
+[Lander]
+name = "Lander"
+race = "Human"
+class = "Fighter"
+level = 4
+max_hp = 36
+cur_hp = 36
+ac = 17
+perception = 14
+darkvision = false
+status = "Normal"
+
+[Armek]
+name = "Armek"
+race = "Dwarf"
+class = "Cleric"
+level = 4
+max_hp = 38
+cur_hp = 38
+ac = 18
+perception = 13
+darkvision = true
+status = "Normal"
+
+[Pip]
+name = "Pip"
+race = "Halfling"
+class = "Rogue"
+level = 4
+max_hp = 29
+cur_hp = 29
+ac = 16
+perception = 10
+darkvision = false
+status = "Normal"
+
+[Dewain]
+name = "Dewain"
+race = "Elf"
+class = "Wizard"
+level = 4
+max_hp = 30
+cur_hp = 30
+ac = 14
+perception = 13
+darkvision = true
+status = "Normal"
+
+[Elwing]
+name = "Elwing"
+race = "Human"
+class = "Fighter"
+level = 4
+max_hp = 38
+cur_hp = 38
+ac = 16
+perception = 13
+darkvision = false
+status = "Normal"
+
