@@ -1,0 +1,45 @@
+name = "goblin"
+race = "goblin"
+cr = 0.25
+xp = 50
+type = "humanoid:goblinoid"
+size = "small"
+alignment = "neutral evil"
+str = 8
+str_bonus = -1
+dex = 14
+dex_bonus = 2
+con = 10
+con_bonus = 0
+int = 10
+int_bonus = 0
+wis = 8
+wis_bonus = -1
+cha = 8
+cha_bonus = -1
+initiative_bonus = 2
+ac = 15
+armor = ["leather armor", "shield"]
+max_hp = "2d6"
+speed = 30
+stealth = 6
+darkvision = 60
+perception = 9
+languages = ["Common", "Goblin"]
+
+[skills.nimbleescape]
+name = "Nimble Escape"
+description = "Take Disengage or Hide as a bonus action on each turn."
+
+[attacks.scimitar]
+weapon = "scimitar"
+attack_bonus = 4
+damage = "1d6+2"
+damage_type = "slashing"
+
+[attacks.shortbow]
+weapon = "short bow"
+attack_bonus = 4
+damage = "1d6+2"
+damage_type = "piercing"
+

@@ -1,0 +1,7 @@
+name = "LMoP 1.1.1: Goblin Ambush"
+location = "Triboar Trail"
+
+[groups.goblins]
+monster = "goblin"
+count = 4
+max_hp = [6, 5, 7, 4]
