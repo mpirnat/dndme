@@ -6,6 +6,7 @@ level = 4
 max_hp = 32
 cur_hp = 32
 ac = 16
+initiative_modifier = 4
 perception = 15
 darkvision = true
 status = "Normal"
