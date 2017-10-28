@@ -24,5 +24,7 @@ class Character:
         if value > self.max_hp:
             value = self.max_hp
         if value < 0:
+            if abs(value) >= self.max_hp:
+                self.status = "Dead"
             value = 0
         self._cur_hp = value
