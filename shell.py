@@ -2,7 +2,10 @@ import glob
 import sys
 import pytoml as toml
 from attr import attrs, attrib
+from dice import roll_dice, roll_dice_expr
+from initiative import TurnManager
 from models import Character, Encounter, Monster
+
 
 commands = {}
 
@@ -11,6 +14,7 @@ class GameState:
     characters = attrib(default={})
     monsters = attrib(default={})
     encounter = attrib(default=None)
+    tm = attrib(default=TurnManager())
 
 
 class Command:
@@ -165,7 +169,6 @@ Usage:
                 self.game.monsters[monsters[i].name+str(i+1)] = monsters[i]
 
 
-
 class Show(Command):
 
     keywords = ['show']
@@ -196,12 +199,39 @@ class Show(Command):
             )
 
 
+class Start(Command):
+
+    keywords = ['start']
+
+    def do_command(self, *args):
+        for monster in self.game.monsters.values():
+            self.game.tm.add_combatant(monster, roll_dice(1, 20,
+                modifier=monster.initiative_bonus))
+
+        for character in self.game.characters.values():
+            roll = input(f"Initiative for {character.name}: ")
+            if not roll:
+                roll = roll_dice(1, 20, modifier=character.initiative_modifier)
+            if roll.isdigit():
+                roll = int(roll)
+            self.game.tm.add_combatant(character, roll)
+
+        print("Beginning combat with...")
+        for roll, combatants in self.game.tm.turn_order:
+            for combatant in combatants:
+                print(f"{roll}: {combatant.name}")
+
+        self.game.tm.turns = self.game.tm.generate_turns()
+
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
     Quit(game)
     Load(game)
     Show(game)
+    Start(game)
 
 
 def main_loop(game):
