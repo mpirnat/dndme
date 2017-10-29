@@ -1,4 +1,5 @@
 import random
+import re
 
 
 def roll_dice(times, sides, modifier=0, dice_mult=1, total_mult=1):
@@ -27,3 +28,16 @@ def roll_dice(times, sides, modifier=0, dice_mult=1, total_mult=1):
     randint = random.randint
     dice_result = sum(map(lambda x: randint(1, sides), range(times)))
     return total_mult * (dice_mult * dice_result + modifier)
+
+
+def roll_dice_expr(value):
+    """
+    Get a dice roll from a dice expression; i.e. a string like
+    "3d6" or "1d8+1"
+    """
+    m = re.match(r'(\d+)d(\d+)\+?(\d+)?', value)
+    times, sides, modifier = m.groups()
+    times = int(times)
+    sides = int(sides)
+    modifier = int(modifier or 0)
+    return roll_dice(times, sides, modifier=modifier)
