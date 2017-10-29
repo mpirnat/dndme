@@ -254,6 +254,40 @@ class NextTurn(Command):
         Show.show_turn(self)
 
 
+class Damage(Command):
+
+    keywords = ['damage', 'hurt']
+
+    def do_command(self, *args):
+        target_name = args[0]
+        amount = int(args[1])
+
+        target = self.game.characters.get(target_name) or \
+                self.game.monsters.get(target_name)
+        if not target:
+            print("Invalid target: "+target_name)
+            return
+
+        target.cur_hp -= amount
+
+
+class Heal(Command):
+
+    keywords = ['heal']
+
+    def do_command(self, *args):
+        target_name = args[0]
+        amount = int(args[1])
+
+        target = self.game.characters.get(target_name) or \
+                self.game.monsters.get(target_name)
+        if not target:
+            print("Invalid target: "+target_name)
+            return
+
+        target.cur_hp += amount
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -262,6 +296,8 @@ def register_commands(game):
     Show(game)
     Start(game)
     NextTurn(game)
+    Damage(game)
+    Heal(game)
 
 
 def main_loop(game):
