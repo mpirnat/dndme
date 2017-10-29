@@ -14,7 +14,7 @@ class GameState:
     characters = attrib(default={})
     monsters = attrib(default={})
     encounter = attrib(default=None)
-    tm = attrib(default=TurnManager())
+    tm = attrib(default=None)
 
 
 class Command:
@@ -182,8 +182,10 @@ class Show(Command):
             return
         if args[0] == 'party':
             self.show_party()
-        if args[0] == 'monsters':
+        elif args[0] == 'monsters':
             self.show_monsters()
+        elif args[0] == 'turn':
+            self.show_turn()
 
     def show_party(self):
         party = list(sorted(self.game.characters.items()))
@@ -200,6 +202,16 @@ class Show(Command):
                     f"\tAC: {monster.ac}\tPer: {monster.perception}\t"
                     f"Status: {monster.status}"
             )
+
+    def show_turn(self):
+        if not self.game.tm:
+            print("No turn in progress.")
+            return
+        elif not self.game.tm.cur_turn:
+            print("No turn in progress.")
+            return
+        turn = self.game.tm.cur_turn
+        print(f"Round: {turn[0]} Initiative: {turn[1]} Name: {turn[2].name}")
 
 
 class Start(Command):
@@ -229,6 +241,19 @@ class Start(Command):
         self.game.tm.turns = self.game.tm.generate_turns()
 
 
+class NextTurn(Command):
+
+    keywords = ['next']
+
+    def do_command(self, *args):
+        if not self.game.tm:
+            print("Combat hasn't started yet.")
+            return
+        turn = next(self.game.tm.turns)
+        self.game.tm.cur_turn = turn
+        Show.show_turn(self)
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -236,6 +261,7 @@ def register_commands(game):
     Load(game)
     Show(game)
     Start(game)
+    NextTurn(game)
 
 
 def main_loop(game):

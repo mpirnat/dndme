@@ -27,6 +27,7 @@ class TurnManager:
     def __init__(self):
         self.initiative = defaultdict(list)
         self.round_number = 0
+        self.cur_turn = None
 
     def add_combatant(self, combatant, initiative_roll):
         for combatants in self.initiative.values():
