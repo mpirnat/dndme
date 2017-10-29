@@ -26,6 +26,10 @@ stealth = 6
 darkvision = 60
 perception = 9
 languages = ["Common", "Goblin"]
+notes = """
+Goblins are black-hearted, gather in overwhelming numbers, and crave power,
+which they abuse.
+"""
 
 [skills.nimbleescape]
 name = "Nimble Escape"
