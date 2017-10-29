@@ -90,16 +90,19 @@ def register_commands():
 
 def main_loop():
     while True:
-        user_input = input("> ").split()
-        if not user_input:
-            continue
+        try:
+            user_input = input("> ").split()
+            if not user_input:
+                continue
 
-        command = commands.get(user_input[0]) or None
-        if not command:
-            print("Unknown command.")
-            continue
+            command = commands.get(user_input[0]) or None
+            if not command:
+                print("Unknown command.")
+                continue
 
-        command.do_command(*user_input[1:])
+            command.do_command(*user_input[1:])
+        except (EOFError, KeyboardInterrupt):
+            pass
 
 
 if __name__ == '__main__':
