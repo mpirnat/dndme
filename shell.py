@@ -166,7 +166,10 @@ Usage:
                 else:
                     monsters[i].max_hp = monsters[i]._max_hp
                     monsters[i].cur_hp = monsters[i].max_hp
-                self.game.monsters[monsters[i].name+str(i+1)] = monsters[i]
+
+                if monsters[i].name[0].islower():
+                    monsters[i].name = monsters[i].name+str(i+1)
+                self.game.monsters[monsters[i].name] = monsters[i]
 
 
 class Show(Command):
@@ -204,6 +207,8 @@ class Start(Command):
     keywords = ['start']
 
     def do_command(self, *args):
+        self.game.tm = TurnManager()
+
         for monster in self.game.monsters.values():
             self.game.tm.add_combatant(monster, roll_dice(1, 20,
                 modifier=monster.initiative_bonus))
@@ -212,17 +217,16 @@ class Start(Command):
             roll = input(f"Initiative for {character.name}: ")
             if not roll:
                 roll = roll_dice(1, 20, modifier=character.initiative_modifier)
-            if roll.isdigit():
+            elif roll.isdigit():
                 roll = int(roll)
             self.game.tm.add_combatant(character, roll)
 
-        print("Beginning combat with...")
+        print("\nBeginning combat with: ")
         for roll, combatants in self.game.tm.turn_order:
             for combatant in combatants:
                 print(f"{roll}: {combatant.name}")
 
         self.game.tm.turns = self.game.tm.generate_turns()
-
 
 
 def register_commands(game):
