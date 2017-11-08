@@ -1,13 +1,26 @@
-import glob
-import sys
-import pytoml as toml
 from attr import attrs, attrib
 from dice import roll_dice, roll_dice_expr
 from initiative import TurnManager
 from models import Character, Encounter, Monster
+from prompt_toolkit import prompt
+from prompt_toolkit.contrib.completers import WordCompleter
+from prompt_toolkit.history import InMemoryHistory
+from prompt_toolkit.key_binding.manager import KeyBindingManager
+from prompt_toolkit.keys import Keys
+from prompt_toolkit.styles import style_from_dict
+from prompt_toolkit.token import Token
+import glob
+import pytoml as toml
+import sys
 
 
 commands = {}
+manager = KeyBindingManager.for_prompt()
+history = InMemoryHistory()
+command_completer = None
+style = style_from_dict({
+    Token.Toolbar: '#ffffff bg:#333333',
+})
 
 @attrs
 class GameState:
@@ -35,18 +48,16 @@ class Command:
             divider = "-" * len(keyword)
             print(self.help_text.format(**locals()))
         else:
-            print("No help text available for: "+keyword)
+            print("No help text available for: " + keyword)
 
 
 class ListCommands(Command):
 
     keywords = ['commands']
-    help_text = """{keyword}
-{divider}
-Summary: List available commands
-
-Usage: {keyword}
-"""
+    help_text = "{keyword}\n" \
+                "{divider}\n" \
+                "Summary: List available commands\n" \
+                "Usage: {keyword}"
 
     def do_command(self, *args):
         print("Available commands:\n")
@@ -58,12 +69,10 @@ Usage: {keyword}
 class Help(Command):
 
     keywords = ['help']
-    help_text = """{keyword}
-{divider}
-Summary: Get help for a command.
-
-Usage: {keyword} <command>
-"""
+    help_text = "{keyword}\n" \
+                "{divider}\n" \
+                "Summary: Get help for a command.\n" \
+                "Usage: {keyword} <command>"
 
     def do_command(self, *args):
         if not args:
@@ -85,13 +94,12 @@ Usage: {keyword} <command>
 class Quit(Command):
 
     keywords = ['quit', 'exit']
-    help_text = """{keyword}
-{divider}
-Summary: quit the shell
+    help_text = "{keyword}\n" \
+                "{divider}\n" \
+                "Summary: quit the shell\n" \
+                "Usage: {keyword}"
 
-Usage: {keyword}
-"""
-
+    @manager.registry.add_binding(Keys.ControlD)
     def do_command(self, *args):
         print("Goodbye!")
         sys.exit(1)
@@ -100,14 +108,12 @@ Usage: {keyword}
 class Load(Command):
 
     keywords = ['load']
-    help_text = """{keyword}
-{divider}
-Summary: Load stuff
-
-Usage:
-    {keyword} party
-    {keyword} encounter
-"""
+    help_text = "{keyword}\n" \
+                "{divider}\n" \
+                "Summary: Load stuff\n" \
+                "Usage:\n" \
+                "    {keyword} party\n" \
+                "    {keyword} encounter"
 
     def do_command(self, *args):
         if not args:
@@ -245,12 +251,19 @@ class NextTurn(Command):
 
     keywords = ['next']
 
+    @manager.registry.add_binding(Keys.ControlN)
     def do_command(self, *args):
-        if not self.game.tm:
+        if not game.tm:
+            if not hasattr(self, "game"):
+            # this feels very hacky however it looks like key binding
+            # takes over object. To me it looks like we might want to change
+            # approach on how we load commands.
+                print("")
             print("Combat hasn't started yet.")
+            main_loop(game)
             return
-        turn = next(self.game.tm.turns)
-        self.game.tm.cur_turn = turn
+        turn = next(game.tm.turns)
+        game.tm.cur_turn = turn
         Show.show_turn(self)
 
 
@@ -300,10 +313,18 @@ def register_commands(game):
     Heal(game)
 
 
+def get_bottom_toolbar_tokens(cli):
+    return [(Token.Toolbar, 'Next:Ctrl+N   Exit:Ctrl+D ')]
+
 def main_loop(game):
+    command_completer = WordCompleter(list(sorted(commands.keys())))
     while True:
         try:
-            user_input = input("> ").split()
+            user_input = prompt("> ", completer=command_completer,
+                history=history,
+                get_bottom_toolbar_tokens=get_bottom_toolbar_tokens,
+                key_bindings_registry=manager.registry,
+                style=style).split()
             if not user_input:
                 continue
 

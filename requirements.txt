@@ -1,2 +1,5 @@
-pytoml
-attrs
+attrs==17.2.0
+prompt-toolkit==1.0.15
+pytoml==0.1.14
+six==1.11.0
+wcwidth==0.1.7
