@@ -54,10 +54,12 @@ class Command:
 class ListCommands(Command):
 
     keywords = ['commands']
-    help_text = "{keyword}\n" \
-                "{divider}\n" \
-                "Summary: List available commands\n" \
-                "Usage: {keyword}"
+    help_text = """{keyword}
+{divider}
+Summary: List available commands
+
+Usage: {keyword}
+"""
 
     def do_command(self, *args):
         print("Available commands:\n")
@@ -69,10 +71,12 @@ class ListCommands(Command):
 class Help(Command):
 
     keywords = ['help']
-    help_text = "{keyword}\n" \
-                "{divider}\n" \
-                "Summary: Get help for a command.\n" \
-                "Usage: {keyword} <command>"
+    help_text = """{keyword}
+{divider}
+Summary: Get help for a command.
+
+Usage: {keyword} <command>
+"""
 
     def do_command(self, *args):
         if not args:
@@ -94,10 +98,12 @@ class Help(Command):
 class Quit(Command):
 
     keywords = ['quit', 'exit']
-    help_text = "{keyword}\n" \
-                "{divider}\n" \
-                "Summary: quit the shell\n" \
-                "Usage: {keyword}"
+    help_text = """{keyword}
+{divider}
+Summary: quit the shell
+
+Usage: {keyword}
+"""
 
     @manager.registry.add_binding(Keys.ControlD)
     def do_command(self, *args):
@@ -108,12 +114,14 @@ class Quit(Command):
 class Load(Command):
 
     keywords = ['load']
-    help_text = "{keyword}\n" \
-                "{divider}\n" \
-                "Summary: Load stuff\n" \
-                "Usage:\n" \
-                "    {keyword} party\n" \
-                "    {keyword} encounter"
+    help_text = """{keyword}
+{divider}
+Summary: Load stuff
+
+Usage:
+    {keyword} party
+    {keyword} encounter
+"""
 
     def do_command(self, *args):
         if not args:
