@@ -1,13 +1,26 @@
-import glob
-import sys
-import pytoml as toml
 from attr import attrs, attrib
 from dice import roll_dice, roll_dice_expr
 from initiative import TurnManager
 from models import Character, Encounter, Monster
+from prompt_toolkit import prompt
+from prompt_toolkit.contrib.completers import WordCompleter
+from prompt_toolkit.history import InMemoryHistory
+from prompt_toolkit.key_binding.manager import KeyBindingManager
+from prompt_toolkit.keys import Keys
+from prompt_toolkit.styles import style_from_dict
+from prompt_toolkit.token import Token
+import glob
+import pytoml as toml
+import sys
 
 
 commands = {}
+manager = KeyBindingManager.for_prompt()
+history = InMemoryHistory()
+command_completer = None
+style = style_from_dict({
+    Token.Toolbar: '#ffffff bg:#333333',
+})
 
 @attrs
 class GameState:
@@ -35,7 +48,7 @@ class Command:
             divider = "-" * len(keyword)
             print(self.help_text.format(**locals()))
         else:
-            print("No help text available for: "+keyword)
+            print("No help text available for: " + keyword)
 
 
 class ListCommands(Command):
@@ -92,6 +105,7 @@ Summary: quit the shell
 Usage: {keyword}
 """
 
+    @manager.registry.add_binding(Keys.ControlD)
     def do_command(self, *args):
         print("Goodbye!")
         sys.exit(1)
@@ -245,12 +259,19 @@ class NextTurn(Command):
 
     keywords = ['next']
 
+    @manager.registry.add_binding(Keys.ControlN)
     def do_command(self, *args):
-        if not self.game.tm:
+        if not game.tm:
+            if not hasattr(self, "game"):
+            # this feels very hacky however it looks like key binding
+            # takes over object. To me it looks like we might want to change
+            # approach on how we load commands.
+                print("")
             print("Combat hasn't started yet.")
+            main_loop(game)
             return
-        turn = next(self.game.tm.turns)
-        self.game.tm.cur_turn = turn
+        turn = next(game.tm.turns)
+        game.tm.cur_turn = turn
         Show.show_turn(self)
 
 
@@ -300,10 +321,18 @@ def register_commands(game):
     Heal(game)
 
 
+def get_bottom_toolbar_tokens(cli):
+    return [(Token.Toolbar, 'Next:Ctrl+N   Exit:Ctrl+D ')]
+
 def main_loop(game):
+    command_completer = WordCompleter(list(sorted(commands.keys())))
     while True:
         try:
-            user_input = input("> ").split()
+            user_input = prompt("> ", completer=command_completer,
+                history=history,
+                get_bottom_toolbar_tokens=get_bottom_toolbar_tokens,
+                key_bindings_registry=manager.registry,
+                style=style).split()
             if not user_input:
                 continue
 
