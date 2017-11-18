@@ -63,6 +63,13 @@ class TurnManager:
                 self.initiative[c2_init][c2_i], \
                 self.initiative[c1_init][c1_i]
 
+    def move(self, combatant, initiative_roll):
+        for combatants in self.initiative.values():
+            if combatant in combatants:
+                combatants.remove(combatant)
+                self.add_combatant(combatant, initiative_roll)
+                break
+
     def generate_turns(self):
         while self.initiative:
             self.round_number += 1
