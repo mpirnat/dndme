@@ -42,6 +42,27 @@ class TurnManager:
                 return combatant
         raise Exception("Combatant not found")
 
+    def swap(self, combatant1, combatant2):
+        c1_init = c2_init = None
+        c1_i = c2_i = None
+
+        for init_roll, combatants in self.initiative.items():
+            for i, combatant in enumerate(combatants):
+                if combatant == combatant1:
+                    c1_init = init_roll
+                    c1_i = i
+                elif combatant == combatant2:
+                    c2_init = init_roll
+                    c2_i = i
+
+        if None in [c1_init, c2_init, c1_i, c2_i]:
+            raise Exception("Could not find one or more combatants")
+
+        self.initiative[c1_init][c1_i], \
+                self.initiative[c2_init][c2_i] = \
+                self.initiative[c2_init][c2_i], \
+                self.initiative[c1_init][c1_i]
+
     def generate_turns(self):
         while self.initiative:
             self.round_number += 1
