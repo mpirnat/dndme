@@ -339,6 +339,34 @@ Usage: {keyword} <combatant1> <combatant2>
         self.game.tm.swap(combatant1, combatant2)
 
 
+class Move(Command):
+
+    keywords = ['move']
+    help_text = """{keyword}
+{divider}
+Summary: Move a combatant to a different initiative value.
+
+Usage: {keyword} <combatant> <initiative>
+"""
+    def do_command(self, *args):
+        name = args[0]
+
+        combatant = self.game.characters.get(name) or \
+                self.game.monsters.get(name)
+
+        if not combatant:
+            print("Invalid target: "+name)
+            return
+
+        try:
+            new_initiative = int(args[1])
+        except ValueError:
+            print("Invalid initiative value")
+            return
+
+        self.game.tm.move(combatant, new_initiative)
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -350,6 +378,7 @@ def register_commands(game):
     Damage(game)
     Heal(game)
     Swap(game)
+    Move(game)
 
 
 def get_bottom_toolbar_tokens(cli):
