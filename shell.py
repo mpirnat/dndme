@@ -309,6 +309,36 @@ class Heal(Command):
         target.cur_hp += amount
 
 
+class Swap(Command):
+
+    keywords = ['swap']
+    help_text = """{keyword}
+{divider}
+Summary: Swap two combatants in turn order.
+
+Usage: {keyword} <combatant1> <combatant2>
+"""
+
+    def do_command(self, *args):
+        name1 = args[0]
+        name2 = args[1]
+
+        combatant1 = self.game.characters.get(name1) or \
+                self.game.monsters.get(name1)
+        combatant2 = self.game.characters.get(name2) or \
+                self.game.monsters.get(name2)
+
+        if not combatant1:
+            print("Invalid target: "+name1)
+            return
+
+        if not combatant2:
+            print("Invalid target: "+name2)
+            return
+
+        self.game.tm.swap(combatant1, combatant2)
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -319,6 +349,7 @@ def register_commands(game):
     NextTurn(game)
     Damage(game)
     Heal(game)
+    Swap(game)
 
 
 def get_bottom_toolbar_tokens(cli):
