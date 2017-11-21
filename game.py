@@ -34,12 +34,12 @@ for group in encounter.groups.values():
             monsters[i].cur_hp = monsters[i].max_hp
     for monster in monsters:
         tm.add_combatant(monster, roll_dice(1, 20,
-            modifier=monster.initiative_bonus))
+            modifier=monster.initiative_mod))
 
 
 for character in characters:
     tm.add_combatant(character,
-            roll_dice(1, 20, modifier=character.initiative_modifier))
+            roll_dice(1, 20, modifier=character.initiative_mod))
 turns = tm.generate_turns()
 for i in range(10):
     print(next(turns))

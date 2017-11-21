@@ -237,12 +237,12 @@ class Start(Command):
 
         for monster in self.game.monsters.values():
             self.game.tm.add_combatant(monster, roll_dice(1, 20,
-                modifier=monster.initiative_bonus))
+                modifier=monster.initiative_mod))
 
         for character in self.game.characters.values():
             roll = input(f"Initiative for {character.name}: ")
             if not roll:
-                roll = roll_dice(1, 20, modifier=character.initiative_modifier)
+                roll = roll_dice(1, 20, modifier=character.initiative_mod)
             elif roll.isdigit():
                 roll = int(roll)
             self.game.tm.add_combatant(character, roll)
