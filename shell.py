@@ -48,7 +48,7 @@ class Command:
             divider = "-" * len(keyword)
             print(self.help_text.format(**locals()))
         else:
-            print("No help text available for: " + keyword)
+            print(f"No help text available for: {keyword}")
 
 
 class ListCommands(Command):
@@ -86,7 +86,7 @@ Usage: {keyword} <command>
         keyword = args[0]
         command = commands.get(keyword)
         if not command:
-            print("Unknown command: "+keyword)
+            print(f"Unknown command: {keyword}")
             return
         command.show_help_text(keyword)
 
@@ -160,7 +160,7 @@ Usage:
             print("Invalid encounter.")
             return
         self.game.encounter = encounter = encounters[pick]
-        print("Loaded encounter: "+encounter.name)
+        print(f"Loaded encounter: {encounter.name}")
 
         for group in encounter.groups.values():
             available_monster_files = glob.glob('monsters/*.toml')
@@ -286,7 +286,7 @@ class Damage(Command):
         target = self.game.characters.get(target_name) or \
                 self.game.monsters.get(target_name)
         if not target:
-            print("Invalid target: "+target_name)
+            print(f"Invalid target: {target_name}")
             return
 
         target.cur_hp -= amount
@@ -303,7 +303,7 @@ class Heal(Command):
         target = self.game.characters.get(target_name) or \
                 self.game.monsters.get(target_name)
         if not target:
-            print("Invalid target: "+target_name)
+            print(f"Invalid target: {target_name}")
             return
 
         target.cur_hp += amount
@@ -329,11 +329,11 @@ Usage: {keyword} <combatant1> <combatant2>
                 self.game.monsters.get(name2)
 
         if not combatant1:
-            print("Invalid target: "+name1)
+            print(f"Invalid target: {name1}")
             return
 
         if not combatant2:
-            print("Invalid target: "+name2)
+            print(f"Invalid target: {name2}")
             return
 
         self.game.tm.swap(combatant1, combatant2)
@@ -355,7 +355,7 @@ Usage: {keyword} <combatant> <initiative>
                 self.game.monsters.get(name)
 
         if not combatant:
-            print("Invalid target: "+name)
+            print(f"Invalid target: {name}")
             return
 
         try:
