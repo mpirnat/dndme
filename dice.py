@@ -35,7 +35,11 @@ def roll_dice_expr(value):
     Get a dice roll from a dice expression; i.e. a string like
     "3d6" or "1d8+1"
     """
-    m = re.match(r'(\d+)d(\d+)\+?(\d+)?', value)
+    m = re.match(r'^(\d+)d(\d+)\+?(\-?\d+)?$', value)
+
+    if not m:
+        raise ValueError(f"Invalid dice expression '{value}'")
+
     times, sides, modifier = m.groups()
     times = int(times)
     sides = int(sides)
