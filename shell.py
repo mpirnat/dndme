@@ -367,6 +367,32 @@ Usage: {keyword} <combatant> <initiative>
         self.game.tm.move(combatant, new_initiative)
 
 
+class Roll(Command):
+
+    keywords = ['roll', 'dice']
+    help_text = """{keyword}
+{divider}
+Summary: Roll dice using a dice expression
+
+Usage: {keyword} <dice expression>
+
+Examples:
+
+    {keyword} 3d6
+    {keyword} 1d20+2
+    {keyword} 2d4-1
+"""
+
+    def do_command(self, *args):
+        dice_expr = args[0]
+        try:
+            result = roll_dice_expr(dice_expr)
+        except ValueError:
+            print(f"Invalid dice expression: {dice_expr}")
+            return
+        print(result)
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -379,6 +405,7 @@ def register_commands(game):
     Heal(game)
     Swap(game)
     Move(game)
+    Roll(game)
 
 
 def get_bottom_toolbar_tokens(cli):
