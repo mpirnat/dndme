@@ -1,5 +1,7 @@
 from attr import attrs, attrib
+from math import inf
 import dice
+
 
 @attrs
 class Combatant:
@@ -10,6 +12,7 @@ class Combatant:
     perception = attrib(default=10)
     darkvision = attrib(default=0)
     status = attrib(default="Normal")
+    conditions = attrib(default={})
 
     _max_hp = attrib(default=10)
     _cur_hp = attrib(default=10)
@@ -42,6 +45,30 @@ class Combatant:
                 self.status = "Dead"
             value = 0
         self._cur_hp = value
+
+    def set_condition(self, condition, duration=inf):
+        self.conditions[condition] = duration
+
+    def unset_condition(self, condition):
+        try:
+            self.conditions.pop(condition)
+        except KeyError:
+            # We can probably safely ignore failures here,
+            # since it shouldn't be the end of the world
+            # to remove a condition that isn't in effect.
+            pass
+
+    def decrement_condition_durations(self):
+        conditions_removed = []
+
+        for condition in list(self.conditions):
+            self.conditions[condition] -= 1
+
+            if self.conditions[condition] == 0:
+                self.conditions.pop(condition)
+                conditions_removed.append(condition)
+
+        return conditions_removed
 
 
 @attrs
