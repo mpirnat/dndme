@@ -272,6 +272,15 @@ class NextTurn(Command):
             print("Combat hasn't started yet.")
             main_loop(game)
             return
+
+        turn = game.tm.cur_turn
+        if turn:
+            combatant = turn[-1]
+            conditions_removed = combatant.decrement_condition_durations()
+            if conditions_removed:
+                print(f"{combatant.name} conditions removed: "
+                        f"{', '.join(conditions_removed)}")
+
         turn = next(game.tm.turns)
         game.tm.cur_turn = turn
         Show.show_turn(self)
@@ -395,6 +404,57 @@ Examples:
         print(result)
 
 
+class SetCondition(Command):
+
+    keywords = ['set']
+
+    def do_command(self, *args):
+        target_name = args[0]
+        condition = args[1]
+
+        target = self.game.characters.get(target_name) or \
+                self.game.monsters.get(target_name)
+        if not target:
+            print(f"Invalid target: {target_name}")
+            return
+
+        target.set_condition(condition)
+
+
+class SetCondition(Command):
+
+    keywords = ['set']
+
+    def do_command(self, *args):
+        target_name = args[0]
+        condition = args[1]
+
+        target = self.game.characters.get(target_name) or \
+                self.game.monsters.get(target_name)
+        if not target:
+            print(f"Invalid target: {target_name}")
+            return
+
+        target.set_condition(condition)
+
+
+class UnsetCondition(Command):
+
+    keywords = ['unset']
+
+    def do_command(self, *args):
+        target_name = args[0]
+        condition = args[1]
+
+        target = self.game.characters.get(target_name) or \
+                self.game.monsters.get(target_name)
+        if not target:
+            print(f"Invalid target: {target_name}")
+            return
+
+        target.unset_condition(condition)
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -408,6 +468,8 @@ def register_commands(game):
     Swap(game)
     Move(game)
     Roll(game)
+    SetCondition(game)
+    UnsetCondition(game)
 
 
 def get_bottom_toolbar_tokens(cli):
