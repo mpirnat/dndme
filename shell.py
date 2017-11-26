@@ -205,17 +205,19 @@ class Show(Command):
         party = list(sorted(self.game.characters.items()))
         for name, character in party:
             print(f"{name:20}\tHP: {character.cur_hp}/{character.max_hp}"
-                    f"\tAC: {character.ac}\tPer: {character.perception}\t"
-                    f"Status: {character.status}"
+                    f"\tAC: {character.ac}\tPer: {character.perception}"
             )
+            if character.conditions:
+                print(f"\t{character.conditions}")
 
     def show_monsters(self):
         monsters = list(sorted(self.game.monsters.items()))
         for name, monster in monsters:
             print(f"{name:20}\tHP: {monster.cur_hp}/{monster.max_hp}"
-                    f"\tAC: {monster.ac}\tPer: {monster.perception}\t"
-                    f"Status: {monster.status}"
+                    f"\tAC: {monster.ac}\tPer: {monster.perception}"
             )
+            if monster.conditions:
+                print(f"\t{monster.conditions}")
 
     def show_turn(self):
         if not self.game.tm:
