@@ -1,6 +1,7 @@
 from attr import attrs, attrib
 from dice import roll_dice, roll_dice_expr
 from initiative import TurnManager
+from math import inf
 from models import Character, Encounter, Monster
 from prompt_toolkit import prompt
 from prompt_toolkit.contrib.completers import WordCompleter
@@ -428,6 +429,17 @@ class SetCondition(Command):
     def do_command(self, *args):
         target_name = args[0]
         condition = args[1]
+        duration = inf
+        if len(args) >= 3:
+            duration = int(args[2])
+        if len(args) >= 4:
+            units = args[3]
+            multipliers = {
+                'turns': 1,
+                'rounds': 1,
+                'minutes': 10,
+            }
+            duration *= multipliers.get(units, 1)
 
         target = self.game.characters.get(target_name) or \
                 self.game.monsters.get(target_name)
@@ -435,7 +447,8 @@ class SetCondition(Command):
             print(f"Invalid target: {target_name}")
             return
 
-        target.set_condition(condition)
+        target.set_condition(condition, duration=duration)
+        print(f"Okay; set condition '{condition}' on {target_name}.")
 
 
 class UnsetCondition(Command):
@@ -453,6 +466,7 @@ class UnsetCondition(Command):
             return
 
         target.unset_condition(condition)
+        print(f"Okay; removed condition '{condition}' from {target_name}.")
 
 
 def register_commands(game):
