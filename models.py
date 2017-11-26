@@ -1,4 +1,5 @@
 from attr import attrs, attrib
+from attr import Factory as attr_factory
 from math import inf
 import dice
 
@@ -11,7 +12,7 @@ class Combatant:
     ac = attrib(default=0)
     perception = attrib(default=10)
     darkvision = attrib(default=0)
-    conditions = attrib(default={})
+    conditions = attrib(default=attr_factory(dict))
 
     _max_hp = attrib(default=10)
     _cur_hp = attrib(default=10)
