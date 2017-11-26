@@ -209,7 +209,10 @@ class Show(Command):
                     f"\tAC: {character.ac}\tPer: {character.perception}"
             )
             if character.conditions:
-                print(f"\t{character.conditions}")
+                conds = ', '.join([f"{x}:{y}"
+                        if y != inf else x
+                        for x, y in character.conditions.items()])
+                print(f"    Conditions: {conds}")
 
     def show_monsters(self):
         monsters = list(sorted(self.game.monsters.items()))
@@ -218,7 +221,10 @@ class Show(Command):
                     f"\tAC: {monster.ac}\tPer: {monster.perception}"
             )
             if monster.conditions:
-                print(f"\t{monster.conditions}")
+                conds = ', '.join([f"{x}:{y}"
+                        if y != inf else x
+                        for x, y in monster.conditions.items()])
+                print(f"    Conditions: {conds}")
 
     def show_turn(self):
         if not self.game.tm:
