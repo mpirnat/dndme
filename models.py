@@ -11,7 +11,6 @@ class Combatant:
     ac = attrib(default=0)
     perception = attrib(default=10)
     darkvision = attrib(default=0)
-    status = attrib(default="Normal")
     conditions = attrib(default={})
 
     _max_hp = attrib(default=10)
@@ -42,7 +41,7 @@ class Combatant:
             value = self.max_hp
         if value < 0:
             if abs(value) >= self.max_hp:
-                self.status = "Dead"
+                self.conditions = {'dead': inf}
             value = 0
         self._cur_hp = value
 
