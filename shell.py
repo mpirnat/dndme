@@ -408,6 +408,20 @@ Examples:
 class SetCondition(Command):
 
     keywords = ['set']
+    help_text = """{keyword}
+{divider}
+Summary: Set a condition on a target, optionally for a duration
+
+Usage: {keyword} <target> <condition> [<duration> [<units>]]
+
+Examples:
+
+    {keyword} Frodo prone
+    {keyword} Aragorn smolder 3
+    {keyword} Gandalf concentrating 1 minute
+    {keyword} Gollum lucid 5 minutes
+"""
+
 
     def do_command(self, *args):
         target_name = args[0]
@@ -418,9 +432,13 @@ class SetCondition(Command):
         if len(args) >= 4:
             units = args[3]
             multipliers = {
+                'turn': 1,
                 'turns': 1,
+                'round': 1,
                 'rounds': 1,
+                'minute': 10,
                 'minutes': 10,
+                'min': 10,
             }
             duration *= multipliers.get(units, 1)
 
@@ -437,6 +455,16 @@ class SetCondition(Command):
 class UnsetCondition(Command):
 
     keywords = ['unset']
+    help_text = """{keyword}
+{divider}
+Summary: Remove a condition from a target
+
+Usage: {keyword} <target> <condition>
+
+Examples:
+
+    {keyword} Frodo prone
+"""
 
     def do_command(self, *args):
         target_name = args[0]
