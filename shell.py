@@ -412,23 +412,6 @@ class SetCondition(Command):
     def do_command(self, *args):
         target_name = args[0]
         condition = args[1]
-
-        target = self.game.characters.get(target_name) or \
-                self.game.monsters.get(target_name)
-        if not target:
-            print(f"Invalid target: {target_name}")
-            return
-
-        target.set_condition(condition)
-
-
-class SetCondition(Command):
-
-    keywords = ['set']
-
-    def do_command(self, *args):
-        target_name = args[0]
-        condition = args[1]
         duration = inf
         if len(args) >= 3:
             duration = int(args[2])
