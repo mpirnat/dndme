@@ -4,6 +4,7 @@ from initiative import TurnManager
 from math import inf
 from models import Character, Encounter, Monster
 from prompt_toolkit import prompt
+from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.contrib.completers import WordCompleter
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.key_binding.manager import KeyBindingManager
@@ -22,6 +23,69 @@ command_completer = None
 style = style_from_dict({
     Token.Toolbar: '#ffffff bg:#333333',
 })
+
+
+class DnDCompleter(Completer):
+    """
+    Simple autocompletion on a list of words.
+
+    :param base_commands: List of base commands.
+    :param ignore_case: If True, case-insensitive completion.
+    :param meta_dict: Optional dict mapping words to their meta-information.
+    :param WORD: When True, use WORD characters.
+    :param sentence: When True, don't complete by comparing the word before the
+        cursor, but by comparing all the text before the cursor. In this case,
+        the list of words is just a list of strings, where each string can
+        contain spaces. (Can not be used together with the WORD option.)
+    :param match_middle: When True, match not only the start, but also in the
+                         middle of the word.
+    """
+    def __init__(self, base_commands, ignore_case=False, meta_dict=None,
+                 WORD=False, sentence=False, match_middle=False):
+        assert not (WORD and sentence)
+
+        self.base_commands = sorted(list(base_commands))
+        self.ignore_case = ignore_case
+        self.meta_dict = meta_dict or {}
+        self.WORD = WORD
+        self.sentence = sentence
+        self.match_middle = match_middle
+
+    def get_completions(self, document, complete_event):
+        # Get word/text before cursor.
+        if self.sentence:
+            word_before_cursor = document.text_before_cursor
+        else:
+            word_before_cursor = document.get_word_before_cursor(WORD=self.WORD)
+
+        if self.ignore_case:
+            word_before_cursor = word_before_cursor.lower()
+
+        def command_matcher(command):
+            """ True when the command before the cursor matches. """
+            if self.ignore_case:
+                command = command.lower()
+
+            if self.match_middle:
+                return word_before_cursor in command
+            else:
+                return command.startswith(word_before_cursor)
+        document_text_list = document.text.split(" ")
+        if len(document_text_list) < 2:
+            for a in self.base_commands:
+                if command_matcher(a):
+                    display_meta = self.meta_dict.get(a, '')
+                    yield Completion(a, -len(word_before_cursor),
+                                     display_meta=display_meta)
+        elif document_text_list[0] in self.base_commands:
+            base_command = document_text_list[0]
+            sub_command_list = commands[base_command].get_sub_commands()
+            for a in sub_command_list:
+                if a.startswith(word_before_cursor):
+                    display_meta = self.meta_dict.get(a, '')
+                    yield Completion(a, -len(word_before_cursor),
+                                     display_meta=display_meta)
+
 
 @attrs
 class GameState:
@@ -43,6 +107,9 @@ class Command:
 
     def do_command(self, *args):
         print("Nothing happens.")
+
+    def get_sub_commands(self):
+        return []
 
     def show_help_text(self, keyword):
         if hasattr(self, 'help_text'):
@@ -95,6 +162,9 @@ Usage: {keyword} <command>
         super().show_help_text(keyword)
         ListCommands.do_command(self, *[])
 
+    def get_sub_commands(self):
+        return commands.keys()
+
 
 class Quit(Command):
 
@@ -123,6 +193,8 @@ Usage:
     {keyword} party
     {keyword} encounter
 """
+    def get_sub_commands(self):
+        return ['party', 'encounter']
 
     def do_command(self, *args):
         if not args:
@@ -190,6 +262,9 @@ Usage:
 class Show(Command):
 
     keywords = ['show']
+
+    def get_sub_commands(self):
+        return ['party', 'monsters', 'turn']
 
     def do_command(self, *args):
         if not args:
@@ -508,11 +583,12 @@ def register_commands(game):
 def get_bottom_toolbar_tokens(cli):
     return [(Token.Toolbar, 'Next:Ctrl+N   Exit:Ctrl+D ')]
 
+
 def main_loop(game):
-    command_completer = WordCompleter(list(sorted(commands.keys())))
     while True:
         try:
-            user_input = prompt("> ", completer=command_completer,
+            user_input = prompt("> ",
+                completer=DnDCompleter(base_commands=commands.keys()),
                 history=history,
                 get_bottom_toolbar_tokens=get_bottom_toolbar_tokens,
                 key_bindings_registry=manager.registry,
