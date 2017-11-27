@@ -101,6 +101,9 @@ class GameState:
         return sorted(list(self.characters.keys()) +
                 list(self.monsters.keys()))
 
+    def get_target(self, name):
+        return self.characters.get(name) or self.monsters.get(name)
+
 
 class Command:
 
@@ -418,8 +421,7 @@ class Damage(Command):
         target_name = args[0]
         amount = int(args[1])
 
-        target = self.game.characters.get(target_name) or \
-                self.game.monsters.get(target_name)
+        target = self.game.get_target(target_name)
         if not target:
             print(f"Invalid target: {target_name}")
             return
@@ -439,8 +441,7 @@ class Heal(Command):
         target_name = args[0]
         amount = int(args[1])
 
-        target = self.game.characters.get(target_name) or \
-                self.game.monsters.get(target_name)
+        target = self.game.get_target(target_name)
         if not target:
             print(f"Invalid target: {target_name}")
             return
@@ -576,8 +577,7 @@ Examples:
             }
             duration *= multipliers.get(units, 1)
 
-        target = self.game.characters.get(target_name) or \
-                self.game.monsters.get(target_name)
+        target = self.game.get_target(target_name)
         if not target:
             print(f"Invalid target: {target_name}")
             return
@@ -605,8 +605,7 @@ Examples:
             return self.game.combatant_names
         elif len(words) == 3:
             target_name = words[1]
-            target = self.game.characters.get(target_name) or \
-                    self.game.monsters.get(target_name)
+            target = self.game.get_target(target_name)
             if not target:
                 return []
             return list(sorted(target.conditions.keys()))
@@ -615,8 +614,7 @@ Examples:
         target_name = args[0]
         condition = args[1]
 
-        target = self.game.characters.get(target_name) or \
-                self.game.monsters.get(target_name)
+        target = self.game.get_target(target_name)
         if not target:
             print(f"Invalid target: {target_name}")
             return
