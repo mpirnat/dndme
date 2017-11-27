@@ -72,7 +72,7 @@ class DnDCompleter(Completer):
             else:
                 return word.startswith(word_before_cursor)
 
-
+        suggestions = []
         document_text_list = document.text.split(' ')
 
         if len(document_text_list) < 2:
@@ -80,8 +80,7 @@ class DnDCompleter(Completer):
 
         elif document_text_list[0] in self.base_commands:
             command = commands[document_text_list[0]]
-            subcommand_attr = f'keywords_{len(document_text_list)}'
-            suggestions = getattr(command, subcommand_attr, [])
+            suggestions = command.get_suggestions(document_text_list) or []
 
         for word in suggestions:
             if word_matcher(word):
@@ -112,6 +111,9 @@ class Command:
         for kw in self.keywords:
             commands[kw] = self
         print("Registered "+self.__class__.__name__)
+
+    def get_suggestions(self, words):
+        return []
 
     def do_command(self, *args):
         print("Nothing happens.")
@@ -151,6 +153,9 @@ Summary: Get help for a command.
 Usage: {keyword} <command>
 """
 
+    def get_suggestions(self, words):
+        return list(sorted(commands.keys()))
+
     def do_command(self, *args):
         if not args:
             self.show_help_text('help')
@@ -166,10 +171,6 @@ Usage: {keyword} <command>
     def show_help_text(self, keyword):
         super().show_help_text(keyword)
         ListCommands.do_command(self, *[])
-
-    @property
-    def keywords_2(self):
-        return commands.keys()
 
 
 class Quit(Command):
@@ -188,10 +189,37 @@ Usage: {keyword}
         sys.exit(1)
 
 
+class Roll(Command):
+
+    keywords = ['roll', 'dice']
+    help_text = """{keyword}
+{divider}
+Summary: Roll dice using a dice expression
+
+Usage: {keyword} <dice expression> [<dice expression> ...]
+
+Examples:
+
+    {keyword} 3d6
+    {keyword} 1d20+2
+    {keyword} 2d4-1
+    {keyword} 1d20 1d20
+"""
+
+    def do_command(self, *args):
+        results = []
+        for dice_expr in args:
+            try:
+                results.append(str(roll_dice_expr(dice_expr)))
+            except ValueError:
+                print(f"Invalid dice expression: {dice_expr}")
+                return
+        print(', '.join(results))
+
+
 class Load(Command):
 
     keywords = ['load']
-    keywords_2 = ['party', 'encounter']
     help_text = """{keyword}
 {divider}
 Summary: Load stuff
@@ -200,6 +228,10 @@ Usage:
     {keyword} party
     {keyword} encounter
 """
+
+    def get_suggestions(self, words):
+        if len(words) == 2:
+            return ['encounter', 'party']
 
     def do_command(self, *args):
         if not args:
@@ -267,7 +299,10 @@ Usage:
 class Show(Command):
 
     keywords = ['show']
-    keywords_2 = ['party', 'monsters', 'turn']
+
+    def get_suggestions(self, words):
+        if len(words) == 2:
+            return ['monsters', 'party', 'turn']
 
     def do_command(self, *args):
         if not args:
@@ -375,6 +410,10 @@ class Damage(Command):
 
     keywords = ['damage', 'hurt']
 
+    def get_suggestions(self, words):
+        if len(words) == 2:
+            return self.game.combatant_names
+
     def do_command(self, *args):
         target_name = args[0]
         amount = int(args[1])
@@ -387,14 +426,14 @@ class Damage(Command):
 
         target.cur_hp -= amount
 
-    @property
-    def keywords_2(self):
-        return self.game.combatant_names
-
 
 class Heal(Command):
 
     keywords = ['heal']
+
+    def get_suggestions(self, words):
+        if len(words) == 2:
+            return self.game.combatant_names
 
     def do_command(self, *args):
         target_name = args[0]
@@ -408,10 +447,6 @@ class Heal(Command):
 
         target.cur_hp += amount
 
-    @property
-    def keywords_2(self):
-        return self.game.combatant_names
-
 
 class Swap(Command):
 
@@ -422,6 +457,10 @@ Summary: Swap two combatants in turn order.
 
 Usage: {keyword} <combatant1> <combatant2>
 """
+
+    def get_suggestions(self, words):
+        if len(words) in (2, 3):
+            return self.game.combatant_names
 
     def do_command(self, *args):
         name1 = args[0]
@@ -442,10 +481,6 @@ Usage: {keyword} <combatant1> <combatant2>
 
         self.game.tm.swap(combatant1, combatant2)
 
-    @property
-    def keywords_2(self):
-        return self.game.combatant_names
-
 
 class Move(Command):
 
@@ -456,6 +491,11 @@ Summary: Move a combatant to a different initiative value.
 
 Usage: {keyword} <combatant> <initiative>
 """
+
+    def get_suggestions(self, words):
+        if len(words) == 2:
+            return self.game.combatant_names
+
     def do_command(self, *args):
         name = args[0]
 
@@ -474,38 +514,6 @@ Usage: {keyword} <combatant> <initiative>
 
         self.game.tm.move(combatant, new_initiative)
 
-    @property
-    def keywords_2(self):
-        return self.game.combatant_names
-
-
-class Roll(Command):
-
-    keywords = ['roll', 'dice']
-    help_text = """{keyword}
-{divider}
-Summary: Roll dice using a dice expression
-
-Usage: {keyword} <dice expression> [<dice expression> ...]
-
-Examples:
-
-    {keyword} 3d6
-    {keyword} 1d20+2
-    {keyword} 2d4-1
-    {keyword} 1d20 1d20
-"""
-
-    def do_command(self, *args):
-        results = []
-        for dice_expr in args:
-            try:
-                results.append(str(roll_dice_expr(dice_expr)))
-            except ValueError:
-                print(f"Invalid dice expression: {dice_expr}")
-                return
-        print(', '.join(results))
-
 
 class SetCondition(Command):
 
@@ -523,6 +531,31 @@ Examples:
     {keyword} Gandalf concentrating 1 minute
     {keyword} Gollum lucid 5 minutes
 """
+    conditions = [
+        'blinded',
+        'charmed',
+        'concentrating',
+        'deafened',
+        'dead',
+        'exhausted',
+        'frightened',
+        'grappled',
+        'incapacitated',
+        'invisible',
+        'paralyzed',
+        'petrified',
+        'poisoned',
+        'prone',
+        'restrained',
+        'stunned',
+        'unconscious',
+    ]
+
+    def get_suggestions(self, words):
+        if len(words) == 2:
+            return self.game.combatant_names
+        elif len(words) == 3:
+            return self.conditions
 
     def do_command(self, *args):
         target_name = args[0]
@@ -552,14 +585,6 @@ Examples:
         target.set_condition(condition, duration=duration)
         print(f"Okay; set condition '{condition}' on {target_name}.")
 
-    @property
-    def keywords_2(self):
-        return self.game.combatant_names
-
-    @property
-    def keywords_3(self):
-        return ['hmm', 'curious']
-
 
 class UnsetCondition(Command):
 
@@ -575,6 +600,17 @@ Examples:
     {keyword} Frodo prone
 """
 
+    def get_suggestions(self, words):
+        if len(words) == 2:
+            return self.game.combatant_names
+        elif len(words) == 3:
+            target_name = words[1]
+            target = self.game.characters.get(target_name) or \
+                    self.game.monsters.get(target_name)
+            if not target:
+                return []
+            return list(sorted(target.conditions.keys()))
+
     def do_command(self, *args):
         target_name = args[0]
         condition = args[1]
@@ -587,14 +623,6 @@ Examples:
 
         target.unset_condition(condition)
         print(f"Okay; removed condition '{condition}' from {target_name}.")
-
-    @property
-    def keywords_2(self):
-        return self.game.combatant_names
-
-    @property
-    def keywords_3(self):
-        return ['hmm', 'curious']
 
 
 def register_commands(game):
