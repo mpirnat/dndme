@@ -427,6 +427,7 @@ class Damage(Command):
             return
 
         target.cur_hp -= amount
+        print(f"Okay; damaged {target_name}.")
 
 
 class Heal(Command):
@@ -447,6 +448,7 @@ class Heal(Command):
             return
 
         target.cur_hp += amount
+        print(f"Okay; healed {target_name}.")
 
 
 class Swap(Command):
@@ -481,6 +483,7 @@ Usage: {keyword} <combatant1> <combatant2>
             return
 
         self.game.tm.swap(combatant1, combatant2)
+        print(f"Okay; swapped {name1} and {name2}.")
 
 
 class Move(Command):
@@ -500,10 +503,9 @@ Usage: {keyword} <combatant> <initiative>
     def do_command(self, *args):
         name = args[0]
 
-        combatant = self.game.characters.get(name) or \
-                self.game.monsters.get(name)
+        target = self.game.get_target(name)
 
-        if not combatant:
+        if not target:
             print(f"Invalid target: {name}")
             return
 
@@ -513,7 +515,8 @@ Usage: {keyword} <combatant> <initiative>
             print("Invalid initiative value")
             return
 
-        self.game.tm.move(combatant, new_initiative)
+        self.game.tm.move(target, new_initiative)
+        print(f"Okay; moved {name} to {new_initiative}.")
 
 
 class SetCondition(Command):
