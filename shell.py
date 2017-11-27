@@ -56,35 +56,38 @@ class DnDCompleter(Completer):
         if self.sentence:
             word_before_cursor = document.text_before_cursor
         else:
-            word_before_cursor = document.get_word_before_cursor(WORD=self.WORD)
+            word_before_cursor = document.get_word_before_cursor(
+                    WORD=self.WORD)
 
         if self.ignore_case:
             word_before_cursor = word_before_cursor.lower()
 
-        def command_matcher(command):
+        def word_matcher(word):
             """ True when the command before the cursor matches. """
             if self.ignore_case:
-                command = command.lower()
+                word = word.lower()
 
             if self.match_middle:
-                return word_before_cursor in command
+                return word_before_cursor in word
             else:
-                return command.startswith(word_before_cursor)
-        document_text_list = document.text.split(" ")
+                return word.startswith(word_before_cursor)
+
+
+        document_text_list = document.text.split(' ')
+
         if len(document_text_list) < 2:
-            for a in self.base_commands:
-                if command_matcher(a):
-                    display_meta = self.meta_dict.get(a, '')
-                    yield Completion(a, -len(word_before_cursor),
-                                     display_meta=display_meta)
+            suggestions = self.base_commands
+
         elif document_text_list[0] in self.base_commands:
-            base_command = document_text_list[0]
-            sub_command_list = commands[base_command].get_sub_commands()
-            for a in sub_command_list:
-                if a.startswith(word_before_cursor):
-                    display_meta = self.meta_dict.get(a, '')
-                    yield Completion(a, -len(word_before_cursor),
-                                     display_meta=display_meta)
+            command = commands[document_text_list[0]]
+            subcommand_attr = f'keywords_{len(document_text_list)}'
+            suggestions = getattr(command, subcommand_attr, [])
+
+        for word in suggestions:
+            if word_matcher(word):
+                display_meta = self.meta_dict.get(word, '')
+                yield Completion(word, -len(word_before_cursor),
+                                    display_meta=display_meta)
 
 
 @attrs
@@ -93,6 +96,11 @@ class GameState:
     monsters = attrib(default={})
     encounter = attrib(default=None)
     tm = attrib(default=None)
+
+    @property
+    def combatant_names(self):
+        return sorted(list(self.characters.keys()) +
+                list(self.monsters.keys()))
 
 
 class Command:
@@ -107,9 +115,6 @@ class Command:
 
     def do_command(self, *args):
         print("Nothing happens.")
-
-    def get_sub_commands(self):
-        return []
 
     def show_help_text(self, keyword):
         if hasattr(self, 'help_text'):
@@ -162,7 +167,8 @@ Usage: {keyword} <command>
         super().show_help_text(keyword)
         ListCommands.do_command(self, *[])
 
-    def get_sub_commands(self):
+    @property
+    def keywords_2(self):
         return commands.keys()
 
 
@@ -185,6 +191,7 @@ Usage: {keyword}
 class Load(Command):
 
     keywords = ['load']
+    keywords_2 = ['party', 'encounter']
     help_text = """{keyword}
 {divider}
 Summary: Load stuff
@@ -193,8 +200,6 @@ Usage:
     {keyword} party
     {keyword} encounter
 """
-    def get_sub_commands(self):
-        return ['party', 'encounter']
 
     def do_command(self, *args):
         if not args:
@@ -262,9 +267,7 @@ Usage:
 class Show(Command):
 
     keywords = ['show']
-
-    def get_sub_commands(self):
-        return ['party', 'monsters', 'turn']
+    keywords_2 = ['party', 'monsters', 'turn']
 
     def do_command(self, *args):
         if not args:
@@ -384,6 +387,10 @@ class Damage(Command):
 
         target.cur_hp -= amount
 
+    @property
+    def keywords_2(self):
+        return self.game.combatant_names
+
 
 class Heal(Command):
 
@@ -400,6 +407,10 @@ class Heal(Command):
             return
 
         target.cur_hp += amount
+
+    @property
+    def keywords_2(self):
+        return self.game.combatant_names
 
 
 class Swap(Command):
@@ -431,6 +442,10 @@ Usage: {keyword} <combatant1> <combatant2>
 
         self.game.tm.swap(combatant1, combatant2)
 
+    @property
+    def keywords_2(self):
+        return self.game.combatant_names
+
 
 class Move(Command):
 
@@ -458,6 +473,10 @@ Usage: {keyword} <combatant> <initiative>
             return
 
         self.game.tm.move(combatant, new_initiative)
+
+    @property
+    def keywords_2(self):
+        return self.game.combatant_names
 
 
 class Roll(Command):
@@ -505,7 +524,6 @@ Examples:
     {keyword} Gollum lucid 5 minutes
 """
 
-
     def do_command(self, *args):
         target_name = args[0]
         condition = args[1]
@@ -533,6 +551,14 @@ Examples:
 
         target.set_condition(condition, duration=duration)
         print(f"Okay; set condition '{condition}' on {target_name}.")
+
+    @property
+    def keywords_2(self):
+        return self.game.combatant_names
+
+    @property
+    def keywords_3(self):
+        return ['hmm', 'curious']
 
 
 class UnsetCondition(Command):
@@ -562,6 +588,14 @@ Examples:
         target.unset_condition(condition)
         print(f"Okay; removed condition '{condition}' from {target_name}.")
 
+    @property
+    def keywords_2(self):
+        return self.game.combatant_names
+
+    @property
+    def keywords_3(self):
+        return ['hmm', 'curious']
+
 
 def register_commands(game):
     ListCommands(game)
@@ -588,7 +622,8 @@ def main_loop(game):
     while True:
         try:
             user_input = prompt("> ",
-                completer=DnDCompleter(base_commands=commands.keys()),
+                completer=DnDCompleter(base_commands=commands.keys(),
+                        ignore_case=True),
                 history=history,
                 get_bottom_toolbar_tokens=get_bottom_toolbar_tokens,
                 key_bindings_registry=manager.registry,
