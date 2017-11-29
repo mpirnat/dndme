@@ -360,9 +360,14 @@ class Start(Command):
     def do_command(self, *args):
         self.game.tm = TurnManager()
 
+        print("Enter initiative rolls or press enter to 'roll' automatically.")
         for monster in self.game.monsters.values():
-            self.game.tm.add_combatant(monster, roll_dice(1, 20,
-                modifier=monster.initiative_mod))
+            roll = input(f"Initiative for {monster.name}: ")
+            if not roll:
+                roll = roll_dice(1, 20, modifier=monster.initiative_mod)
+            elif roll.isdigit():
+                roll = int(roll)
+            self.game.tm.add_combatant(monster, roll)
 
         for character in self.game.characters.values():
             roll = input(f"Initiative for {character.name}: ")
@@ -374,8 +379,7 @@ class Start(Command):
 
         print("\nBeginning combat with: ")
         for roll, combatants in self.game.tm.turn_order:
-            for combatant in combatants:
-                print(f"{roll}: {combatant.name}")
+            print(f"{roll}: {', '.join([x.name for x in combatants])}")
 
         self.game.tm.turns = self.game.tm.generate_turns()
 
