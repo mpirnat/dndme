@@ -384,19 +384,12 @@ class NextTurn(Command):
 
     keywords = ['next']
 
-    @manager.registry.add_binding(Keys.ControlN)
     def do_command(self, *args):
-        if not game.tm:
-            if not hasattr(self, "game"):
-            # this feels very hacky however it looks like key binding
-            # takes over object. To me it looks like we might want to change
-            # approach on how we load commands.
-                print("")
+        if not self.game.tm:
             print("Combat hasn't started yet.")
-            main_loop(game)
             return
 
-        turn = game.tm.cur_turn
+        turn = self.game.tm.cur_turn
         if turn:
             combatant = turn[-1]
             conditions_removed = combatant.decrement_condition_durations()
@@ -405,7 +398,7 @@ class NextTurn(Command):
                         f"{', '.join(conditions_removed)}")
 
         turn = next(game.tm.turns)
-        game.tm.cur_turn = turn
+        self.game.tm.cur_turn = turn
         Show.show_turn(self)
 
 
@@ -695,7 +688,7 @@ def register_commands(game):
 
 
 def get_bottom_toolbar_tokens(cli):
-    return [(Token.Toolbar, 'Next:Ctrl+N   Exit:Ctrl+D ')]
+    return [(Token.Toolbar, 'Exit:Ctrl+D ')]
 
 
 def main_loop(game):
