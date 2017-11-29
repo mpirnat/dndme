@@ -519,6 +519,56 @@ Usage: {keyword} <combatant> <initiative>
         print(f"Okay; moved {name} to {new_initiative}.")
 
 
+class Reorder(Command):
+
+    keywords = ['reorder']
+    help_text = """{keyword}
+{divider}
+Summary: Reorder the combatants with a particular initiative value.
+
+Usage: reorder <initiative value> <combatant1> [<combatant2> ...]
+"""
+
+    def get_suggestions(self, words):
+        if len(words) > 2:
+            try:
+                initiative_value = int(words[1])
+            except ValueError:
+                return []
+
+            combatant_names = [x.name for x in
+                    self.game.tm.initiative[initiative_value]]
+            names_already_chosen = words[2:]
+            return list(set(combatant_names) - set(names_already_chosen))
+
+    def do_command(self, *args):
+        if not self.game.tm:
+            print("No encounter in progress.")
+            return
+
+        try:
+            i = int(args[0])
+        except ValueError:
+            print("Invalid initiative value")
+            return
+
+        names = args[1:]
+        old_initiative = self.game.tm.initiative[i]
+        new_initiative = [self.game.get_target(x) for x in names]
+
+        if set(names) != set([x.name for x in new_initiative if x]):
+            print("Could not reorder: couldn't find all combatants specified.")
+            return
+
+        elif set(names) != set([x.name for x in old_initiative]):
+            print("Could not reorder: not all original combatants specified.")
+            return
+
+        self.game.tm.initiative[i] = new_initiative
+        print(f"Okay; updated {i}: "
+                f"{', '.join([x.name for x in self.game.tm.initiative[i]])}")
+
+
 class SetCondition(Command):
 
     keywords = ['set']
@@ -638,6 +688,7 @@ def register_commands(game):
     Heal(game)
     Swap(game)
     Move(game)
+    Reorder(game)
     Roll(game)
     SetCondition(game)
     UnsetCondition(game)
