@@ -286,7 +286,12 @@ Usage:
                         count = int(group['count'])
                     except ValueError:
                         if 'd' in group['count']:
-                            count = roll_dice_expr(group['count'])
+                            override_count = \
+                                    input(f"Number of monsters [{group['count']}]: ")
+                            if override_count.strip():
+                                count = int(override_count)
+                            else:
+                                count = roll_dice_expr(group['count'])
                         else:
                             print(f"Invalid monster count: {group['count']}")
                             return
