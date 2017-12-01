@@ -282,8 +282,18 @@ Usage:
             for filename in available_monster_files:
                 monster = toml.load(open(filename, 'r'))
                 if monster['name'] == group['monster']:
-                    for i in range(group['count']):
+                    try:
+                        count = int(group['count'])
+                    except ValueError:
+                        if 'd' in group['count']:
+                            count = roll_dice_expr(group['count'])
+                        else:
+                            print(f"Invalid monster count: {group['count']}")
+                            return
+
+                    for i in range(count):
                         monsters.append(Monster(**monster))
+                    print(f"Loaded {count} of {monster['name']}")
                     break
 
             for i in range(len(monsters)):

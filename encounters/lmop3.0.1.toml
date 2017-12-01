@@ -1,0 +1,10 @@
+name = "LMoP 3.0.1: Random - Goblins (Day: 5/6, Night: 5)"
+location = "Wilderness"
+
+notes = """
+Uh-oh, it's a goblin hunting party!
+"""
+
+[groups.goblins]
+monster = "goblin"
+count = "1d6+3"
