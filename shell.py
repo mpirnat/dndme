@@ -448,29 +448,32 @@ class NextTurn(Command):
 
 class Damage(Command):
 
-    keywords = ['damage', 'hurt']
+    keywords = ['damage', 'hurt', 'hit']
 
     def get_suggestions(self, words):
-        if len(words) == 2:
-            return self.game.combatant_names
+        names_already_chosen = words[1:]
+        return sorted(set(self.game.combatant_names) - \
+                set(names_already_chosen))
 
     def do_command(self, *args):
-        target_name = args[0]
-        amount = int(args[1])
+        target_names = args[0:-1]
+        amount = int(args[-1])
 
-        target = self.game.get_target(target_name)
-        if not target:
-            print(f"Invalid target: {target_name}")
-            return
+        for target_name in target_names:
+            target = self.game.get_target(target_name)
+            if not target:
+                print(f"Invalid target: {target_name}")
+                continue
 
-        target.cur_hp -= amount
-        print(f"Okay; damaged {target_name}.")
+            target.cur_hp -= amount
+            print(f"Okay; damaged {target_name}. "
+                    f"Now: {target.cur_hp}/{target.max_hp}")
 
-        if target_name in self.game.monsters and target.cur_hp == 0:
-            if (input(f"{target_name} reduced to 0 HP--defeated? [Y]: ")
-                    or 'y').lower() != 'y':
-                return
-            DefeatMonster.do_command(self, target_name)
+            if target_name in self.game.monsters and target.cur_hp == 0:
+                if (input(f"{target_name} reduced to 0 HP--defeated? [Y]: ")
+                        or 'y').lower() != 'y':
+                    continue
+                DefeatMonster.do_command(self, target_name)
 
 
 class Heal(Command):
