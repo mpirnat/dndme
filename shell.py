@@ -466,6 +466,12 @@ class Damage(Command):
         target.cur_hp -= amount
         print(f"Okay; damaged {target_name}.")
 
+        if target_name in self.game.monsters and target.cur_hp == 0:
+            if (input(f"{target_name} reduced to 0 HP--defeated? [Y]: ")
+                    or 'y').lower() != 'y':
+                return
+            DefeatMonster.do_command(self, target_name)
+
 
 class Heal(Command):
 
