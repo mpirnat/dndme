@@ -423,6 +423,32 @@ class Start(Command):
         self.game.tm.turns = self.game.tm.generate_turns()
 
 
+class End(Command):
+
+    keywords = ['end']
+
+    def do_command(self, *args):
+        if not self.game.tm:
+            print("Combat hasn't started yet.")
+            return
+
+        cur_turn = self.game.tm.cur_turn
+
+        self.game.tm = None
+        Show.show_defeated(self)
+        self.game.defeated = []
+        self.game.monsters = {}
+
+        duration_sec = cur_turn[0] * 6
+
+        if duration_sec > 60:
+            duration = f"{duration_sec // 60} min {duration_sec % 60} sec"
+        else:
+            duration = f"{duration_sec} sec"
+
+        print(f"Combat ended in {cur_turn[0]} rounds ({duration})")
+
+
 class NextTurn(Command):
 
     keywords = ['next']
@@ -432,17 +458,20 @@ class NextTurn(Command):
             print("Combat hasn't started yet.")
             return
 
-        turn = self.game.tm.cur_turn
-        if turn:
-            combatant = turn[-1]
-            conditions_removed = combatant.decrement_condition_durations()
-            if conditions_removed:
-                print(f"{combatant.name} conditions removed: "
-                        f"{', '.join(conditions_removed)}")
+        num_turns = int(args[0]) if args else 1
 
-        turn = next(game.tm.turns)
-        self.game.tm.cur_turn = turn
-        Show.show_turn(self)
+        for i in range(num_turns):
+            turn = self.game.tm.cur_turn
+            if turn:
+                combatant = turn[-1]
+                conditions_removed = combatant.decrement_condition_durations()
+                if conditions_removed:
+                    print(f"{combatant.name} conditions removed: "
+                            f"{', '.join(conditions_removed)}")
+
+            turn = next(game.tm.turns)
+            self.game.tm.cur_turn = turn
+            Show.show_turn(self)
 
 
 class Damage(Command):
@@ -812,6 +841,7 @@ def register_commands(game):
     Show(game)
     Start(game)
     NextTurn(game)
+    End(game)
     Damage(game)
     Heal(game)
     Swap(game)
