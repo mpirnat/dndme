@@ -92,6 +92,7 @@ class DnDCompleter(Completer):
 class GameState:
     characters = attrib(default={})
     monsters = attrib(default={})
+    stash = attrib(default={})
     encounter = attrib(default=None)
     tm = attrib(default=None)
 
@@ -319,7 +320,7 @@ class Show(Command):
 
     def get_suggestions(self, words):
         if len(words) == 2:
-            return ['monsters', 'party', 'turn']
+            return ['monsters', 'party', 'stash', 'turn']
 
     def do_command(self, *args):
         if not args:
@@ -329,6 +330,8 @@ class Show(Command):
             self.show_party()
         elif args[0] == 'monsters':
             self.show_monsters()
+        elif args[0] == 'stash':
+            self.show_stash()
         elif args[0] == 'turn':
             self.show_turn()
 
@@ -355,6 +358,14 @@ class Show(Command):
                         if y != inf else x
                         for x, y in monster.conditions.items()])
                 print(f"    Conditions: {conds}")
+
+    def show_stash(self):
+        if not self.game.stash:
+            print("No monsters stashed.")
+            return
+
+        for monster, origin in self.game.stash.values():
+            print(f"{monster.name} from {origin}")
 
     def show_turn(self):
         if not self.game.tm:
@@ -687,6 +698,58 @@ Examples:
         print(f"Okay; removed condition '{condition}' from {target_name}.")
 
 
+class StashMonster(Command):
+
+    keywords = ['stash']
+
+    def get_suggestions(self, words):
+        names_already_chosen = words[1:]
+        return sorted(set(self.game.monsters.keys()) - set(names_already_chosen))
+
+    def do_command(self, *args):
+        for target_name in args:
+            target = self.game.monsters.get(target_name)
+            if not target:
+                print(f"Invalid target: {target_name}")
+                continue
+
+            if self.game.tm:
+                self.game.tm.remove_combatant(target)
+            self.game.monsters.pop(target_name)
+            origin = self.game.encounter.name if self.game.encounter \
+                    else "Unknown"
+            self.game.stash[target_name] = (target, origin)
+            print(f"Stashed {target_name}")
+
+
+class UnstashMonster(Command):
+
+    keywords = ['unstash']
+
+    def get_suggestions(self, words):
+        names_already_chosen = words[1:]
+        return sorted(set(self.game.stash.keys()) - set(names_already_chosen))
+
+    def do_command(self, *args):
+        for target_name in args:
+            if target_name not in self.game.stash:
+                print(f"Invalid target: {target_name}")
+                continue
+
+            target, origin = self.game.stash.pop(target_name)
+            self.game.monsters[target_name] = target
+
+            print(f"Unstashed {target_name}")
+
+            if self.game.tm:
+                roll = input(f"Initiative for {target.name}: ")
+                if not roll:
+                    roll = roll_dice(1, 20, modifier=target.initiative_mod)
+                elif roll.isdigit():
+                    roll = int(roll)
+                self.game.tm.add_combatant(target, roll)
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -703,6 +766,8 @@ def register_commands(game):
     Roll(game)
     SetCondition(game)
     UnsetCondition(game)
+    StashMonster(game)
+    UnstashMonster(game)
 
 
 def get_bottom_toolbar_tokens(cli):
