@@ -19,7 +19,6 @@ import sys
 commands = {}
 manager = KeyBindingManager.for_prompt()
 history = InMemoryHistory()
-command_completer = None
 style = style_from_dict({
     Token.Toolbar: '#ffffff bg:#333333',
 })
