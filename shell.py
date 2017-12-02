@@ -125,7 +125,7 @@ class Command:
     def show_help_text(self, keyword):
         if hasattr(self, 'help_text'):
             divider = "-" * len(keyword)
-            print(self.help_text.format(**locals()))
+            print(self.help_text.format(**locals()).strip())
         else:
             print(f"No help text available for: {keyword}")
 
@@ -144,7 +144,6 @@ Usage: {keyword}
         print("Available commands:\n")
         for keyword in list(sorted(commands.keys())):
             print('*', keyword)
-        print()
 
 
 class Help(Command):
@@ -849,6 +848,7 @@ def main_loop(game):
                 continue
 
             command.do_command(*user_input[1:])
+            print()
         except (EOFError, KeyboardInterrupt):
             pass
 
