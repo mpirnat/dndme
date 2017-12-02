@@ -1,7 +1,7 @@
 from attr import attrs, attrib
 from dice import roll_dice, roll_dice_expr
 from initiative import TurnManager
-from math import inf
+from math import inf, floor
 from models import Character, Encounter, Monster
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
@@ -93,6 +93,7 @@ class GameState:
     characters = attrib(default={})
     monsters = attrib(default={})
     stash = attrib(default={})
+    defeated = attrib(default=[])
     encounter = attrib(default=None)
     tm = attrib(default=None)
 
@@ -320,7 +321,7 @@ class Show(Command):
 
     def get_suggestions(self, words):
         if len(words) == 2:
-            return ['monsters', 'party', 'stash', 'turn']
+            return ['monsters', 'party', 'stash', 'defeated', 'turn']
 
     def do_command(self, *args):
         if not args:
@@ -332,6 +333,8 @@ class Show(Command):
             self.show_monsters()
         elif args[0] == 'stash':
             self.show_stash()
+        elif args[0] == 'defeated':
+            self.show_defeated()
         elif args[0] == 'turn':
             self.show_turn()
 
@@ -366,6 +369,18 @@ class Show(Command):
 
         for monster, origin in self.game.stash.values():
             print(f"{monster.name} from {origin}")
+
+    def show_defeated(self):
+        total_xp = 0
+        for monster, origin in self.game.defeated:
+            total_xp += monster.xp
+            print(f"{monster.name} from {origin}\tXP: {monster.xp}")
+
+        if not self.game.characters:
+            print(f"Total XP: {total_xp}")
+        else:
+            divided_xp = floor(total_xp / len(self.game.characters))
+            print(f"Total XP: {total_xp} ({divided_xp} each)")
 
     def show_turn(self):
         if not self.game.tm:
@@ -750,6 +765,30 @@ class UnstashMonster(Command):
                 self.game.tm.add_combatant(target, roll)
 
 
+class DefeatMonster(Command):
+
+    keywords = ['defeat']
+
+    def get_suggestions(self, words):
+        names_already_chosen = words[1:]
+        return sorted(set(self.game.monsters.keys()) - set(names_already_chosen))
+
+    def do_command(self, *args):
+        for target_name in args:
+            target = self.game.get_target(target_name)
+            if not target:
+                print(f"Invalid target: {target_name}")
+                continue
+
+            if self.game.tm:
+                self.game.tm.remove_combatant(target)
+            self.game.monsters.pop(target_name)
+            origin = self.game.encounter.name if self.game.encounter \
+                    else "Unknown"
+            self.game.defeated.append((target, origin))
+            print(f"Defeated {target_name}")
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -768,6 +807,7 @@ def register_commands(game):
     UnsetCondition(game)
     StashMonster(game)
     UnstashMonster(game)
+    DefeatMonster(game)
 
 
 def get_bottom_toolbar_tokens(cli):
