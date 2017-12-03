@@ -340,8 +340,10 @@ class Show(Command):
     def show_party(self):
         party = list(sorted(self.game.characters.items()))
         for name, character in party:
-            print(f"{name:20}\tHP: {character.cur_hp}/{character.max_hp}"
-                    f"\tAC: {character.ac}\tPer: {character.perception}"
+            print(f"{name:20}"
+                    f"\tHP: {character.cur_hp:0>2}/{character.max_hp:0>2}"
+                    f"\tAC: {character.ac:0>2}"
+                    f"\tPer: {character.perception:0>2}"
             )
             if character.conditions:
                 conds = ', '.join([f"{x}:{y}"
@@ -352,8 +354,10 @@ class Show(Command):
     def show_monsters(self):
         monsters = list(sorted(self.game.monsters.items()))
         for name, monster in monsters:
-            print(f"{name:20}\tHP: {monster.cur_hp}/{monster.max_hp}"
-                    f"\tAC: {monster.ac}\tPer: {monster.perception}"
+            print(f"{name:20}"
+                    f"\tHP: {monster.cur_hp:0>2}/{monster.max_hp:0>2}"
+                    f"\tAC: {monster.ac:0>2}"
+                    f"\tPer: {monster.perception:0>2}"
             )
             if monster.conditions:
                 conds = ', '.join([f"{x}:{y}"
@@ -367,13 +371,13 @@ class Show(Command):
             return
 
         for monster, origin in self.game.stash.values():
-            print(f"{monster.name} from {origin}")
+            print(f"{monster.name:20} {origin:.50}")
 
     def show_defeated(self):
         total_xp = 0
         for monster, origin in self.game.defeated:
             total_xp += monster.xp
-            print(f"{monster.name} from {origin}\tXP: {monster.xp}")
+            print(f"{monster.name:20} {origin:.40}\tXP: {monster.xp}")
 
         if not self.game.characters:
             print(f"Total XP: {total_xp}")
@@ -401,7 +405,9 @@ class Start(Command):
 
         print("Enter initiative rolls or press enter to 'roll' automatically.")
         for monster in self.game.monsters.values():
-            roll = input(f"Initiative for {monster.name}: ")
+            roll_advice = f"[1d20{monster.initiative_mod:+}]" \
+                    if monster.initiative_mod else "[1d20]"
+            roll = input(f"Initiative for {monster.name} {roll_advice}:")
             if not roll:
                 roll = roll_dice(1, 20, modifier=monster.initiative_mod)
             elif roll.isdigit():
@@ -409,7 +415,10 @@ class Start(Command):
             self.game.tm.add_combatant(monster, roll)
 
         for character in self.game.characters.values():
-            roll = input(f"Initiative for {character.name}: ")
+            roll_advice = f"[1d20{character.initiative_mod:+}]" \
+                    if character.initiative_mod else "[1d20]"
+
+            roll = input(f"Initiative for {character.name} {roll_advice}:")
             if not roll:
                 roll = roll_dice(1, 20, modifier=character.initiative_mod)
             elif roll.isdigit():
@@ -498,7 +507,8 @@ class Damage(Command):
                     f"Now: {target.cur_hp}/{target.max_hp}")
 
             if target_name in self.game.monsters and target.cur_hp == 0:
-                if (input(f"{target_name} reduced to 0 HP--defeated? [Y]: ")
+                if (input(f"{target_name} reduced to 0 HP--"
+                        "mark as defeated? [Y]: ")
                         or 'y').lower() != 'y':
                     continue
                 DefeatMonster.do_command(self, target_name)
@@ -801,7 +811,10 @@ class UnstashMonster(Command):
             print(f"Unstashed {target_name}")
 
             if self.game.tm:
-                roll = input(f"Initiative for {target.name}: ")
+                roll_advice = f"[1d20{target.initiative_mod:+}]" \
+                    if target.initiative_mod else "[1d20]"
+
+                roll = input(f"Initiative for {target.name} {roll_advice}: ")
                 if not roll:
                     roll = roll_dice(1, 20, modifier=target.initiative_mod)
                 elif roll.isdigit():
