@@ -134,3 +134,9 @@ with lots of interesting data:
 
 Everything here is "first draft" code as I explore the problem space.
 Contributions are welcome.
+
+Everything we add should aim to be simple to use, with a close second goal of
+being simple to implement. If the implementation is really tricky, or is a
+struggle, that's a sign that we might be trying to be too clever or take too
+much of the judgment away from the DM. We are not attempting to model the
+entire ruleset or automate the game, just make the DM's life a little easier.
