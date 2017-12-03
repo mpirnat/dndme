@@ -316,6 +316,18 @@ Usage:
                     monsters[i].name += f"-{i+1:0>2}/{str(uuid.uuid4())[:4]}"
                 self.game.monsters[monsters[i].name] = monsters[i]
 
+                if not self.game.tm:
+                    continue
+
+                roll_advice = f"[1d20{monsters[i].initiative_mod:+}]" \
+                        if monsters[i].initiative_mod else "[1d20]"
+                roll = input(f"Initiative for {monsters[i].name} {roll_advice}:")
+                if not roll:
+                    roll = roll_dice(1, 20, modifier=monsters[i].initiative_mod)
+                elif roll.isdigit():
+                    roll = int(roll)
+                self.game.tm.add_combatant(monsters[i], roll)
+
 
 class Show(Command):
 
