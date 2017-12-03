@@ -14,6 +14,7 @@ from prompt_toolkit.token import Token
 import glob
 import pytoml as toml
 import sys
+import uuid
 
 
 commands = {}
@@ -309,8 +310,8 @@ Usage:
                     monsters[i].max_hp = monsters[i]._max_hp
                     monsters[i].cur_hp = monsters[i].max_hp
 
-                if monsters[i].name[0].islower():
-                    monsters[i].name = monsters[i].name+str(i+1)
+                if monsters[i].name.islower():
+                    monsters[i].name += f"-{i+1:0>2}/{str(uuid.uuid4())[:4]}"
                 self.game.monsters[monsters[i].name] = monsters[i]
 
 
