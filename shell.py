@@ -448,14 +448,19 @@ class End(Command):
         self.game.defeated = []
         self.game.monsters = {}
 
-        duration_sec = cur_turn[0] * 6
+        if cur_turn:
+            rounds = cur_turn[0]
+            duration_sec = cur_turn[0] * 6
+        else:
+            rounds = 0
+            duration_sec = 0
 
         if duration_sec > 60:
             duration = f"{duration_sec // 60} min {duration_sec % 60} sec"
         else:
             duration = f"{duration_sec} sec"
 
-        print(f"Combat ended in {cur_turn[0]} rounds ({duration})")
+        print(f"Combat ended in {rounds} rounds ({duration})")
 
 
 class NextTurn(Command):
