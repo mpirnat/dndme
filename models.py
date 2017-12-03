@@ -103,6 +103,7 @@ class Monster(Combatant):
     notes = attrib(default="")
     skills = attrib(default=[])
     attacks = attrib(default=[])
+    origin = attrib(default="origin unknown")
 
 
 @attrs

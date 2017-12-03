@@ -310,6 +310,8 @@ Usage:
                     monsters[i].max_hp = monsters[i]._max_hp
                     monsters[i].cur_hp = monsters[i].max_hp
 
+                monsters[i].origin = f"{encounter.name} ({encounter.location})"
+
                 if monsters[i].name.islower():
                     monsters[i].name += f"-{i+1:0>2}/{str(uuid.uuid4())[:4]}"
                 self.game.monsters[monsters[i].name] = monsters[i]
@@ -371,14 +373,14 @@ class Show(Command):
             print("No monsters stashed.")
             return
 
-        for monster, origin in self.game.stash.values():
-            print(f"{monster.name:20} {origin:.50}")
+        for monster in self.game.stash.values():
+            print(f"{monster.name:20} {monster.origin:.50}")
 
     def show_defeated(self):
         total_xp = 0
-        for monster, origin in self.game.defeated:
+        for monster in self.game.defeated:
             total_xp += monster.xp
-            print(f"{monster.name:20} {origin:.40}\tXP: {monster.xp}")
+            print(f"{monster.name:20} {monster.origin:.40}\tXP: {monster.xp}")
 
         if not self.game.characters:
             print(f"Total XP: {total_xp}")
@@ -791,9 +793,7 @@ class StashMonster(Command):
             if self.game.tm:
                 self.game.tm.remove_combatant(target)
             self.game.monsters.pop(target_name)
-            origin = self.game.encounter.name if self.game.encounter \
-                    else "Unknown"
-            self.game.stash[target_name] = (target, origin)
+            self.game.stash[target_name] = target
             print(f"Stashed {target_name}")
 
 
@@ -811,7 +811,7 @@ class UnstashMonster(Command):
                 print(f"Invalid target: {target_name}")
                 continue
 
-            target, origin = self.game.stash.pop(target_name)
+            target = self.game.stash.pop(target_name)
             self.game.monsters[target_name] = target
 
             print(f"Unstashed {target_name}")
@@ -846,9 +846,7 @@ class DefeatMonster(Command):
             if self.game.tm:
                 self.game.tm.remove_combatant(target)
             self.game.monsters.pop(target_name)
-            origin = self.game.encounter.name if self.game.encounter \
-                    else "Unknown"
-            self.game.defeated.append((target, origin))
+            self.game.defeated.append(target)
             print(f"Defeated {target_name}")
 
 
