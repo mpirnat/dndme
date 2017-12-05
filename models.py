@@ -13,6 +13,8 @@ class Combatant:
     perception = attrib(default=10)
     darkvision = attrib(default=0)
     conditions = attrib(default=attr_factory(dict))
+    skills = attrib(default=[])
+    attacks = attrib(default=[])
 
     _max_hp = attrib(default=10)
     _cur_hp = attrib(default=10)
@@ -101,8 +103,6 @@ class Monster(Combatant):
     stealth = attrib(default=0)
     languages = attrib(default=[])
     notes = attrib(default="")
-    skills = attrib(default=[])
-    attacks = attrib(default=[])
     origin = attrib(default="origin unknown")
 
 

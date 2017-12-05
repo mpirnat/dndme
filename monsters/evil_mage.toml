@@ -1,0 +1,55 @@
+name = "evil_mage"
+race = "human"
+cr = 1
+xp = 200
+mtype = "humanoid:human"
+size = "medium"
+alignment = "lawful evil"
+str = 9
+str_mod = -1
+dex = 14
+dex_mod = 2
+con = 11
+con_mod = 0
+int = 17
+int_mod = 3
+wis = 12
+wis_mod = +1
+cha = 11
+cha_mod = 0
+initiative_mod = 2
+ac = 12
+armor = []
+max_hp = "5d8"
+speed = 30
+stealth = 6
+darkvision = 0
+perception = 11
+languages = ["Common", "Draconic", "Dwarvish", "Elvish"]
+notes = """
+Evil mages hunger for arcane power and dwell in isolated places, where they can
+perform terrible magical experiments without interference.
+"""
+
+[skills.spellcasting]
+name = "Spellcasting"
+description = """
+The mage is a 4th·level spellcaster that uses Intelligence as its spellcasting
+ability (spell save DC 13; +5 to hit with spell attacks).
+"""
+cantrips = ["Light", "Mage Hand", "Shocking Grasp"]
+spells = [
+    ["Charm Person", "Magic Missile"],
+    ["Hold Person", "Misty Step"]
+]
+slots = [4, 3]
+slots_used = [0, 0]
+
+[attacks.quarterstaff]
+weapon = "quarterstaff"
+wtype = "melee"
+attack_mod = 1
+reach = 5
+targets = 1
+damage = "1d8-1"
+damage_type = "bludgeoning"

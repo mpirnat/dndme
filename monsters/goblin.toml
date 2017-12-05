@@ -37,13 +37,19 @@ description = "Take Disengage or Hide as a bonus action on each turn."
 
 [attacks.scimitar]
 weapon = "scimitar"
+wtype = "melee"
 attack_mod = 4
+reach = 5
+targets = 1
 damage = "1d6+2"
 damage_type = "slashing"
 
 [attacks.shortbow]
 weapon = "short bow"
+wtype = "ranged"
 attack_mod = 4
+range = [80, 320]
+targets = 1
 damage = "1d6+2"
 damage_type = "piercing"
 

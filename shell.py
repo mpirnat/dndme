@@ -259,6 +259,7 @@ Usage:
         if not available_encounter_files:
             print("No available encounters found.")
             return
+
         print("Available encounters:\n")
         encounters = []
         for i, filename in enumerate(available_encounter_files, 1):
@@ -560,6 +561,66 @@ class Heal(Command):
             target.cur_hp += amount
             print(f"Okay; healed {target_name}. "
                     f"Now: {target.cur_hp}/{target.max_hp}")
+
+class CastSpell(Command):
+
+    keywords = ['cast']
+    help_text = """{keyword}
+{divider}
+Summary: Make the current combatant cast a spell at a particular spell level.
+
+Usage: {keyword} <spell level>
+
+Example: {keyword} 2
+"""
+
+    def get_suggestions(self, words):
+        if len(words) != 2:
+            return []
+        if not (self.game.tm and self.game.tm.cur_turn):
+            return []
+        caster = self.game.tm.cur_turn[-1]
+        if not (caster.skills.get('spellcasting')):
+            return []
+
+        slots = caster.skills['spellcasting']['slots']
+        slots_used = caster.skills['spellcasting']['slots_used']
+        return [str(i+1) for i in range(len(slots))
+                if slots_used[i] < slots[i]]
+
+
+    def do_command(self, *args):
+        if not (self.game.tm and self.game.tm.cur_turn):
+            print("No turn in progress.")
+            return
+
+        caster = self.game.tm.cur_turn[-1]
+        if 'spellcasting' not in caster.skills:
+            print("Combatant can't cast spells.")
+            return
+
+        # Convert to 0-based...
+        spell_level = int(args[0]) - 1
+
+        if spell_level < 0:
+            print("Can't cast spells at spell level 0.")
+            return
+
+        spells = caster.skills['spellcasting']['spells']
+        slots = caster.skills['spellcasting']['slots']
+        slots_used = caster.skills['spellcasting']['slots_used']
+
+        try:
+            if slots_used[spell_level] < slots[spell_level]:
+                slots_used[spell_level] += 1
+                remaining = slots[spell_level] - slots_used[spell_level]
+                print(f"Okay; {remaining} level {spell_level+1} slots left.")
+            else:
+                print("Combatant has no available spell slots at that level.")
+                return
+        except IndexError:
+            print("Combatant can't cast spells of that level.")
+            return
 
 
 class Swap(Command):
@@ -873,6 +934,7 @@ def register_commands(game):
     End(game)
     Damage(game)
     Heal(game)
+    CastSpell(game)
     Swap(game)
     Move(game)
     Reorder(game)
