@@ -328,6 +328,7 @@ Usage:
                 elif roll.isdigit():
                     roll = int(roll)
                 self.game.tm.add_combatant(monsters[i], roll)
+                print(f"Added to turn order in {roll}")
 
 
 class Show(Command):
@@ -383,11 +384,14 @@ class Show(Command):
 
     def show_stash(self):
         if not self.game.stash:
-            print("No monsters stashed.")
+            print("No combatants stashed.")
             return
 
-        for monster in self.game.stash.values():
-            print(f"{monster.name:20} {monster.origin:.50}")
+        for combatant in self.game.stash.values():
+            if hasattr(combatant, 'origin'):
+                print(f"{combatant.name:20} {combatant.origin:.50}")
+            else:
+                print(f"{combatant.name:20} (party)")
 
     def show_defeated(self):
         total_xp = 0
@@ -429,6 +433,7 @@ class Start(Command):
             elif roll.isdigit():
                 roll = int(roll)
             self.game.tm.add_combatant(monster, roll)
+            print(f"Added to turn order in {roll}\n")
 
         for character in self.game.characters.values():
             roll_advice = f"[1d20{character.initiative_mod:+}]" \
@@ -440,6 +445,7 @@ class Start(Command):
             elif roll.isdigit():
                 roll = int(roll)
             self.game.tm.add_combatant(character, roll)
+            print(f"Added to turn order in {roll}\n")
 
         print("\nBeginning combat with: ")
         for roll, combatants in self.game.tm.turn_order:
@@ -848,29 +854,30 @@ Examples:
         print(f"Okay; removed condition '{condition}' from {target_name}.")
 
 
-class StashMonster(Command):
+class StashCombatant(Command):
 
     keywords = ['stash']
 
     def get_suggestions(self, words):
         names_already_chosen = words[1:]
-        return sorted(set(self.game.monsters.keys()) - set(names_already_chosen))
+        return sorted(set(self.game.combatant_names) - set(names_already_chosen))
 
     def do_command(self, *args):
         for target_name in args:
-            target = self.game.monsters.get(target_name)
+            target = self.game.get_target(target_name)
             if not target:
                 print(f"Invalid target: {target_name}")
                 continue
 
             if self.game.tm:
                 self.game.tm.remove_combatant(target)
-            self.game.monsters.pop(target_name)
+            if target_name in self.game.monsters:
+                self.game.monsters.pop(target_name)
             self.game.stash[target_name] = target
             print(f"Stashed {target_name}")
 
 
-class UnstashMonster(Command):
+class UnstashCombatant(Command):
 
     keywords = ['unstash']
 
@@ -885,7 +892,9 @@ class UnstashMonster(Command):
                 continue
 
             target = self.game.stash.pop(target_name)
-            self.game.monsters[target_name] = target
+
+            if hasattr(target, 'mtype'):
+                self.game.monsters[target_name] = target
 
             print(f"Unstashed {target_name}")
 
@@ -899,6 +908,7 @@ class UnstashMonster(Command):
                 elif roll.isdigit():
                     roll = int(roll)
                 self.game.tm.add_combatant(target, roll)
+                print(f"Added to turn order in {roll}")
 
 
 class DefeatMonster(Command):
@@ -941,8 +951,8 @@ def register_commands(game):
     Roll(game)
     SetCondition(game)
     UnsetCondition(game)
-    StashMonster(game)
-    UnstashMonster(game)
+    StashCombatant(game)
+    UnstashCombatant(game)
     DefeatMonster(game)
 
 
