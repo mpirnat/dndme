@@ -91,9 +91,16 @@ class DnDCompleter(Completer):
 
 @attrs
 class Combat:
-    characters = attrib(default={})
-    monsters = attrib(default={})
-    defeated = attrib(default=[])
+    characters = attrib()
+    @characters.default
+    def _characters(self):
+        return {}
+
+    monsters = attrib()
+    @monsters.default
+    def _monsters(self):
+        return {}
+
     tm = attrib(default=None)
 
     @property
@@ -349,7 +356,8 @@ class Show(Command):
 
     def get_suggestions(self, words):
         if len(words) == 2:
-            return ['monsters', 'party', 'stash', 'defeated', 'turn']
+            return ['monsters', 'party', 'stash', 'defeated', 'turn',
+                    'combats']
 
     def do_command(self, *args):
         if not args:
@@ -365,6 +373,8 @@ class Show(Command):
             self.show_defeated()
         elif args[0] == 'turn':
             self.show_turn()
+        elif args[0] == 'combats':
+            self.show_combats()
 
     def show_party(self):
         combat = self.game.combat
@@ -431,6 +441,10 @@ class Show(Command):
             return
         turn = combat.tm.cur_turn
         print(f"Round: {turn[0]} Initiative: {turn[1]} Name: {turn[2].name}")
+
+    def show_combats(self):
+        for i, combat in enumerate(self.game.combats, 1):
+            print(f"{i}: {', '.join([x for x in combat.characters])}")
 
 
 class Start(Command):
@@ -991,6 +1005,43 @@ class DefeatMonster(Command):
             print(f"Defeated {target_name}")
 
 
+class Split(Command):
+
+    keywords = ['split']
+
+    def get_suggestions(self, words):
+        combat = self.game.combat
+        names_already_chosen = words[1:]
+        return sorted(set(combat.combatant_names) - set(names_already_chosen))
+
+    def do_command(self, *args):
+        source_combat = self.game.combat
+        dest_combat = Combat()
+        self.game.combats.append(dest_combat)
+
+        if not len(args):
+            print("Okay; created new combat")
+            return
+
+        for target_name in args:
+            target = source_combat.get_target(target_name)
+            if not target:
+                print(f"Invalid target: {target_name}")
+                continue
+
+            if source_combat.tm:
+                source_combat.tm.remove_combatant(target)
+            if hasattr(target, 'mtype'):
+                source_combat.monsters.pop(target_name)
+                dest_combat.monsters[target_name] = target
+            else:
+                source_combat.characters.pop(target_name)
+                dest_combat.characters[target_name] = target
+
+        print("Okay; created new combat with "
+                f"{', '.join(dest_combat.combatant_names)}")
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -1012,6 +1063,7 @@ def register_commands(game):
     StashCombatant(game)
     UnstashCombatant(game)
     DefeatMonster(game)
+    Split(game)
 
 
 def get_bottom_toolbar_tokens(cli):
