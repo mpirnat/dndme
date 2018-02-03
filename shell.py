@@ -92,14 +92,22 @@ class DnDCompleter(Completer):
 @attrs
 class Combat:
     characters = attrib()
+
     @characters.default
     def _characters(self):
         return {}
 
     monsters = attrib()
+
     @monsters.default
     def _monsters(self):
         return {}
+
+    defeated = attrib()
+
+    @defeated.default
+    def _defeated(self):
+        return []
 
     tm = attrib(default=None)
 
@@ -1042,6 +1050,27 @@ class Split(Command):
                 f"{', '.join(dest_combat.combatant_names)}")
 
 
+class Switch(Command):
+
+    keywords = ['switch']
+
+    def do_command(self, *args):
+        switch_to = int(args[0]) if args else None
+        if switch_to and 1 <= switch_to <= len(self.game.combats):
+            switch_to -= 1
+            self.game.combat = self.game.combats[switch_to]
+        else:
+            switch_to = self.game.combats.index(self.game.combat) + 1
+            if switch_to >= len(self.game.combats):
+                switch_to = 0
+            self.game.combat = self.game.combats[switch_to]
+
+        print(f"Okay; switched to combat {switch_to + 1}")
+        Show.show_party(self)
+
+
+
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -1064,6 +1093,7 @@ def register_commands(game):
     UnstashCombatant(game)
     DefeatMonster(game)
     Split(game)
+    Switch(game)
 
 
 def get_bottom_toolbar_tokens(cli):
