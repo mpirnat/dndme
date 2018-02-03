@@ -90,12 +90,10 @@ class DnDCompleter(Completer):
 
 
 @attrs
-class GameState:
+class Combat:
     characters = attrib(default={})
     monsters = attrib(default={})
-    stash = attrib(default={})
     defeated = attrib(default=[])
-    encounter = attrib(default=None)
     tm = attrib(default=None)
 
     @property
@@ -104,7 +102,21 @@ class GameState:
                 list(self.monsters.keys()))
 
     def get_target(self, name):
-        return self.characters.get(name) or self.monsters.get(name)
+        return self.characters.get(name) or \
+                self.monsters.get(name)
+
+
+@attrs
+class Game:
+    stash = attrib(default={})
+    combats = attrib(default=[])
+    combat = attrib()
+
+    @combat.default
+    def _combat(self):
+        combat = Combat()
+        self.combats.append(combat)
+        return combat
 
 
 class Command:
@@ -250,7 +262,7 @@ Usage:
         party = {}
         with open('party.toml', 'r') as fin:
             party = toml.load(fin)
-        self.game.characters = \
+        self.game.combat.characters = \
                 {x['name']: Character(**x) for x in party.values()}
         print("OK; loaded {} characters".format(len(party)))
 
@@ -274,7 +286,7 @@ Usage:
         if pick < 0 or pick > len(encounters):
             print("Invalid encounter.")
             return
-        self.game.encounter = encounter = encounters[pick]
+        encounter = encounters[pick]
         print(f"Loaded encounter: {encounter.name}")
 
         for group in encounter.groups.values():
@@ -315,9 +327,9 @@ Usage:
 
                 if monsters[i].name.islower():
                     monsters[i].name += f"-{i+1:0>2}/{str(uuid.uuid4())[:4]}"
-                self.game.monsters[monsters[i].name] = monsters[i]
+                self.game.combat.monsters[monsters[i].name] = monsters[i]
 
-                if not self.game.tm:
+                if not self.game.combat.tm:
                     continue
 
                 roll_advice = f"[1d20{monsters[i].initiative_mod:+}]" \
@@ -327,7 +339,7 @@ Usage:
                     roll = roll_dice(1, 20, modifier=monsters[i].initiative_mod)
                 elif roll.isdigit():
                     roll = int(roll)
-                self.game.tm.add_combatant(monsters[i], roll)
+                self.game.combat.tm.add_combatant(monsters[i], roll)
                 print(f"Added to turn order in {roll}")
 
 
@@ -355,7 +367,8 @@ class Show(Command):
             self.show_turn()
 
     def show_party(self):
-        party = list(sorted(self.game.characters.items()))
+        combat = self.game.combat
+        party = list(sorted(combat.characters.items()))
         for name, character in party:
             print(f"{name:20}"
                     f"\tHP: {character.cur_hp:0>2}/{character.max_hp:0>2}"
@@ -369,7 +382,8 @@ class Show(Command):
                 print(f"    Conditions: {conds}")
 
     def show_monsters(self):
-        monsters = list(sorted(self.game.monsters.items()))
+        combat = self.game.combat
+        monsters = list(sorted(combat.monsters.items()))
         for name, monster in monsters:
             print(f"{name:20}"
                     f"\tHP: {monster.cur_hp:0>2}/{monster.max_hp:0>2}"
@@ -394,25 +408,28 @@ class Show(Command):
                 print(f"{combatant.name:20} (party)")
 
     def show_defeated(self):
+        combat = self.game.combat
+
         total_xp = 0
-        for monster in self.game.defeated:
+        for monster in combat.defeated:
             total_xp += monster.xp
             print(f"{monster.name:20} {monster.origin:.40}\tXP: {monster.xp}")
 
-        if not self.game.characters:
+        if not combat.characters:
             print(f"Total XP: {total_xp}")
         else:
-            divided_xp = floor(total_xp / len(self.game.characters))
+            divided_xp = floor(total_xp / len(combat.characters))
             print(f"Total XP: {total_xp} ({divided_xp} each)")
 
     def show_turn(self):
-        if not self.game.tm:
+        combat = self.game.combat
+        if not combat.tm:
             print("No turn in progress.")
             return
-        elif not self.game.tm.cur_turn:
+        elif not combat.tm.cur_turn:
             print("No turn in progress.")
             return
-        turn = self.game.tm.cur_turn
+        turn = combat.tm.cur_turn
         print(f"Round: {turn[0]} Initiative: {turn[1]} Name: {turn[2].name}")
 
 
@@ -421,10 +438,12 @@ class Start(Command):
     keywords = ['start']
 
     def do_command(self, *args):
-        self.game.tm = TurnManager()
+        combat = self.game.combat
+
+        combat.tm = TurnManager()
 
         print("Enter initiative rolls or press enter to 'roll' automatically.")
-        for monster in self.game.monsters.values():
+        for monster in combat.monsters.values():
             roll_advice = f"[1d20{monster.initiative_mod:+}]" \
                     if monster.initiative_mod else "[1d20]"
             roll = input(f"Initiative for {monster.name} {roll_advice}:")
@@ -432,10 +451,10 @@ class Start(Command):
                 roll = roll_dice(1, 20, modifier=monster.initiative_mod)
             elif roll.isdigit():
                 roll = int(roll)
-            self.game.tm.add_combatant(monster, roll)
+            combat.tm.add_combatant(monster, roll)
             print(f"Added to turn order in {roll}\n")
 
-        for character in self.game.characters.values():
+        for character in combat.characters.values():
             roll_advice = f"[1d20{character.initiative_mod:+}]" \
                     if character.initiative_mod else "[1d20]"
 
@@ -444,14 +463,14 @@ class Start(Command):
                 roll = roll_dice(1, 20, modifier=character.initiative_mod)
             elif roll.isdigit():
                 roll = int(roll)
-            self.game.tm.add_combatant(character, roll)
+            combat.tm.add_combatant(character, roll)
             print(f"Added to turn order in {roll}\n")
 
         print("\nBeginning combat with: ")
-        for roll, combatants in self.game.tm.turn_order:
+        for roll, combatants in combat.tm.turn_order:
             print(f"{roll}: {', '.join([x.name for x in combatants])}")
 
-        self.game.tm.turns = self.game.tm.generate_turns()
+        combat.tm.turns = combat.tm.generate_turns()
 
 
 class End(Command):
@@ -459,16 +478,17 @@ class End(Command):
     keywords = ['end']
 
     def do_command(self, *args):
-        if not self.game.tm:
+        combat = self.game.combat
+        if not combat.tm:
             print("Combat hasn't started yet.")
             return
 
-        cur_turn = self.game.tm.cur_turn
+        cur_turn = combat.tm.cur_turn
 
-        self.game.tm = None
+        combat.tm = None
         Show.show_defeated(self)
-        self.game.defeated = []
-        self.game.monsters = {}
+        combat.defeated = []
+        combat.monsters = {}
 
         if cur_turn:
             rounds = cur_turn[0]
@@ -490,14 +510,15 @@ class NextTurn(Command):
     keywords = ['next']
 
     def do_command(self, *args):
-        if not self.game.tm:
+        combat = self.game.combat
+        if not combat.tm:
             print("Combat hasn't started yet.")
             return
 
         num_turns = int(args[0]) if args else 1
 
         for i in range(num_turns):
-            turn = self.game.tm.cur_turn
+            turn = combat.tm.cur_turn
             if turn:
                 combatant = turn[-1]
                 conditions_removed = combatant.decrement_condition_durations()
@@ -505,8 +526,8 @@ class NextTurn(Command):
                     print(f"{combatant.name} conditions removed: "
                             f"{', '.join(conditions_removed)}")
 
-            turn = next(game.tm.turns)
-            self.game.tm.cur_turn = turn
+            turn = next(combat.tm.turns)
+            combat.tm.cur_turn = turn
             Show.show_turn(self)
 
 
@@ -515,16 +536,19 @@ class Damage(Command):
     keywords = ['damage', 'hurt', 'hit']
 
     def get_suggestions(self, words):
+        combat = self.game.combat
         names_already_chosen = words[1:]
-        return sorted(set(self.game.combatant_names) - \
-                set(names_already_chosen))
+        return sorted(set(combat.combatant_names) - set(names_already_chosen))
 
     def do_command(self, *args):
         target_names = args[0:-1]
         amount = int(args[-1])
 
+        combat = self.game.combat
+
         for target_name in target_names:
-            target = self.game.get_target(target_name)
+
+            target = combat.get_target(target_name)
             if not target:
                 print(f"Invalid target: {target_name}")
                 continue
@@ -533,7 +557,7 @@ class Damage(Command):
             print(f"Okay; damaged {target_name}. "
                     f"Now: {target.cur_hp}/{target.max_hp}")
 
-            if target_name in self.game.monsters and target.cur_hp == 0:
+            if target_name in combat.monsters and target.cur_hp == 0:
                 if (input(f"{target_name} reduced to 0 HP--"
                         "mark as defeated? [Y]: ")
                         or 'y').lower() != 'y':
@@ -546,16 +570,18 @@ class Heal(Command):
     keywords = ['heal']
 
     def get_suggestions(self, words):
+        combat = self.game.combat
         names_already_chosen = words[1:]
-        return sorted(set(self.game.combatant_names) - \
-                set(names_already_chosen))
+        return sorted(set(combat.combatant_names) - set(names_already_chosen))
 
     def do_command(self, *args):
         target_names = args[0:-1]
         amount = int(args[-1])
 
+        combat = self.game.combat
+
         for target_name in target_names:
-            target = self.game.get_target(target_name)
+            target = combat.get_target(target_name)
             if not target:
                 print(f"Invalid target: {target_name}")
                 continue
@@ -581,11 +607,13 @@ Example: {keyword} 2
 """
 
     def get_suggestions(self, words):
+        combat = self.game.combat
+
         if len(words) != 2:
             return []
-        if not (self.game.tm and self.game.tm.cur_turn):
+        if not (combat.tm and combat.tm.cur_turn):
             return []
-        caster = self.game.tm.cur_turn[-1]
+        caster = combat.tm.cur_turn[-1]
         if not (caster.skills.get('spellcasting')):
             return []
 
@@ -596,11 +624,13 @@ Example: {keyword} 2
 
 
     def do_command(self, *args):
-        if not (self.game.tm and self.game.tm.cur_turn):
+        combat = self.game.combat
+
+        if not (combat.tm and combat.tm.cur_turn):
             print("No turn in progress.")
             return
 
-        caster = self.game.tm.cur_turn[-1]
+        caster = combat.tm.cur_turn[-1]
         if 'spellcasting' not in caster.skills:
             print("Combatant can't cast spells.")
             return
@@ -640,17 +670,20 @@ Usage: {keyword} <combatant1> <combatant2>
 """
 
     def get_suggestions(self, words):
+        combat = self.game.combat
         if len(words) in (2, 3):
-            return self.game.combatant_names
+            return combat.combatant_names
 
     def do_command(self, *args):
         name1 = args[0]
         name2 = args[1]
 
-        combatant1 = self.game.characters.get(name1) or \
-                self.game.monsters.get(name1)
-        combatant2 = self.game.characters.get(name2) or \
-                self.game.monsters.get(name2)
+        combat = self.game.combat
+
+        combatant1 = combat.characters.get(name1) or \
+                combat.monsters.get(name1)
+        combatant2 = combat.characters.get(name2) or \
+                combat.monsters.get(name2)
 
         if not combatant1:
             print(f"Invalid target: {name1}")
@@ -660,7 +693,7 @@ Usage: {keyword} <combatant1> <combatant2>
             print(f"Invalid target: {name2}")
             return
 
-        self.game.tm.swap(combatant1, combatant2)
+        combat.tm.swap(combatant1, combatant2)
         print(f"Okay; swapped {name1} and {name2}.")
 
 
@@ -676,12 +709,15 @@ Usage: {keyword} <combatant> <initiative>
 
     def get_suggestions(self, words):
         if len(words) == 2:
-            return self.game.combatant_names
+            combat = self.game.combat
+            return combat.combatant_names
 
     def do_command(self, *args):
         name = args[0]
 
-        target = self.game.get_target(name)
+        combat = self.game.combat
+
+        target = combat.get_target(name)
 
         if not target:
             print(f"Invalid target: {name}")
@@ -693,7 +729,7 @@ Usage: {keyword} <combatant> <initiative>
             print("Invalid initiative value")
             return
 
-        self.game.tm.move(target, new_initiative)
+        combat.tm.move(target, new_initiative)
         print(f"Okay; moved {name} to {new_initiative}.")
 
 
@@ -708,6 +744,8 @@ Usage: reorder <initiative value> <combatant1> [<combatant2> ...]
 """
 
     def get_suggestions(self, words):
+        combat = self.game.combat
+
         if len(words) > 2:
             try:
                 initiative_value = int(words[1])
@@ -715,12 +753,14 @@ Usage: reorder <initiative value> <combatant1> [<combatant2> ...]
                 return []
 
             combatant_names = [x.name for x in
-                    self.game.tm.initiative[initiative_value]]
+                    combat.tm.initiative[initiative_value]]
             names_already_chosen = words[2:]
             return list(set(combatant_names) - set(names_already_chosen))
 
     def do_command(self, *args):
-        if not self.game.tm:
+        combat = self.game.combat
+
+        if not combat.tm:
             print("No encounter in progress.")
             return
 
@@ -731,8 +771,8 @@ Usage: reorder <initiative value> <combatant1> [<combatant2> ...]
             return
 
         names = args[1:]
-        old_initiative = self.game.tm.initiative[i]
-        new_initiative = [self.game.get_target(x) for x in names]
+        old_initiative = combat.tm.initiative[i]
+        new_initiative = [combat.get_target(x) for x in names]
 
         if set(names) != set([x.name for x in new_initiative if x]):
             print("Could not reorder: couldn't find all combatants specified.")
@@ -742,9 +782,9 @@ Usage: reorder <initiative value> <combatant1> [<combatant2> ...]
             print("Could not reorder: not all original combatants specified.")
             return
 
-        self.game.tm.initiative[i] = new_initiative
+        combat.tm.initiative[i] = new_initiative
         print(f"Okay; updated {i}: "
-                f"{', '.join([x.name for x in self.game.tm.initiative[i]])}")
+                f"{', '.join([x.name for x in combat.tm.initiative[i]])}")
 
 
 class SetCondition(Command):
@@ -784,8 +824,9 @@ Examples:
     ]
 
     def get_suggestions(self, words):
+        combat = self.game.combat
         if len(words) == 2:
-            return self.game.combatant_names
+            return combat.combatant_names
         elif len(words) == 3:
             return self.conditions
 
@@ -808,7 +849,9 @@ Examples:
             }
             duration *= multipliers.get(units, 1)
 
-        target = self.game.get_target(target_name)
+        combat = self.game.combat
+
+        target = combat.get_target(target_name)
         if not target:
             print(f"Invalid target: {target_name}")
             return
@@ -832,11 +875,12 @@ Examples:
 """
 
     def get_suggestions(self, words):
+        combat = self.game.combat
         if len(words) == 2:
-            return self.game.combatant_names
+            return combat.combatant_names
         elif len(words) == 3:
             target_name = words[1]
-            target = self.game.get_target(target_name)
+            target = combat.get_target(target_name)
             if not target:
                 return []
             return list(sorted(target.conditions.keys()))
@@ -845,7 +889,9 @@ Examples:
         target_name = args[0]
         condition = args[1]
 
-        target = self.game.get_target(target_name)
+        combat = self.game.combat
+
+        target = combat.get_target(target_name)
         if not target:
             print(f"Invalid target: {target_name}")
             return
@@ -859,20 +905,26 @@ class StashCombatant(Command):
     keywords = ['stash']
 
     def get_suggestions(self, words):
+        combat = self.game.combat
         names_already_chosen = words[1:]
-        return sorted(set(self.game.combatant_names) - set(names_already_chosen))
+        return sorted(set(combat.combatant_names) - set(names_already_chosen))
 
     def do_command(self, *args):
+        combat = self.game.combat
+
         for target_name in args:
-            target = self.game.get_target(target_name)
+            target = combat.get_target(target_name)
             if not target:
                 print(f"Invalid target: {target_name}")
                 continue
 
-            if self.game.tm:
-                self.game.tm.remove_combatant(target)
-            if target_name in self.game.monsters:
-                self.game.monsters.pop(target_name)
+            if combat.tm:
+                combat.tm.remove_combatant(target)
+            if target_name in combat.monsters:
+                combat.monsters.pop(target_name)
+            else:
+                combat.characters.pop(target_name)
+
             self.game.stash[target_name] = target
             print(f"Stashed {target_name}")
 
@@ -886,6 +938,8 @@ class UnstashCombatant(Command):
         return sorted(set(self.game.stash.keys()) - set(names_already_chosen))
 
     def do_command(self, *args):
+        combat = self.game.combat
+
         for target_name in args:
             if target_name not in self.game.stash:
                 print(f"Invalid target: {target_name}")
@@ -894,11 +948,13 @@ class UnstashCombatant(Command):
             target = self.game.stash.pop(target_name)
 
             if hasattr(target, 'mtype'):
-                self.game.monsters[target_name] = target
+                combat.monsters[target_name] = target
+            else:
+                combat.characters[target_name] = target
 
             print(f"Unstashed {target_name}")
 
-            if self.game.tm:
+            if combat.tm:
                 roll_advice = f"[1d20{target.initiative_mod:+}]" \
                     if target.initiative_mod else "[1d20]"
 
@@ -907,7 +963,7 @@ class UnstashCombatant(Command):
                     roll = roll_dice(1, 20, modifier=target.initiative_mod)
                 elif roll.isdigit():
                     roll = int(roll)
-                self.game.tm.add_combatant(target, roll)
+                combat.tm.add_combatant(target, roll)
                 print(f"Added to turn order in {roll}")
 
 
@@ -916,20 +972,22 @@ class DefeatMonster(Command):
     keywords = ['defeat']
 
     def get_suggestions(self, words):
+        combat = self.game.combat
         names_already_chosen = words[1:]
-        return sorted(set(self.game.monsters.keys()) - set(names_already_chosen))
+        return sorted(set(combat.monsters.keys()) - set(names_already_chosen))
 
     def do_command(self, *args):
+        combat = self.game.combat
         for target_name in args:
-            target = self.game.get_target(target_name)
+            target = combat.get_target(target_name)
             if not target:
                 print(f"Invalid target: {target_name}")
                 continue
 
-            if self.game.tm:
-                self.game.tm.remove_combatant(target)
-            self.game.monsters.pop(target_name)
-            self.game.defeated.append(target)
+            if combat.tm:
+                combat.tm.remove_combatant(target)
+            combat.monsters.pop(target_name)
+            combat.defeated.append(target)
             print(f"Defeated {target_name}")
 
 
@@ -985,6 +1043,6 @@ def main_loop(game):
 
 
 if __name__ == '__main__':
-    game = GameState()
+    game = Game()
     register_commands(game)
     main_loop(game)
