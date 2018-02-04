@@ -1013,7 +1013,7 @@ class DefeatMonster(Command):
             print(f"Defeated {target_name}")
 
 
-class Split(Command):
+class SplitCombat(Command):
 
     keywords = ['split']
 
@@ -1050,7 +1050,7 @@ class Split(Command):
                 f"{', '.join(dest_combat.combatant_names)}")
 
 
-class Switch(Command):
+class SwitchCombat(Command):
 
     keywords = ['switch']
 
@@ -1069,6 +1069,57 @@ class Switch(Command):
         Show.show_party(self)
 
 
+class JoinCombat(Command):
+
+    keywords = ['join']
+
+    def get_suggestions(self, words):
+        if len(words) == 2:
+            return [f"{i} - {', '.join([x for x in combat.characters])}"
+                    for i, combat in enumerate(self.game.combats, 1)]
+
+        elif len(words) > 2:
+            names_already_chosen = words[2:]
+            combat = self.game.combat
+            return sorted(set(combat.combatant_names) - \
+                    set(names_already_chosen))
+
+    def do_command(self, *args):
+        source_combat = self.game.combat
+
+        if not args:
+            print("Join which combat group?")
+            return
+
+        join_to = int(args[0]) - 1
+        dest_combat = self.game.combats[join_to]
+
+        if len(args) == 1:
+            # join all to dest
+            target_names = list(source_combat.characters.keys())
+        else:
+            # join specific characters to dest
+            target_names = args[1:]
+
+        for target_name in target_names:
+            target = source_combat.get_target(target_name)
+            if not target:
+                print(f"Invalid target: {target_name}")
+                continue
+
+            if source_combat.tm:
+                source_combat.tm.remove_combatant(target)
+
+            source_combat.characters.pop(target_name)
+            dest_combat.characters[target_name] = target
+
+        if source_combat.monsters and not source_combat.characters:
+            StashCombatant.do_command(self,
+                    list(source_combat.monsters.keys()))
+
+        if not source_combat.characters and not source_combat.monsters:
+            SwitchParty.do_command(self)
+            self.game.combats.remove(source_combat)
 
 
 def register_commands(game):
@@ -1092,8 +1143,9 @@ def register_commands(game):
     StashCombatant(game)
     UnstashCombatant(game)
     DefeatMonster(game)
-    Split(game)
-    Switch(game)
+    SplitCombat(game)
+    SwitchCombat(game)
+    JoinCombat(game)
 
 
 def get_bottom_toolbar_tokens(cli):
