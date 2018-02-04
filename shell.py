@@ -1119,8 +1119,12 @@ class JoinCombat(Command):
             if source_combat.tm:
                 source_combat.tm.remove_combatant(target)
 
-            source_combat.characters.pop(target_name)
-            dest_combat.characters[target_name] = target
+            if hasattr(target, 'mtype'):
+                source_combat.monsters.pop(target_name)
+                dest_combat.monsters[target_name] = target
+            else:
+                source_combat.characters.pop(target_name)
+                dest_combat.characters[target_name] = target
 
         if source_combat.monsters and not source_combat.characters:
             print("Monsters remain, stashing them:\n")
