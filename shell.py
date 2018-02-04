@@ -1106,6 +1106,10 @@ class JoinCombat(Command):
             # join specific characters to dest
             target_names = args[1:]
 
+        if source_combat.defeated:
+            print("Monsters were defeated:\n")
+            Show.show_defeated(self)
+
         for target_name in target_names:
             target = source_combat.get_target(target_name)
             if not target:
@@ -1119,11 +1123,13 @@ class JoinCombat(Command):
             dest_combat.characters[target_name] = target
 
         if source_combat.monsters and not source_combat.characters:
+            print("Monsters remain, stashing them:\n")
             StashCombatant.do_command(self,
-                    list(source_combat.monsters.keys()))
+                    *list(source_combat.monsters.keys()))
 
         if not source_combat.characters and not source_combat.monsters:
-            SwitchParty.do_command(self)
+            print("Combat group is empty; switching...")
+            SwitchCombat.do_command(self)
             self.game.combats.remove(source_combat)
 
 
