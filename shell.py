@@ -1137,6 +1137,74 @@ class JoinCombat(Command):
             self.game.combats.remove(source_combat)
 
 
+class CombatantDetails(Command):
+
+    keywords = ['details']
+
+    def get_suggestions(self, words):
+        combat = self.game.combat
+
+        if len(words) == 2:
+            return sorted(set(combat.combatant_names))
+
+    def do_command(self, *args):
+        combat = self.game.combat
+
+        if args:
+            target = combat.get_target(args[0])
+        else:
+            if not combat.tm or not combat.tm.cur_turn:
+                print("No target specified.")
+                return
+            turn = combat.tm.cur_turn
+            target = turn[2]
+
+        t = target
+        if hasattr(target, 'cclass'):
+            print(f"{t.name}: Level {t.level} {t.race} {t.cclass}")
+            print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp} "
+                    f"Per: {t.perception} Dark: {t.darkvision}")
+
+        else:
+            print()
+            print(f"{t.name}: {t.alignment} {t.race} {t.size} {t.mtype}")
+            print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp} "
+                    f"Per: {t.perception} Dark: {t.darkvision} "
+                    f"Speed: {t.speed} Stealth: {t.stealth}")
+            print(f"STR: {t.str} ({t.str_mod}) "
+                    f"DEX: {t.dex} ({t.dex_mod}) "
+                    f"CON: {t.con} ({t.con_mod}) "
+                    f"INT: {t.int} ({t.int_mod}) "
+                    f"WIS: {t.wis} ({t.wis_mod}) "
+                    f"CHA: {t.cha} ({t.cha_mod})")
+            print(f"Languages: {', '.join(t.languages)}")
+            print()
+
+            print("Skills")
+            for k, s in t.skills.items():
+                print(f"{s['name']}\n{s['description']}")
+                if k == 'spellcasting':
+                    print(f"Cantrips: {', '.join(s['cantrips'])}")
+                    print(f"Spells: ")
+                    for i, spells in enumerate(s['spells']):
+                        print(f"Level {i+1} "
+                                f"({s['slots_used'][i]}/{s['slots'][i]}): "
+                                f"{', '.join(spells)}")
+                print()
+
+            print("Attacks")
+            for a in t.attacks.values():
+                reach_text = 'reach' if a['wtype'] == 'melee' else 'range'
+                print(f"{a['weapon'].title()} ({a['wtype']}) "
+                        f"Targets: {a['targets']} "
+                        f"{reach_text}: {a[reach_text]}")
+                print(f"To hit: {a['attack_mod']} "
+                        f"Damage: {a['damage']} {a['damage_type']}")
+                print()
+
+
+            print(t.notes)
+
 def register_commands(game):
     ListCommands(game)
     Help(game)
@@ -1161,6 +1229,7 @@ def register_commands(game):
     SplitCombat(game)
     SwitchCombat(game)
     JoinCombat(game)
+    CombatantDetails(game)
 
 
 def get_bottom_toolbar_tokens(cli):
