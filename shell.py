@@ -1181,6 +1181,7 @@ class CombatantDetails(Command):
             print()
 
             print("Skills")
+            print("------")
             for k, s in t.skills.items():
                 print(f"{s['name']}\n{s['description']}")
                 if k == 'spellcasting':
@@ -1193,8 +1194,9 @@ class CombatantDetails(Command):
                 print()
 
             print("Attacks")
+            print("-------")
             for a in t.attacks.values():
-                reach_text = 'reach' if a['wtype'] == 'melee' else 'range'
+                reach_text = 'Reach' if a['wtype'] == 'melee' else 'Range'
                 print(f"{a['weapon'].title()} ({a['wtype']}) "
                         f"Targets: {a['targets']} "
                         f"{reach_text}: {a[reach_text]}")
