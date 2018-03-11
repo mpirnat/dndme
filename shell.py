@@ -1141,6 +1141,9 @@ class CombatantDetails(Command):
 
     keywords = ['details']
 
+    def mod_fmt(self, modifier):
+        return f"+{modifier}" if modifier > -1 else f"{modifier}"
+
     def get_suggestions(self, words):
         combat = self.game.combat
 
@@ -1166,17 +1169,19 @@ class CombatantDetails(Command):
                     f"Per: {t.perception} Dark: {t.darkvision}")
 
         else:
+            mf = self.mod_fmt
+
             print()
             print(f"{t.name}: {t.alignment} {t.race} {t.size} {t.mtype}")
             print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp} "
                     f"Per: {t.perception} Dark: {t.darkvision} "
                     f"Speed: {t.speed} Stealth: {t.stealth}")
-            print(f"STR: {t.str} ({t.str_mod}) "
-                    f"DEX: {t.dex} ({t.dex_mod}) "
-                    f"CON: {t.con} ({t.con_mod}) "
-                    f"INT: {t.int} ({t.int_mod}) "
-                    f"WIS: {t.wis} ({t.wis_mod}) "
-                    f"CHA: {t.cha} ({t.cha_mod})")
+            print(f"STR: {t.str} ({mf(t.str_mod)}) "
+                    f"DEX: {t.dex} ({mf(t.dex_mod)}) "
+                    f"CON: {t.con} ({mf(t.con_mod)}) "
+                    f"INT: {t.int} ({mf(t.int_mod)}) "
+                    f"WIS: {t.wis} ({mf(t.wis_mod)}) "
+                    f"CHA: {t.cha} ({mf(t.cha_mod)})")
             print(f"Languages: {', '.join(t.languages)}")
             print()
 

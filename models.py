@@ -1,6 +1,6 @@
 from attr import attrs, attrib
 from attr import Factory as attr_factory
-from math import inf
+from math import floor, inf
 import dice
 
 
@@ -86,24 +86,48 @@ class Monster(Combatant):
     size = attrib(default="medium")
     mtype = attrib(default="humanoid")
     alignment = attrib(default="unaligned")
+
     str = attrib(default=10)
-    str_mod = attrib(default=0)
     dex = attrib(default=10)
-    dex_mod = attrib(default=0)
     con = attrib(default=10)
-    con_mod = attrib(default=0)
     int = attrib(default=10)
-    int_mod = attrib(default=0)
     wis = attrib(default=10)
-    wis_mod = attrib(default=0)
     cha = attrib(default=10)
-    cha_mod = attrib(default=0)
+
+    @property
+    def str_mod(self):
+        return self.ability_modifier(self.str)
+
+    @property
+    def dex_mod(self):
+        return self.ability_modifier(self.dex)
+
+    @property
+    def con_mod(self):
+        return self.ability_modifier(self.con)
+
+    @property
+    def int_mod(self):
+        return self.ability_modifier(self.int)
+
+    @property
+    def wis_mod(self):
+        return self.ability_modifier(self.wis)
+
+    @property
+    def cha_mod(self):
+        return self.ability_modifier(self.cha)
+
+    def ability_modifier(self, stat):
+        return floor((stat - 10) / 2)
+
     armor = attrib(default=[])
     speed = attrib(default=30)
     stealth = attrib(default=0)
     languages = attrib(default=[])
     notes = attrib(default="")
     origin = attrib(default="origin unknown")
+
 
 
 @attrs

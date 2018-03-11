@@ -1,0 +1,71 @@
+name = "young_green_dragon"
+race = "dragon"
+cr = 8
+xp = 3900
+mtype = "dragon"
+size = "large"
+alignment = "lawful evil"
+str = 19
+dex = 12
+con = 17
+int = 16
+wis = 13
+cha = 15
+ac = 18
+armor = []
+max_hp = "16d10+48"
+speed = [40, 60, 40]
+deception = 5
+stealth = 4
+darkvision = 120
+blindsight = 30
+perception = 17
+languages = ["Common", "Draconic"]
+dex_save = 4
+con_save = 6
+wis_save = 4
+cha_save = 5
+immune = ["poison", "poisoned"]
+notes = """
+Thoroughly evil, green dragons delight in subverting and corrupting the
+good-hearted. They prefer to dwell in ancient forests.
+"""
+
+[skills.amphibious]
+name = "Amphibious"
+description = "The dragon can breathe air and water."
+
+[skills.multiattack]
+name = "Multiattack"
+description = "The dragon makes three attacks, one with its bite and two with its claws."
+
+[attacks.bite]
+weapon = "bite"
+wtype = "melee"
+attack_mod = 7
+reach = 10
+targets = 1
+damage = "2d10+4"
+damage_type = "piercing"
+bonus_damage = "2d6"
+bonus_damange_type = "poison"
+
+[attacks.claw]
+weapon = "claw"
+wtype = "melee"
+attack_mod = 7
+reach = 5
+targets = 1
+damage = "2d6+4"
+damage_type = "slashing"
+
+[attacks.breath]
+weapon = "poison breath"
+wtype = "breath"
+shape = "cone"
+size = 30
+damage = "12d6"
+damage_type = "poison"
+save = "CON"
+save_dc = 16
+save_benefit = "half damage"
