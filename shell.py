@@ -1170,7 +1170,8 @@ class CombatantDetails(Command):
         if hasattr(target, 'cclass'):
             print(f"{t.name}: Level {t.level} {t.race} {t.cclass}")
             print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp}")
-            print(t.senses)
+            print(', '.join([f"{x}: {y}"
+                    for x, y in t.senses.items()]))
 
         else:
             mf = self.mod_fmt
@@ -1184,8 +1185,12 @@ class CombatantDetails(Command):
                     f"INT: {t.int} ({mf(t.int_mod)}) "
                     f"WIS: {t.wis} ({mf(t.wis_mod)}) "
                     f"CHA: {t.cha} ({mf(t.cha_mod)})")
-            print(f"Senses: {t.senses}")
-            print(f"Skills: {t.skills}")
+            print("Senses: " + \
+                    ', '.join([f"{x}: {y}"
+                            for x, y in t.senses.items()]))
+            print("Skills: " + \
+                    ', '.join([f"{x}: {y}"
+                            for x, y in t.skills.items()]))
             print(f"Languages: {', '.join(t.languages)}")
             print()
 
