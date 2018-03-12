@@ -326,7 +326,10 @@ Usage:
                             return
 
                     for i in range(count):
-                        monsters.append(Monster(**monster))
+                        new_monster = Monster(**monster)
+                        if group.get('name'):
+                            new_monster.name = group['name']
+                        monsters.append(new_monster)
                     print(f"Loaded {count} of {monster['name']}")
                     break
 

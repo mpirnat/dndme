@@ -12,7 +12,6 @@ int = 17
 wis = 12
 cha = 11
 max_hp = "5d8"
-initiative_mod = 2
 ac = 12
 armor = []
 speed = 30

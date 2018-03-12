@@ -7,4 +7,5 @@ A necromancer, oh no!
 
 [groups.evil_mage]
 monster = "evil_mage"
+name = "Mr_Necromancer"
 count = 1
