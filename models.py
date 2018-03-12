@@ -8,7 +8,6 @@ import dice
 class Combatant:
     name = attrib(default="")
     race = attrib(default="")
-    initiative_mod = attrib(default=0)
     ac = attrib(default=0)
 
     senses = attrib(default=attr_factory(dict))
@@ -75,7 +74,7 @@ class Combatant:
 class Character(Combatant):
     cclass = attrib(default="Fighter")
     level = attrib(default=1)
-
+    initiative_mod = attrib(default=0)
 
 @attrs
 class Monster(Combatant):
@@ -92,61 +91,15 @@ class Monster(Combatant):
     wis = attrib(default=10)
     cha = attrib(default=10)
 
-    @property
-    def str_mod(self):
-        return self.ability_modifier(self.str)
-
-    @str_mod.setter
-    def str_mod(self, x):
-        pass
-
-    @property
-    def dex_mod(self):
-        return self.ability_modifier(self.dex)
-
-    @dex_mod.setter
-    def dex_mod(self, x):
-        pass
-
-    @property
-    def initiative_mod(self):
-        return self.ability_modifier(self.dex)
-
-    @initiative_mod.setter
-    def initiative_mod(self, x):
-        pass
-
-    @property
-    def con_mod(self):
-        return self.ability_modifier(self.con)
-
-    @con_mod.setter
-    def con_mod(self, x):
-        pass
-
-    @property
-    def int_mod(self):
-        return self.ability_modifier(self.int)
-
-    @int_mod.setter
-    def int_mod(self, x):
-        pass
-
-    @property
-    def wis_mod(self):
-        return self.ability_modifier(self.wis)
-
-    @wis_mod.setter
-    def wis_mod(self, x):
-        pass
-
-    @property
-    def cha_mod(self):
-        return self.ability_modifier(self.cha)
-
-    @cha_mod.setter
-    def char_mod(self, x):
-        pass
+    def __getattr__(self, attr_name):
+        if attr_name[3:] == '_mod' and \
+                attr_name[:3] in ('str', 'dex', 'con', 'int', 'wis', 'cha'):
+            return self.ability_modifier(getattr(self, attr_name[:3]))
+        elif attr_name == 'initiative_mod':
+            return self.ability_modifier(getattr(self, 'dex'))
+        else:
+            raise AttributeError(
+                    f"'Monster' object has no attribute '{attr_name}'")
 
     def ability_modifier(self, stat):
         return floor((stat - 10) / 2)
