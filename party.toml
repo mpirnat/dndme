@@ -7,6 +7,8 @@ max_hp = 32
 cur_hp = 32
 ac = 16
 initiative_mod = 4
+
+[Sariel.senses]
 perception = 15
 darkvision = true
 
@@ -18,6 +20,8 @@ level = 4
 max_hp = 36
 cur_hp = 36
 ac = 17
+
+[Lander.senses]
 perception = 14
 darkvision = false
 
@@ -29,6 +33,8 @@ level = 4
 max_hp = 38
 cur_hp = 38
 ac = 18
+
+[Armek.senses]
 perception = 13
 darkvision = true
 
@@ -40,6 +46,8 @@ level = 4
 max_hp = 29
 cur_hp = 29
 ac = 16
+
+[Pip.senses]
 perception = 10
 darkvision = false
 
@@ -51,6 +59,8 @@ level = 4
 max_hp = 30
 cur_hp = 30
 ac = 14
+
+[Dewain.senses]
 perception = 13
 darkvision = true
 
@@ -62,5 +72,7 @@ level = 4
 max_hp = 38
 cur_hp = 38
 ac = 16
+
+[Elwing.senses]
 perception = 13
 darkvision = false

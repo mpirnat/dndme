@@ -10,11 +10,9 @@ class Combatant:
     race = attrib(default="")
     initiative_mod = attrib(default=0)
     ac = attrib(default=0)
-    perception = attrib(default=10)
-    darkvision = attrib(default=0)
+
+    senses = attrib(default=attr_factory(dict))
     conditions = attrib(default=attr_factory(dict))
-    skills = attrib(default=[])
-    attacks = attrib(default=[])
 
     _max_hp = attrib(default=10)
     _cur_hp = attrib(default=10)
@@ -98,36 +96,72 @@ class Monster(Combatant):
     def str_mod(self):
         return self.ability_modifier(self.str)
 
+    @str_mod.setter
+    def str_mod(self, x):
+        pass
+
     @property
     def dex_mod(self):
         return self.ability_modifier(self.dex)
+
+    @dex_mod.setter
+    def dex_mod(self, x):
+        pass
+
+    @property
+    def initiative_mod(self):
+        return self.ability_modifier(self.dex)
+
+    @initiative_mod.setter
+    def initiative_mod(self, x):
+        pass
 
     @property
     def con_mod(self):
         return self.ability_modifier(self.con)
 
+    @con_mod.setter
+    def con_mod(self, x):
+        pass
+
     @property
     def int_mod(self):
         return self.ability_modifier(self.int)
+
+    @int_mod.setter
+    def int_mod(self, x):
+        pass
 
     @property
     def wis_mod(self):
         return self.ability_modifier(self.wis)
 
+    @wis_mod.setter
+    def wis_mod(self, x):
+        pass
+
     @property
     def cha_mod(self):
         return self.ability_modifier(self.cha)
 
+    @cha_mod.setter
+    def char_mod(self, x):
+        pass
+
     def ability_modifier(self, stat):
         return floor((stat - 10) / 2)
 
-    armor = attrib(default=[])
+    armor = attrib(default=attr_factory(list))
     speed = attrib(default=30)
-    stealth = attrib(default=0)
-    languages = attrib(default=[])
+    skills = attrib(default=attr_factory(dict))
+    resist = attrib(default=attr_factory(list))
+    immune = attrib(default=attr_factory(list))
+    languages = attrib(default=attr_factory(list))
+    features = attrib(default=attr_factory(dict))
+    actions = attrib(default=attr_factory(dict))
+    reactions = attrib(default=attr_factory(dict))
     notes = attrib(default="")
     origin = attrib(default="origin unknown")
-
 
 
 @attrs

@@ -11,61 +11,59 @@ con = 17
 int = 16
 wis = 13
 cha = 15
-ac = 18
-armor = []
 max_hp = "16d10+48"
-speed = [40, 60, 40]
-deception = 5
-stealth = 4
-darkvision = 120
-blindsight = 30
-perception = 17
-languages = ["Common", "Draconic"]
-dex_save = 4
-con_save = 6
-wis_save = 4
-cha_save = 5
+ac = 18
+armor = ["natural armor"]
+speed = ["land: 40", "fly: 60", "swim: 40"]
+resist = []
 immune = ["poison", "poisoned"]
+languages = ["Common", "Draconic"]
 notes = """
 Thoroughly evil, green dragons delight in subverting and corrupting the
 good-hearted. They prefer to dwell in ancient forests.
 """
 
-[skills.amphibious]
+[skills]
+deception = 5
+stealth = 4
+dex_save = 4
+con_save = 6
+wis_save = 4
+cha_save = 5
+
+[senses]
+darkvision = 120
+blindsight = 30
+perception = 17
+
+[features.amphibious]
 name = "Amphibious"
 description = "The dragon can breathe air and water."
 
-[skills.multiattack]
+[actions.multiattack]
 name = "Multiattack"
-description = "The dragon makes three attacks, one with its bite and two with its claws."
+description = """
+The dragon makes three attacks, one with its bite and two with its claws.
+"""
 
-[attacks.bite]
-weapon = "bite"
-wtype = "melee"
-attack_mod = 7
-reach = 10
-targets = 1
-damage = "2d10+4"
-damage_type = "piercing"
-bonus_damage = "2d6"
-bonus_damange_type = "poison"
+[actions.bite]
+name = "Bite"
+description = """
+Melee Weapon Attack: +7 to hit, reach 10 ft., one target.
+Hit: 15 (2dl0 + 4) piercing damage plus 7 (2d6) poison damage.
+"""
 
-[attacks.claw]
-weapon = "claw"
-wtype = "melee"
-attack_mod = 7
-reach = 5
-targets = 1
-damage = "2d6+4"
-damage_type = "slashing"
+[actions.claw]
+name = "Claw"
+description = """
+Melee Weapon Attack: +7 to hit, reach 5 ft., one target.
+Hit: 11 (2d6 + 4) slashing damage.
+"""
 
-[attacks.breath]
-weapon = "poison breath"
-wtype = "breath"
-shape = "cone"
-size = 30
-damage = "12d6"
-damage_type = "poison"
-save = "CON"
-save_dc = 16
-save_benefit = "half damage"
+[actions.breath]
+name = "Poison Breath (Recharge 5-6)"
+description = """
+The dragon breathes poisonous gas in a 30-foot cone. Each creature in the
+cone must make a DC 16 Constitution saving throw, taking 42 (12d6) poison
+damage on a failed save, or half as much damage on a successful one.
+"""

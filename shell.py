@@ -391,7 +391,7 @@ class Show(Command):
             print(f"{name:20}"
                     f"\tHP: {character.cur_hp:0>2}/{character.max_hp:0>2}"
                     f"\tAC: {character.ac:0>2}"
-                    f"\tPer: {character.perception:0>2}"
+                    f"\tPer: {character.senses['perception']:0>2}"
             )
             if character.conditions:
                 conds = ', '.join([f"{x}:{y}"
@@ -406,7 +406,7 @@ class Show(Command):
             print(f"{name:20}"
                     f"\tHP: {monster.cur_hp:0>2}/{monster.max_hp:0>2}"
                     f"\tAC: {monster.ac:0>2}"
-                    f"\tPer: {monster.perception:0>2}"
+                    f"\tPer: {monster.senses['perception']:0>2}"
             )
             if monster.conditions:
                 conds = ', '.join([f"{x}:{y}"
@@ -636,11 +636,11 @@ Example: {keyword} 2
         if not (combat.tm and combat.tm.cur_turn):
             return []
         caster = combat.tm.cur_turn[-1]
-        if not (caster.skills.get('spellcasting')):
+        if not (caster.features.get('spellcasting')):
             return []
 
-        slots = caster.skills['spellcasting']['slots']
-        slots_used = caster.skills['spellcasting']['slots_used']
+        slots = caster.features['spellcasting']['slots']
+        slots_used = caster.features['spellcasting']['slots_used']
         return [str(i+1) for i in range(len(slots))
                 if slots_used[i] < slots[i]]
 
@@ -653,7 +653,7 @@ Example: {keyword} 2
             return
 
         caster = combat.tm.cur_turn[-1]
-        if 'spellcasting' not in caster.skills:
+        if 'spellcasting' not in caster.features:
             print("Combatant can't cast spells.")
             return
 
@@ -664,9 +664,9 @@ Example: {keyword} 2
             print("Can't cast spells at spell level 0.")
             return
 
-        spells = caster.skills['spellcasting']['spells']
-        slots = caster.skills['spellcasting']['slots']
-        slots_used = caster.skills['spellcasting']['slots_used']
+        spells = caster.features['spellcasting']['spells']
+        slots = caster.features['spellcasting']['slots']
+        slots_used = caster.features['spellcasting']['slots_used']
 
         try:
             if slots_used[spell_level] < slots[spell_level]:
@@ -1163,54 +1163,63 @@ class CombatantDetails(Command):
             target = turn[2]
 
         t = target
+
         if hasattr(target, 'cclass'):
             print(f"{t.name}: Level {t.level} {t.race} {t.cclass}")
-            print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp} "
-                    f"Per: {t.perception} Dark: {t.darkvision}")
+            print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp}")
+            print(t.senses)
 
         else:
             mf = self.mod_fmt
 
             print()
             print(f"{t.name}: {t.alignment} {t.race} {t.size} {t.mtype}")
-            print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp} "
-                    f"Per: {t.perception} Dark: {t.darkvision} "
-                    f"Speed: {t.speed} Stealth: {t.stealth}")
+            print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp}")
             print(f"STR: {t.str} ({mf(t.str_mod)}) "
                     f"DEX: {t.dex} ({mf(t.dex_mod)}) "
                     f"CON: {t.con} ({mf(t.con_mod)}) "
                     f"INT: {t.int} ({mf(t.int_mod)}) "
                     f"WIS: {t.wis} ({mf(t.wis_mod)}) "
                     f"CHA: {t.cha} ({mf(t.cha_mod)})")
+            print(f"Senses: {t.senses}")
+            print(f"Skills: {t.skills}")
             print(f"Languages: {', '.join(t.languages)}")
             print()
 
-            print("Skills")
-            print("------")
-            for k, s in t.skills.items():
-                print(f"{s['name']}\n{s['description']}")
-                if k == 'spellcasting':
-                    print(f"Cantrips: {', '.join(s['cantrips'])}")
-                    print(f"Spells: ")
-                    for i, spells in enumerate(s['spells']):
-                        print(f"Level {i+1} "
-                                f"({s['slots_used'][i]}/{s['slots'][i]}): "
-                                f"{', '.join(spells)}")
-                print()
+            if t.features:
+                print("Features")
+                print("--------")
 
-            print("Attacks")
-            print("-------")
-            for a in t.attacks.values():
-                reach_text = 'Reach' if a['wtype'] == 'melee' else 'Range'
-                print(f"{a['weapon'].title()} ({a['wtype']}) "
-                        f"Targets: {a['targets']} "
-                        f"{reach_text}: {a[reach_text]}")
-                print(f"To hit: {a['attack_mod']} "
-                        f"Damage: {a['damage']} {a['damage_type']}")
-                print()
+                for k, s in t.features.items():
+                    print(f"{s['name']}\n{s['description'].strip()}")
 
+                    if k == 'spellcasting':
+                        print(f"Cantrips: {', '.join(s['cantrips'])}")
+                        print(f"Spells: ")
+                        for i, spells in enumerate(s['spells']):
+                            print(f"Level {i+1} "
+                                    f"({s['slots_used'][i]}/{s['slots'][i]}): "
+                                    f"{', '.join(spells)}")
+                    print()
 
-            print(t.notes)
+            if t.actions:
+                print("Actions")
+                print("-------")
+                for a in t.actions.values():
+                    print(a['name'])
+                    print(a['description'].strip())
+                    print()
+
+            if t.reactions:
+                print("Reactions")
+                print("---------")
+                for r in t.reactions.values():
+                    print(r['name'])
+                    print(r['description'].strip())
+                    print()
+
+            print(t.notes.strip())
+
 
 def register_commands(game):
     ListCommands(game)

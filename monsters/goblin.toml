@@ -11,39 +11,42 @@ con = 10
 int = 10
 wis = 8
 cha = 8
-initiative_mod = 2
+max_hp = "2d6"
 ac = 15
 armor = ["leather armor", "shield"]
-max_hp = "2d6"
 speed = 30
-stealth = 6
-darkvision = 60
-perception = 9
+resist = []
+immune = []
 languages = ["Common", "Goblin"]
 notes = """
 Goblins are black-hearted, gather in overwhelming numbers, and crave power,
 which they abuse.
 """
 
-[skills.nimbleescape]
+[skills]
+stealth = 6
+
+[senses]
+darkvision = 60
+perception = 9
+
+[features.nimbleescape]
 name = "Nimble Escape"
-description = "Take Disengage or Hide as a bonus action on each turn."
+description = """
+The goblin can take the Disengage or Hide action as a bonus action on each
+of its turns.
+"""
 
-[attacks.scimitar]
-weapon = "scimitar"
-wtype = "melee"
-attack_mod = 4
-reach = 5
-targets = 1
-damage = "1d6+2"
-damage_type = "slashing"
+[actions.scimitar]
+name = "Scimitar"
+description = """
+Melee Weapon Attack: +4 to hit, reach 5 ft., one target.
+Hit: 5 (ld6 + 2) slashing damage.
+"""
 
-[attacks.shortbow]
-weapon = "short bow"
-wtype = "ranged"
-attack_mod = 4
-range = [80, 320]
-targets = 1
-damage = "1d6+2"
-damage_type = "piercing"
-
+[actions.shortbow]
+name = "Short Bow"
+description = """
+Ranged Weapon Attack: +4 to hit, range 80 ft./320 ft., one target.
+Hit: 5 (1d6 + 2) piercing damage.
+"""
