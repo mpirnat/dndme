@@ -1228,6 +1228,14 @@ class CombatantDetails(Command):
                     print(a['description'].strip())
                     print()
 
+            if t.legendary_actions:
+                print("Legendary Actions")
+                print("-----------------")
+                for a in t.legendary_actions.values():
+                    print(a['name'])
+                    print(a['description'].strip())
+                    print()
+
             if t.reactions:
                 print("Reactions")
                 print("---------")

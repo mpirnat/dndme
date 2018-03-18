@@ -112,6 +112,7 @@ class Monster(Combatant):
     languages = attrib(default=attr_factory(list))
     features = attrib(default=attr_factory(dict))
     actions = attrib(default=attr_factory(dict))
+    legendary_actions = attrib(default=attr_factory(dict))
     reactions = attrib(default=attr_factory(dict))
     notes = attrib(default="")
     origin = attrib(default="origin unknown")
