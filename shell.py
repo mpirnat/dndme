@@ -11,11 +11,15 @@ from prompt_toolkit.key_binding.manager import KeyBindingManager
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.styles import style_from_dict
 from prompt_toolkit.token import Token
+import click
 import glob
 import pytoml as toml
 import sys
 import uuid
 
+default_encounters_dir = './encounters'
+default_monsters_dir = './monsters'
+default_party_file = 'party.toml'
 
 commands = {}
 manager = KeyBindingManager.for_prompt()
@@ -123,6 +127,10 @@ class Combat:
 
 @attrs
 class Game:
+    encounters_dir = attrib(default=default_encounters_dir)
+    monsters_dir = attrib(default=default_monsters_dir)
+    party_file = attrib(default=default_party_file)
+
     stash = attrib(default={})
     combats = attrib(default=[])
     combat = attrib()
@@ -275,14 +283,15 @@ Usage:
 
     def load_party(self):
         party = {}
-        with open('party.toml', 'r') as fin:
+        with open(self.game.party_file, 'r') as fin:
             party = toml.load(fin)
         self.game.combat.characters = \
                 {x['name']: Character(**x) for x in party.values()}
         print("OK; loaded {} characters".format(len(party)))
 
     def load_encounter(self):
-        available_encounter_files = glob.glob('encounters/*.toml')
+        available_encounter_files = \
+                glob.glob(self.game.encounters_dir+'/*.toml')
         if not available_encounter_files:
             print("No available encounters found.")
             return
@@ -305,7 +314,8 @@ Usage:
         print(f"Loaded encounter: {encounter.name}")
 
         for group in encounter.groups.values():
-            available_monster_files = glob.glob('monsters/*.toml')
+            available_monster_files = \
+                    glob.glob(self.game.monsters_dir+'/*.toml')
             monsters = []
 
             for filename in available_monster_files:
@@ -1260,7 +1270,21 @@ def get_bottom_toolbar_tokens(cli):
     return [(Token.Toolbar, 'Exit:Ctrl+D ')]
 
 
-def main_loop(game):
+@click.command()
+@click.option('--encounters', default='./encounters',
+        help="Directory containing encounters TOML files; "
+            f"default: {default_encounters_dir}")
+@click.option('--monsters', default='./monsters',
+        help="Directory containing monsters TOML files; "
+            f"default: {default_monsters_dir}")
+@click.option('--party', default='party.toml',
+        help="Player character party TOML file to use; "
+            f"default: {default_party_file}")
+def main_loop(encounters, monsters, party):
+    game = Game(encounters_dir=encounters, monsters_dir=monsters,
+            party_file=party)
+    register_commands(game)
+
     while True:
         try:
             user_input = prompt("> ",
@@ -1285,6 +1309,4 @@ def main_loop(game):
 
 
 if __name__ == '__main__':
-    game = Game()
-    register_commands(game)
-    main_loop(game)
+    main_loop()
