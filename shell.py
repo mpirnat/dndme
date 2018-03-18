@@ -298,7 +298,7 @@ Usage:
 
         print("Available encounters:\n")
         encounters = []
-        for i, filename in enumerate(available_encounter_files, 1):
+        for i, filename in enumerate(sorted(available_encounter_files), 1):
             encounter = Encounter(**toml.load(open(filename, 'r')))
             encounters.append(encounter)
             print(f"{i}: {encounter.name} ({encounter.location})")
@@ -1183,6 +1183,12 @@ class CombatantDetails(Command):
             print(', '.join([f"{x}: {y}"
                     for x, y in t.senses.items()]))
 
+            if t.conditions:
+                conds = ', '.join([f"{x}:{y}"
+                        if y != inf else x
+                        for x, y in t.conditions.items()])
+                print(f"Conditions: {conds}")
+
         else:
             mf = self.mod_fmt
 
@@ -1202,6 +1208,13 @@ class CombatantDetails(Command):
                     ', '.join([f"{x}: {y}"
                             for x, y in t.skills.items()]))
             print(f"Languages: {', '.join(t.languages)}")
+
+            if t.conditions:
+                conds = ', '.join([f"{x}:{y}"
+                        if y != inf else x
+                        for x, y in t.conditions.items()])
+                print(f"Conditions: {conds}")
+
             print()
 
             if t.features:
