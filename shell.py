@@ -1,6 +1,7 @@
 from attr import attrs, attrib
 from dice import roll_dice, roll_dice_expr
 from initiative import TurnManager
+from loaders import MonsterLoader
 from math import inf, floor
 from models import Character, Encounter, Monster
 from prompt_toolkit import prompt
@@ -313,35 +314,30 @@ Usage:
         encounter = encounters[pick]
         print(f"Loaded encounter: {encounter.name}")
 
+        monster_loader = MonsterLoader(self.game.monsters_dir)
+
         for group in encounter.groups.values():
-            available_monster_files = \
-                    glob.glob(self.game.monsters_dir+'/*.toml')
-            monsters = []
+            try:
+                count = int(group['count'])
+            except ValueError:
+                if 'd' in group['count']:
+                    override_count = \
+                            input(f"Number of monsters [{group['count']}]: ")
+                    if override_count.strip():
+                        count = int(override_count)
+                    else:
+                        count = roll_dice_expr(group['count'])
+                else:
+                    print(f"Invalid monster count: {group['count']}")
+                    return
 
-            for filename in available_monster_files:
-                monster = toml.load(open(filename, 'r'))
-                if monster['name'] == group['monster']:
-                    try:
-                        count = int(group['count'])
-                    except ValueError:
-                        if 'd' in group['count']:
-                            override_count = \
-                                    input(f"Number of monsters [{group['count']}]: ")
-                            if override_count.strip():
-                                count = int(override_count)
-                            else:
-                                count = roll_dice_expr(group['count'])
-                        else:
-                            print(f"Invalid monster count: {group['count']}")
-                            return
+            monsters = monster_loader.load(group['monster'], count=count)
 
-                    for i in range(count):
-                        new_monster = Monster(**monster)
-                        if group.get('name'):
-                            new_monster.name = group['name']
-                        monsters.append(new_monster)
-                    print(f"Loaded {count} of {monster['name']}")
-                    break
+            if group.get('name'):
+                for monster in monsters:
+                    monster.name = group['name']
+
+            print(f"Loaded {count} of {monsters[0].name}")
 
             for i in range(len(monsters)):
                 if 'max_hp' in group and len(group['max_hp']) == len(monsters):
