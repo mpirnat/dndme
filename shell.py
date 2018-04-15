@@ -1,7 +1,7 @@
 from attr import attrs, attrib
 from dice import roll_dice, roll_dice_expr
 from initiative import TurnManager
-from loaders import MonsterLoader
+from loaders import EncounterLoader, MonsterLoader
 from math import inf, floor
 from models import Character, Encounter, Monster
 from prompt_toolkit import prompt
@@ -16,7 +16,6 @@ import click
 import glob
 import pytoml as toml
 import sys
-import uuid
 
 default_encounters_dir = './encounters'
 default_monsters_dir = './monsters'
@@ -291,18 +290,43 @@ Usage:
         print("OK; loaded {} characters".format(len(party)))
 
     def load_encounter(self):
-        available_encounter_files = \
-                glob.glob(self.game.encounters_dir+'/*.toml')
-        if not available_encounter_files:
+
+        def prompt_count(count):
+            override_count = \
+                    input(f"Number of monsters [{count}]: ")
+            if override_count.strip():
+                return int(override_count)
+            return None
+
+        def prompt_initiative(monster):
+            # prompt to add the monsters to initiative order
+            roll_advice = f"[1d20{monster.initiative_mod:+}]" \
+                    if monster.initiative_mod else "[1d20]"
+            roll = input(f"Initiative for {monster.name} {roll_advice}:")
+            if not roll:
+                roll = roll_dice(1, 20, modifier=monster.initiative_mod)
+            elif roll.isdigit():
+                roll = int(roll)
+            return roll
+
+        monster_loader = MonsterLoader(self.game.monsters_dir)
+        encounter_loader = EncounterLoader(
+                self.game.encounters_dir,
+                monster_loader,
+                count_resolver=prompt_count,
+                initiative_resolver=prompt_initiative)
+
+        encounters = encounter_loader.get_available_encounters()
+
+        if not encounters:
             print("No available encounters found.")
             return
 
+        # prompt to pick an encounter
         print("Available encounters:\n")
-        encounters = []
-        for i, filename in enumerate(sorted(available_encounter_files), 1):
-            encounter = Encounter(**toml.load(open(filename, 'r')))
-            encounters.append(encounter)
+        for i, encounter in enumerate(encounters, 1):
             print(f"{i}: {encounter.name} ({encounter.location})")
+
         pick = input("\nLoad encounter: ")
         if not pick.isdigit():
             print("Invalid encounter.")
@@ -311,60 +335,11 @@ Usage:
         if pick < 0 or pick > len(encounters):
             print("Invalid encounter.")
             return
+
         encounter = encounters[pick]
-        print(f"Loaded encounter: {encounter.name}")
-
-        monster_loader = MonsterLoader(self.game.monsters_dir)
-
-        for group in encounter.groups.values():
-            try:
-                count = int(group['count'])
-            except ValueError:
-                if 'd' in group['count']:
-                    override_count = \
-                            input(f"Number of monsters [{group['count']}]: ")
-                    if override_count.strip():
-                        count = int(override_count)
-                    else:
-                        count = roll_dice_expr(group['count'])
-                else:
-                    print(f"Invalid monster count: {group['count']}")
-                    return
-
-            monsters = monster_loader.load(group['monster'], count=count)
-
-            if group.get('name'):
-                for monster in monsters:
-                    monster.name = group['name']
-
-            print(f"Loaded {count} of {monsters[0].name}")
-
-            for i in range(len(monsters)):
-                if 'max_hp' in group and len(group['max_hp']) == len(monsters):
-                    monsters[i].max_hp = group['max_hp'][i]
-                    monsters[i].cur_hp = group['max_hp'][i]
-                else:
-                    monsters[i].max_hp = monsters[i]._max_hp
-                    monsters[i].cur_hp = monsters[i].max_hp
-
-                monsters[i].origin = f"{encounter.name} ({encounter.location})"
-
-                if monsters[i].name.islower():
-                    monsters[i].name += f"-{i+1:0>2}/{str(uuid.uuid4())[:4]}"
-                self.game.combat.monsters[monsters[i].name] = monsters[i]
-
-                if not self.game.combat.tm:
-                    continue
-
-                roll_advice = f"[1d20{monsters[i].initiative_mod:+}]" \
-                        if monsters[i].initiative_mod else "[1d20]"
-                roll = input(f"Initiative for {monsters[i].name} {roll_advice}:")
-                if not roll:
-                    roll = roll_dice(1, 20, modifier=monsters[i].initiative_mod)
-                elif roll.isdigit():
-                    roll = int(roll)
-                self.game.combat.tm.add_combatant(monsters[i], roll)
-                print(f"Added to turn order in {roll}")
+        monsters = encounter_loader.load(encounter, self.game.combat)
+        print(f"Loaded encounter: {encounter.name}"
+                f" with {len(monsters)} monsters")
 
 
 class Show(Command):
