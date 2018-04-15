@@ -1,5 +1,5 @@
 from dice import roll_dice, roll_dice_expr
-from models import Encounter, Monster
+from models import Character, Encounter, Monster
 import glob
 import pytoml as toml
 import uuid
@@ -120,4 +120,13 @@ class MonsterLoader:
 
 class PartyLoader:
 
-    pass
+    def __init__(self, filename):
+        self.filename = filename
+
+    def load(self, combat):
+        with open(self.filename, 'r') as fin:
+            party = toml.load(fin)
+        combat.characters = \
+                {x['name']: Character(**x) for x in party.values()}
+        return party
+

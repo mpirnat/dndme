@@ -1,9 +1,8 @@
 from attr import attrs, attrib
 from dice import roll_dice, roll_dice_expr
 from initiative import TurnManager
-from loaders import EncounterLoader, MonsterLoader
+from loaders import EncounterLoader, MonsterLoader, PartyLoader
 from math import inf, floor
-from models import Character, Encounter, Monster
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.contrib.completers import WordCompleter
@@ -282,11 +281,8 @@ Usage:
             self.load_encounter()
 
     def load_party(self):
-        party = {}
-        with open(self.game.party_file, 'r') as fin:
-            party = toml.load(fin)
-        self.game.combat.characters = \
-                {x['name']: Character(**x) for x in party.values()}
+        party_loader = PartyLoader(self.game.party_file)
+        party = party_loader.load(self.game.combat)
         print("OK; loaded {} characters".format(len(party)))
 
     def load_encounter(self):
