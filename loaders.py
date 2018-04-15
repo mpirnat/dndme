@@ -36,6 +36,7 @@ class EncounterLoader:
         monsters = self.monster_loader.load(group['monster'], count=count)
         self._set_names(group, monsters)
         self._set_hp(group, monsters)
+        self._set_alignment(group, monsters)
         return monsters
 
     def _determine_count(self, group):
@@ -53,7 +54,7 @@ class EncounterLoader:
         return count
 
     def _set_names(self, group, monsters):
-        if group.get('name'):
+        if 'name' in group:
             for monster in monsters:
                 monster.name = group['name']
 
@@ -69,6 +70,11 @@ class EncounterLoader:
             else:
                 monsters[i].max_hp = monsters[i]._max_hp
                 monsters[i].cur_hp = monsters[i].max_hp
+
+    def _set_alignment(self, group, monsters):
+        if 'alignment' in group:
+            for monster in monsters:
+                monster.alignment = group['alignment']
 
     def _set_origin(self, encounter, monsters):
         for monster in monsters:
