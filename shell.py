@@ -1163,7 +1163,7 @@ class CombatantDetails(Command):
             mf = self.mod_fmt
 
             print()
-            print(f"{t.name}: {t.alignment} {t.race} {t.size} {t.mtype}")
+            print(f"{t.name}: {t.race} - {t.size} {t.mtype}, {t.alignment}")
             print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp}")
             print(f"STR: {t.str} ({mf(t.str_mod)}) "
                     f"DEX: {t.dex} ({mf(t.dex_mod)}) "
@@ -1171,13 +1171,20 @@ class CombatantDetails(Command):
                     f"INT: {t.int} ({mf(t.int_mod)}) "
                     f"WIS: {t.wis} ({mf(t.wis_mod)}) "
                     f"CHA: {t.cha} ({mf(t.cha_mod)})")
-            print("Senses: " + \
-                    ', '.join([f"{x}: {y}"
-                            for x, y in t.senses.items()]))
-            print("Skills: " + \
-                    ', '.join([f"{x}: {y}"
-                            for x, y in t.skills.items()]))
-            print(f"Languages: {', '.join(t.languages)}")
+            if t.senses:
+                print("Senses: " + \
+                        ', '.join([f"{x}: {y}"
+                                for x, y in t.senses.items()]))
+            if t.skills:
+                print("Skills: " + \
+                        ', '.join([f"{x}: {y}"
+                                for x, y in t.skills.items()]))
+            if t.immune:
+                print(f"Immune: {', '.join(t.immune)}")
+            if t.resist:
+                print(f"Resist: {', '.join(t.resist)}")
+            if t.languages:
+                print(f"Languages: {', '.join(t.languages)}")
 
             if t.conditions:
                 conds = ', '.join([f"{x}:{y}"
