@@ -291,8 +291,10 @@ Usage:
             override_count = \
                     input(f"Number of monsters [{count}]: ")
             if override_count.strip():
-                return int(override_count)
-            return None
+                count = int(override_count)
+            else:
+                count = roll_dice_expr(count)
+            return count
 
         def prompt_initiative(monster):
             # prompt to add the monsters to initiative order
@@ -303,6 +305,7 @@ Usage:
                 roll = roll_dice(1, 20, modifier=monster.initiative_mod)
             elif roll.isdigit():
                 roll = int(roll)
+            print(f"Adding to turn order at: {roll}")
             return roll
 
         monster_loader = MonsterLoader(self.game.monsters_dir)

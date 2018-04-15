@@ -44,8 +44,9 @@ class EncounterLoader:
         except ValueError:
             if 'd' in group['count']:
                 if self.count_resolver:
-                    override_count = self.count_resolver(group['count'])
-                count = override_count or roll_dice_expr(group['count'])
+                    count = self.count_resolver(group['count'])
+                else:
+                    count = roll_dice_expr(group['count'])
             else:
                 raise ValueError(f"Invalid monster count: {group['count']}")
 
