@@ -861,6 +861,11 @@ Examples:
             print(f"Invalid target: {target_name}")
             return
 
+        if hasattr(target, 'immune') and condition in target.immune:
+            print(f"Cannot set condition '{condition}' on {target_name};"
+                    " target is immune.")
+            return
+
         target.set_condition(condition, duration=duration)
         print(f"Okay; set condition '{condition}' on {target_name}.")
 
