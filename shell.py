@@ -1188,6 +1188,8 @@ class CombatantDetails(Command):
                 print(f"Immune: {', '.join(t.immune)}")
             if t.resist:
                 print(f"Resist: {', '.join(t.resist)}")
+            if t.vulnerable:
+                print(f"Vulnerable: {', '.join(t.vulnerable)}")
             if t.languages:
                 print(f"Languages: {', '.join(t.languages)}")
 

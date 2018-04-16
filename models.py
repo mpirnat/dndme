@@ -109,6 +109,7 @@ class Monster(Combatant):
     skills = attrib(default=attr_factory(dict))
     resist = attrib(default=attr_factory(list))
     immune = attrib(default=attr_factory(list))
+    vulnerable = attrib(default=attr_factory(list))
     languages = attrib(default=attr_factory(list))
     features = attrib(default=attr_factory(dict))
     actions = attrib(default=attr_factory(dict))
