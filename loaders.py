@@ -37,6 +37,7 @@ class EncounterLoader:
         self._set_names(group, monsters)
         self._set_hp(group, monsters)
         self._set_alignment(group, monsters)
+        self._set_race(group, monsters)
         return monsters
 
     def _determine_count(self, group):
@@ -75,6 +76,11 @@ class EncounterLoader:
         if 'alignment' in group:
             for monster in monsters:
                 monster.alignment = group['alignment']
+
+    def _set_race(self, group, monsters):
+        if 'race' in group:
+            for monster in monsters:
+                monster.race = group['race']
 
     def _set_origin(self, encounter, monsters):
         for monster in monsters:
