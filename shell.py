@@ -1169,13 +1169,15 @@ class CombatantDetails(Command):
 
             print()
             print(f"{t.name}: {t.race} - {t.size} {t.mtype}, {t.alignment}")
-            print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp}")
+            print(f"AC: {t.ac} ({t.armor or None}) HP: {t.cur_hp}/{t.max_hp}")
+            print(f"Speed: {t.speed}")
             print(f"STR: {t.str} ({mf(t.str_mod)}) "
                     f"DEX: {t.dex} ({mf(t.dex_mod)}) "
                     f"CON: {t.con} ({mf(t.con_mod)}) "
                     f"INT: {t.int} ({mf(t.int_mod)}) "
                     f"WIS: {t.wis} ({mf(t.wis_mod)}) "
                     f"CHA: {t.cha} ({mf(t.cha_mod)})")
+
             if t.senses:
                 print("Senses: " + \
                         ', '.join([f"{x}: {y}"

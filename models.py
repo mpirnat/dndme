@@ -104,7 +104,7 @@ class Monster(Combatant):
     def ability_modifier(self, stat):
         return floor((stat - 10) / 2)
 
-    armor = attrib(default=attr_factory(list))
+    armor = attrib(default="")
     speed = attrib(default=30)
     skills = attrib(default=attr_factory(dict))
     resist = attrib(default=attr_factory(list))
