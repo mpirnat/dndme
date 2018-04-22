@@ -85,30 +85,17 @@ class EncounterLoader:
                 monster.race = group['race']
 
     def _add_attributes(self, group, monsters):
-        if 'skills' in group:
-            for k, v in group['skills'].items():
-                for monster in monsters:
-                    monster.skills[k] = v
-
-        if 'features' in group:
-            for k, v in group['features'].items():
-                for monster in monsters:
-                    monster.features[k] = v
-
-        if 'actions' in group:
-            for k, v in group['actions'].items():
-                for monster in monsters:
-                    monster.actions[k] = v
-
-        if 'legendary_actions' in group:
-            for k, v in group['legendary_actions'].items():
-                for monster in monsters:
-                    monster.legendary_actions[k] = v
-
-        if 'reactions' in group:
-            for k, v in group['reactions'].items():
-                for monster in monsters:
-                    monster.reactions[k] = v
+        for monster in monsters:
+            if 'skills' in group:
+                monster.skills.update(group['skills'])
+            if 'features' in group:
+                monster.features.update(group['features'])
+            if 'actions' in group:
+                monster.actions.update(group['actions'])
+            if 'legendary_actions' in group:
+                monster.legendary_actions.update(group['legendary_actions'])
+            if 'reactions' in group:
+                monster.reactions.update(group['reactions'])
 
     def _remove_attributes(self, group, monsters):
         for attr in group.get('remove', []):
