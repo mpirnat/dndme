@@ -38,6 +38,8 @@ class EncounterLoader:
         self._set_hp(group, monsters)
         self._set_alignment(group, monsters)
         self._set_race(group, monsters)
+        self._add_attributes(group, monsters)
+        self._remove_attributes(group, monsters)
         return monsters
 
     def _determine_count(self, group):
@@ -81,6 +83,45 @@ class EncounterLoader:
         if 'race' in group:
             for monster in monsters:
                 monster.race = group['race']
+
+    def _add_attributes(self, group, monsters):
+        if 'skills' in group:
+            for k, v in group['skills'].items():
+                for monster in monsters:
+                    monster.skills[k] = v
+
+        if 'features' in group:
+            for k, v in group['features'].items():
+                for monster in monsters:
+                    monster.features[k] = v
+
+        if 'actions' in group:
+            for k, v in group['actions'].items():
+                for monster in monsters:
+                    monster.actions[k] = v
+
+        if 'legendary_actions' in group:
+            for k, v in group['legendary_actions'].items():
+                for monster in monsters:
+                    monster.legendary_actions[k] = v
+
+        if 'reactions' in group:
+            for k, v in group['reactions'].items():
+                for monster in monsters:
+                    monster.reactions[k] = v
+
+    def _remove_attributes(self, group, monsters):
+        for attr in group.get('remove', []):
+            try:
+                (attr, key) = attr.split('.')
+                for monster in monsters:
+                    if hasattr(monster, attr):
+                        getattr(monster, attr).pop(key)
+            except KeyError:
+                pass
+            except ValueError:
+                if hasattr(monster, attr):
+                    delattr(monster, attr)
 
     def _set_origin(self, encounter, monsters):
         for monster in monsters:
