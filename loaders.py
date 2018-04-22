@@ -35,7 +35,9 @@ class EncounterLoader:
         count = self._determine_count(group)
         monsters = self.monster_loader.load(group['monster'], count=count)
         self._set_names(group, monsters)
+        self._set_stats(group, monsters)
         self._set_hp(group, monsters)
+        self._set_armor(group, monsters)
         self._set_alignment(group, monsters)
         self._set_race(group, monsters)
         self._add_attributes(group, monsters)
@@ -65,6 +67,21 @@ class EncounterLoader:
             if monster.name.islower():
                 monster.name += f"-{i:0>2}/{str(uuid.uuid4())[:4]}"
 
+    def _set_stats(self, group, monsters):
+        for monster in monsters:
+            if 'str' in group:
+                monster.str = group['str']
+            if 'dex' in group:
+                monster.dex = group['dex']
+            if 'con' in group:
+                monster.con = group['con']
+            if 'int' in group:
+                monster.int = group['int']
+            if 'wis' in group:
+                monster.wis = group['wis']
+            if 'cha' in group:
+                monster.cha = group['cha']
+
     def _set_hp(self, group, monsters):
         for i in range(len(monsters)):
             if 'max_hp' in group and len(group['max_hp']) == len(monsters):
@@ -73,6 +90,15 @@ class EncounterLoader:
             else:
                 monsters[i].max_hp = monsters[i]._max_hp
                 monsters[i].cur_hp = monsters[i].max_hp
+
+    def _set_armor(self, group, monsters):
+        if 'armor' in group:
+            for monster in monsters:
+                monster.armor = group['armor']
+
+        if 'ac' in group:
+            for monster in monsters:
+                monster.ac = group['ac']
 
     def _set_alignment(self, group, monsters):
         if 'alignment' in group:
