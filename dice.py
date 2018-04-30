@@ -1,6 +1,7 @@
 import random
 import re
 
+dice_expr = re.compile(r'^(\d+)d(\d+)\+?(\-?\d+)?$')
 
 def roll_dice(times, sides, modifier=0, dice_mult=1, total_mult=1):
     """
@@ -35,7 +36,7 @@ def roll_dice_expr(value):
     Get a dice roll from a dice expression; i.e. a string like
     "3d6" or "1d8+1"
     """
-    m = re.match(r'^(\d+)d(\d+)\+?(\-?\d+)?$', value)
+    m = dice_expr.match(value)
 
     if not m:
         raise ValueError(f"Invalid dice expression '{value}'")

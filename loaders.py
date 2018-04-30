@@ -2,6 +2,7 @@ from dice import roll_dice, roll_dice_expr
 from models import Character, Encounter, Monster
 import glob
 import pytoml as toml
+import re
 import uuid
 
 
@@ -168,11 +169,11 @@ class MonsterLoader:
 
     def load(self, monster_name, count=1):
         # TODO: hey maybe make this more efficient, yeah?
-        available_monster_files = \
-                glob.glob(self.base_dir+'/*.toml')
+
+        monster_files = self.get_available_monster_files()
         monsters = []
 
-        for filename in available_monster_files:
+        for filename in monster_files:
             monster = toml.load(open(filename, 'r'))
 
             if monster['name'] != monster_name:
@@ -183,6 +184,15 @@ class MonsterLoader:
             break
 
         return monsters
+
+    def get_available_monster_files(self):
+        monster_files = glob.glob(self.base_dir+'/*.toml')
+        return monster_files
+
+    def get_available_monster_keys(self):
+        keys = [re.sub(r".*\/(.*)\.toml", "\\1", fn)
+                for fn in self.get_available_monster_files()]
+        return sorted(keys)
 
 
 class PartyLoader:
