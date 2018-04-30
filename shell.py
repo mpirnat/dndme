@@ -141,6 +141,41 @@ class Game:
         return combat
 
 
+def safe_input(text, default=None, converter=None):
+    data = None
+
+    while data is None:
+        if default is not None:
+            data = input(f"{text} [{default}]: ").strip()
+        else:
+            data = input(f"{text}: ").strip()
+
+        if default and not data:
+            data = default
+
+        if converter:
+            data = converter(data)
+
+    return data
+
+
+def convert_to_int(value):
+    try:
+        value = int(value)
+    except ValueError:
+        value = None
+    return value
+
+
+def convert_to_int_or_dice_expr(value):
+    try:
+        value = int(value)
+    except ValueError:
+        if 'd' in value:
+            value = roll_dice_expr(value)
+    return value
+
+
 class Command:
 
     keywords = ['command']
@@ -279,6 +314,8 @@ Usage:
             self.load_party()
         elif args[0] == 'encounter':
             self.load_encounter()
+        else:
+            print("Sorry; can't load that.")
 
     def load_party(self):
         party_loader = PartyLoader(self.game.party_file)
@@ -288,23 +325,20 @@ Usage:
     def load_encounter(self):
 
         def prompt_count(count):
-            override_count = \
-                    input(f"Number of monsters [{count}]: ")
-            if override_count.strip():
-                count = int(override_count)
-            else:
-                count = roll_dice_expr(count)
+            count = safe_input(
+                    "Number of monsters",
+                    default=count,
+                    converter=convert_to_int_or_dice_expr)
             return count
 
         def prompt_initiative(monster):
             # prompt to add the monsters to initiative order
-            roll_advice = f"[1d20{monster.initiative_mod:+}]" \
-                    if monster.initiative_mod else "[1d20]"
-            roll = input(f"Initiative for {monster.name} {roll_advice}:")
-            if not roll:
-                roll = roll_dice(1, 20, modifier=monster.initiative_mod)
-            elif roll.isdigit():
-                roll = int(roll)
+            roll_advice = f"1d20{monster.initiative_mod:+}" \
+                    if monster.initiative_mod else "1d20"
+            roll = safe_input(
+                    f"Initiative for {monster.name}",
+                    default=roll_advice,
+                    converter=convert_to_int_or_dice_expr)
             print(f"Adding to turn order at: {roll}")
             return roll
 
@@ -330,6 +364,7 @@ Usage:
         if not pick.isdigit():
             print("Invalid encounter.")
             return
+
         pick = int(pick) - 1
         if pick < 0 or pick > len(encounters):
             print("Invalid encounter.")
@@ -366,6 +401,8 @@ class Show(Command):
             self.show_turn()
         elif args[0] == 'combats':
             self.show_combats()
+        else:
+            print("Sorry; can't show that.")
 
     def show_party(self):
         combat = self.game.combat
@@ -449,25 +486,22 @@ class Start(Command):
 
         print("Enter initiative rolls or press enter to 'roll' automatically.")
         for monster in combat.monsters.values():
-            roll_advice = f"[1d20{monster.initiative_mod:+}]" \
-                    if monster.initiative_mod else "[1d20]"
-            roll = input(f"Initiative for {monster.name} {roll_advice}:")
-            if not roll:
-                roll = roll_dice(1, 20, modifier=monster.initiative_mod)
-            elif roll.isdigit():
-                roll = int(roll)
+            roll_advice = f"1d20{monster.initiative_mod:+}" \
+                    if monster.initiative_mod else "1d20"
+            roll = safe_input(
+                    f"Initiative for {monster.name}",
+                    default=roll_advice,
+                    converter=convert_to_int_or_dice_expr)
             combat.tm.add_combatant(monster, roll)
             print(f"Added to turn order in {roll}\n")
 
         for character in combat.characters.values():
-            roll_advice = f"[1d20{character.initiative_mod:+}]" \
-                    if character.initiative_mod else "[1d20]"
-
-            roll = input(f"Initiative for {character.name} {roll_advice}:")
-            if not roll:
-                roll = roll_dice(1, 20, modifier=character.initiative_mod)
-            elif roll.isdigit():
-                roll = int(roll)
+            roll_advice = f"1d20{character.initiative_mod:+}" \
+                    if character.initiative_mod else "1d20"
+            roll = safe_input(
+                    f"Initiative for {character.name}",
+                    default=roll_advice,
+                    converter=convert_to_int_or_dice_expr)
             combat.tm.add_combatant(character, roll)
             print(f"Added to turn order in {roll}\n")
 
@@ -546,8 +580,16 @@ class Damage(Command):
         return sorted(set(combat.combatant_names) - set(names_already_chosen))
 
     def do_command(self, *args):
+        if len(args) < 2:
+            print("Need a target and an amount of HP.")
+            return
+
         target_names = args[0:-1]
-        amount = int(args[-1])
+        try:
+            amount = int(args[-1])
+        except ValueError:
+            print("Need an amount of HP.")
+            return
 
         combat = self.game.combat
 
@@ -580,8 +622,20 @@ class Heal(Command):
         return sorted(set(combat.combatant_names) - set(names_already_chosen))
 
     def do_command(self, *args):
+        if len(args) < 2:
+            print("Need a target and an amount of HP.")
+            return
+
         target_names = args[0:-1]
-        amount = int(args[-1])
+        try:
+            amount = int(args[-1])
+        except ValueError:
+            print("Need an amount of HP.")
+            return
+
+        if len(args) < 2:
+            print("Need a target and an amount of HP.")
+            return
 
         combat = self.game.combat
 
@@ -599,54 +653,86 @@ class Heal(Command):
             print(f"Okay; healed {target_name}. "
                     f"Now: {target.cur_hp}/{target.max_hp}")
 
+
 class CastSpell(Command):
 
     keywords = ['cast']
     help_text = """{keyword}
 {divider}
-Summary: Make the current combatant cast a spell at a particular spell level.
+Summary: Make a combatant cast a spell at a particular spell level. By default
+selects the current combatant, but the caster may be explicitly specified in
+(for example) cases where spells might be cast as reactions.
 
 Usage: {keyword} <spell level>
+       {keyword> <spell level> <caster>
 
 Example: {keyword} 2
+         {keyword} evil_wizard 2
 """
 
     def get_suggestions(self, words):
         combat = self.game.combat
 
-        if len(words) != 2:
-            return []
-        if not (combat.tm and combat.tm.cur_turn):
-            return []
-        caster = combat.tm.cur_turn[-1]
-        if not (caster.features.get('spellcasting')):
+        if len(words) < 2:
             return []
 
-        slots = caster.features['spellcasting']['slots']
-        slots_used = caster.features['spellcasting']['slots_used']
-        return [str(i+1) for i in range(len(slots))
-                if slots_used[i] < slots[i]]
+        if len(words) >= 2:
+            caster = self._get_caster(words[1])
 
+            if not caster:
+                return sorted(set(combat.combatant_names))
+
+            elif not (caster.features.get('spellcasting')):
+                return []
+
+            else:
+                slots = caster.features['spellcasting']['slots']
+                slots_used = caster.features['spellcasting']['slots_used']
+                return [str(i+1) for i in range(len(slots))
+                        if slots_used[i] < slots[i]]
+
+    def _get_caster(self, name):
+        combat = self.game.combat
+        caster = None
+
+        if name:
+            caster = combat.get_target(name)
+
+        if not caster:
+            if combat.tm and combat.tm.cur_turn and not name:
+                caster = combat.tm.cur_turn[-1]
+
+        return caster
 
     def do_command(self, *args):
-        combat = self.game.combat
-
-        if not (combat.tm and combat.tm.cur_turn):
-            print("No turn in progress.")
+        if not args:
+            print("Need a caster or a spell level.")
             return
 
-        caster = combat.tm.cur_turn[-1]
+        # Get the caster...
+        caster_name = args[0] if not args[0].isdigit() else None
+        caster = self._get_caster(caster_name)
+
+        if not caster:
+            print(f"No caster identified.")
+            return
+
         if 'spellcasting' not in caster.features:
             print("Combatant can't cast spells.")
             return
 
-        # Convert to 0-based...
-        spell_level = int(args[0]) - 1
+        # Determine the spell level being cast
+        try:
+            spell_level = int(args[-1]) - 1
+        except ValueError:
+            print("Invalid spell level.")
+            return
 
         if spell_level < 0:
             print("Can't cast spells at spell level 0.")
             return
 
+        # And cast it!
         spells = caster.features['spellcasting']['spells']
         slots = caster.features['spellcasting']['slots']
         slots_used = caster.features['spellcasting']['slots_used']
@@ -680,15 +766,17 @@ Usage: {keyword} <combatant1> <combatant2>
             return combat.combatant_names
 
     def do_command(self, *args):
+        if len(args) != 2:
+            print("Need two combatants to swap.")
+            return
+
         name1 = args[0]
         name2 = args[1]
 
         combat = self.game.combat
 
-        combatant1 = combat.characters.get(name1) or \
-                combat.monsters.get(name1)
-        combatant2 = combat.characters.get(name2) or \
-                combat.monsters.get(name2)
+        combatant1 = combat.get_target(name1)
+        combatant2 = combat.get_target(name2)
 
         if not combatant1:
             print(f"Invalid target: {name1}")
@@ -718,10 +806,13 @@ Usage: {keyword} <combatant> <initiative>
             return combat.combatant_names
 
     def do_command(self, *args):
-        name = args[0]
+        if len(args) != 2:
+            print("Need a combatant and an initiative value.")
+            return
 
         combat = self.game.combat
 
+        name = args[0]
         target = combat.get_target(name)
 
         if not target:
@@ -763,6 +854,10 @@ Usage: reorder <initiative value> <combatant1> [<combatant2> ...]
             return list(set(combatant_names) - set(names_already_chosen))
 
     def do_command(self, *args):
+        if len(args) < 2:
+            print("Need an initiative and combatants to reorder.")
+            return
+
         combat = self.game.combat
 
         if not combat.tm:
@@ -828,31 +923,40 @@ Examples:
         'unconscious',
     ]
 
+    multipliers = {
+        'turn': 1,
+        'turns': 1,
+        'round': 1,
+        'rounds': 1,
+        'minute': 10,
+        'minutes': 10,
+        'min': 10,
+    }
+
     def get_suggestions(self, words):
         combat = self.game.combat
         if len(words) == 2:
             return combat.combatant_names
         elif len(words) == 3:
             return self.conditions
+        elif len(words) == 5:
+            return sorted(self.multipliers.keys())
 
     def do_command(self, *args):
+        if len(args) < 2:
+            print("Need a combatant and condition.")
+            return
+
         target_name = args[0]
         condition = args[1]
         duration = inf
+
         if len(args) >= 3:
             duration = int(args[2])
+
         if len(args) >= 4:
             units = args[3]
-            multipliers = {
-                'turn': 1,
-                'turns': 1,
-                'round': 1,
-                'rounds': 1,
-                'minute': 10,
-                'minutes': 10,
-                'min': 10,
-            }
-            duration *= multipliers.get(units, 1)
+            duration *= self.multipliers.get(units, 1)
 
         combat = self.game.combat
 
@@ -896,6 +1000,10 @@ Examples:
             return list(sorted(target.conditions.keys()))
 
     def do_command(self, *args):
+        if len(args) < 2:
+            print("Need a combatant and a condition.")
+            return
+
         target_name = args[0]
         condition = args[1]
 
@@ -965,14 +1073,12 @@ class UnstashCombatant(Command):
             print(f"Unstashed {target_name}")
 
             if combat.tm:
-                roll_advice = f"[1d20{target.initiative_mod:+}]" \
-                    if target.initiative_mod else "[1d20]"
-
-                roll = input(f"Initiative for {target.name} {roll_advice}: ")
-                if not roll:
-                    roll = roll_dice(1, 20, modifier=target.initiative_mod)
-                elif roll.isdigit():
-                    roll = int(roll)
+                roll_advice = f"1d20{target.initiative_mod:+}" \
+                        if target.initiative_mod else "1d20"
+                roll = safe_input(
+                        f"Initiative for {target.name}",
+                        default=roll_advice,
+                        converter=convert_to_int_or_dice_expr)
                 combat.tm.add_combatant(target, roll)
                 print(f"Added to turn order in {roll}")
 
@@ -1084,7 +1190,12 @@ class JoinCombat(Command):
             print("Join which combat group?")
             return
 
-        join_to = int(args[0]) - 1
+        try:
+            join_to = int(args[0]) - 1
+        except ValueError:
+            print("Invalid combat to join to.")
+            return
+
         dest_combat = self.game.combats[join_to]
 
         if len(args) == 1:
@@ -1147,8 +1258,7 @@ class CombatantDetails(Command):
             if not combat.tm or not combat.tm.cur_turn:
                 print("No target specified.")
                 return
-            turn = combat.tm.cur_turn
-            target = turn[2]
+            target = combat.tm.cur_turn[-1]
 
         t = target
 
