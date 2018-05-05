@@ -418,6 +418,7 @@ Usage:
                 self.game.encounters_dir,
                 monster_loader,
                 initiative_resolver=prompt_initiative)
+        encounter_loader._set_hp([], monsters)
         encounter_loader._set_names([], monsters)
         encounter_loader._add_to_combat(self.game.combat, monsters)
         for monster in monsters:
