@@ -75,6 +75,8 @@ class TurnManager:
             self.round_number += 1
             for initiative_roll, combatants in self.turn_order:
                 for combatant in combatants[:]:
+                    if combatant not in combatants:
+                        continue
                     yield self.round_number, initiative_roll, combatant
 
     @property
