@@ -58,6 +58,10 @@ class EncounterLoader:
                     count = roll_dice_expr(group['count'])
             elif group['count'] in monster_groups:
                 count = len(monster_groups[group['count']])
+            elif '+' in group['count']:
+                keys = [x.strip() for x in group['count'].split('+')]
+                count = sum([len(monster_groups[x]) for x in keys
+                        if x in monster_groups])
             else:
                 raise ValueError(f"Invalid monster count: {group['count']}")
 

@@ -14,3 +14,6 @@ count = "1d4+2"
 monster = "evil_mage"
 count = "goblins"
 
+[groups.young_green_dragon]
+monster = "young_green_dragon"
+count = "goblin + evil_mage"
