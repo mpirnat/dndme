@@ -1,4 +1,4 @@
-from dice import roll_dice, roll_dice_expr
+from dice import dice_expr, roll_dice, roll_dice_expr
 from models import Character, Encounter, Monster
 import glob
 import pytoml as toml
@@ -23,17 +23,19 @@ class EncounterLoader:
         return encounters
 
     def load(self, encounter, combat=None):
-        monsters = []
-        for group in encounter.groups.values():
-            monsters.extend(self._load_group(group))
+        monster_groups = {}
+        for key, group in encounter.groups.items():
+            monster_groups[key] = self._load_group(group, monster_groups)
+
+        monsters = [y for x in monster_groups.values() for y in x]
 
         self._set_origin(encounter, monsters)
         self._add_to_combat(combat, monsters)
 
         return monsters
 
-    def _load_group(self, group):
-        count = self._determine_count(group)
+    def _load_group(self, group, monster_groups):
+        count = self._determine_count(group, monster_groups)
         monsters = self.monster_loader.load(group['monster'], count=count)
         self._set_names(group, monsters)
         self._set_stats(group, monsters)
@@ -45,15 +47,17 @@ class EncounterLoader:
         self._remove_attributes(group, monsters)
         return monsters
 
-    def _determine_count(self, group):
+    def _determine_count(self, group, monster_groups):
         try:
             count = int(group['count'])
         except ValueError:
-            if 'd' in group['count']:
+            if dice_expr.match(group['count']):
                 if self.count_resolver:
-                    count = self.count_resolver(group['count'])
+                    count = self.count_resolver(group['count'], group['monster'])
                 else:
                     count = roll_dice_expr(group['count'])
+            elif group['count'] in monster_groups:
+                count = len(monster_groups[group['count']])
             else:
                 raise ValueError(f"Invalid monster count: {group['count']}")
 

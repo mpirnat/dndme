@@ -343,9 +343,9 @@ Usage:
 
     def load_encounter(self):
 
-        def prompt_count(count):
+        def prompt_count(count, monster_name="monsters"):
             count = safe_input(
-                    "Number of monsters",
+                    f"Number of {monster_name}",
                     default=count,
                     converter=convert_to_int_or_dice_expr)
             return count

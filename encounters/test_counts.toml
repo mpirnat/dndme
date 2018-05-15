@@ -1,0 +1,16 @@
+name = "Test Monster Counts"
+location = "PyCon Sprints Hallway"
+
+notes = """
+This encounter tests monster group counts that depend on the counts of other
+monster groups.
+"""
+
+[groups.goblins]
+monster = "goblin"
+count = "1d4+2"
+
+[groups.evil_mage]
+monster = "evil_mage"
+count = "goblins"
+
