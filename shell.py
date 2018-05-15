@@ -432,7 +432,7 @@ class Show(Command):
     def get_suggestions(self, words):
         if len(words) == 2:
             return ['monsters', 'party', 'stash', 'defeated', 'turn',
-                    'combats']
+                    'initiative', 'order', 'turns', 'combats']
 
     def do_command(self, *args):
         if not args:
@@ -448,6 +448,8 @@ class Show(Command):
             self.show_defeated()
         elif args[0] == 'turn':
             self.show_turn()
+        elif args[0] in ('initiative', 'order', 'turns'):
+            self.show_turns()
         elif args[0] == 'combats':
             self.show_combats()
         else:
@@ -518,6 +520,14 @@ class Show(Command):
             return
         turn = combat.tm.cur_turn
         print(f"Round: {turn[0]} Initiative: {turn[1]} Name: {turn[2].name}")
+
+    def show_turns(self):
+        combat = self.game.combat
+        if not combat.tm:
+            print("No turn in progress.")
+            return
+        for roll, combatants in combat.tm.turn_order:
+            print(f"{roll}: {', '.join([x.name for x in combatants])}")
 
     def show_combats(self):
         for i, combat in enumerate(self.game.combats, 1):
