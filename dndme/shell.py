@@ -1,8 +1,9 @@
-from attr import attrs, attrib
-from dice import roll_dice, roll_dice_expr
-from initiative import TurnManager
-from loaders import EncounterLoader, MonsterLoader, PartyLoader
+import glob
 from math import inf, floor
+import sys
+
+from attr import attrs, attrib
+import click
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.contrib.completers import WordCompleter
@@ -11,10 +12,11 @@ from prompt_toolkit.key_binding.manager import KeyBindingManager
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.styles import style_from_dict
 from prompt_toolkit.token import Token
-import click
-import glob
 import pytoml as toml
-import sys
+
+from dice import roll_dice, roll_dice_expr
+from initiative import TurnManager
+from loaders import EncounterLoader, MonsterLoader, PartyLoader
 
 default_encounters_dir = './encounters'
 default_monsters_dir = './monsters'
