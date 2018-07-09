@@ -1,7 +1,9 @@
+from math import floor, inf
+
 from attr import attrs, attrib
 from attr import Factory as attr_factory
-from math import floor, inf
-import dice
+
+from dndme import dice
 
 
 @attrs

@@ -1,8 +1,10 @@
 import glob
+
 import pytoml as toml
-from initiative import TurnManager
-from dice import roll_dice
-from models import Character, Encounter, Monster
+
+from dndme.initiative import TurnManager
+from dndme.dice import roll_dice
+from dndme.models import Character, Encounter, Monster
 
 tm = TurnManager()
 
