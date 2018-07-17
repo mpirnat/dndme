@@ -13,7 +13,7 @@ def encounter_loader():
     )
 
 
-def test_get_avaoilable_encounters(encounter_loader):
+def test_get_available_encounters(encounter_loader):
     available_encounters = encounter_loader.get_available_encounters()
 
     print(available_encounters)

@@ -25,9 +25,11 @@ setup(
             'pytest-cov',
             'pytest-runner',
             'tox',
-            'pylint'
+            'pylint',
         ],
-        'dev': ['pip-tools'],
+        'dev': [
+            'pip-tools',
+        ],
     },
     tests_require=['pytest'],
     setup_requires=['pytest-runner'],

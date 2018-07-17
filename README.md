@@ -142,7 +142,7 @@ much of the judgment away from the DM. We are not attempting to model the
 entire ruleset or automate the game, just make the DM's life a little easier.
 
 
-# Development Guide
+# Getting Started / Installing dndme
 
 If you are looking to contribute, here are some tips for getting started!
 
