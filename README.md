@@ -140,3 +140,52 @@ being simple to implement. If the implementation is really tricky, or is a
 struggle, that's a sign that we might be trying to be too clever or take too
 much of the judgment away from the DM. We are not attempting to model the
 entire ruleset or automate the game, just make the DM's life a little easier.
+
+
+# Development Guide
+
+If you are looking to contribute, here are some tips for getting started!
+
+Development Environment Setup
+
+* Fork dndme and clone to your location of choice
+* Create a virtualenv (3.6+) to isolate the installation
+* install the package in development mode with dev and test requirements
+* run the tests!
+
+as example
+```
+    # clone the repository
+    git clone [repository url] ~/dndme
+    cd ~/dndme
+
+    # create the virtualenv
+    python3.6 -m virtualenv .venv
+    . .venv/bin/activate
+
+    # install dndme
+    pip install -e .[dev,test]
+
+    # run the tests
+    tox
+```
+
+The above is only meant as a rough guide. Feel free to use whichever tools
+you prefer for configuring your python development environment!
+
+### Tests
+
+Tests are runnable with either `pytest` or `tox`
+
+* `pytest` - for running tests quickly against your local machine & setup
+* `tox` - for running more comprehensive tests in (potentially) many python versions
+
+Testing command examples can be found in tox.ini under the "commands" heading.
+
+### Packaging
+Package requirements are specified in setup.py and their pinned versions can be built
+by running `pip-compile -r` from the same location as the setup.py file.
+
+Source and wheel artifacts can be built for distribution by running
+* `python setup.py sdist`
+* `python setup.py bdist_wheel`
