@@ -1,8 +1,9 @@
-from attr import attrs, attrib
-from dice import roll_dice, roll_dice_expr
-from initiative import TurnManager
-from loaders import EncounterLoader, MonsterLoader, PartyLoader
+import glob
 from math import inf, floor
+import sys
+
+from attr import attrs, attrib
+import click
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.contrib.completers import WordCompleter
@@ -11,14 +12,15 @@ from prompt_toolkit.key_binding.manager import KeyBindingManager
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.styles import style_from_dict
 from prompt_toolkit.token import Token
-import click
-import glob
 import pytoml as toml
-import sys
+
+from dndme.dice import roll_dice, roll_dice_expr
+from dndme.initiative import TurnManager
+from dndme.loaders import EncounterLoader, MonsterLoader, PartyLoader
 
 default_encounters_dir = './encounters'
 default_monsters_dir = './monsters'
-default_party_file = 'party.toml'
+default_party_file = './parties/party.toml'
 
 commands = {}
 manager = KeyBindingManager.for_prompt()
@@ -1238,7 +1240,7 @@ class SplitCombat(Command):
                     default=roll_advice,
                     converter=convert_to_int_or_dice_expr)
                 print(f"Adding to turn order at {roll}")
-                dest_combat.tm.add_combatant(target, roll) 
+                dest_combat.tm.add_combatant(target, roll)
 
             if hasattr(target, 'mtype'):
                 source_combat.monsters.pop(target_name)
@@ -1339,7 +1341,7 @@ class JoinCombat(Command):
             else:
                 source_combat.characters.pop(target_name)
                 dest_combat.characters[target_name] = target
-            
+
             if dest_combat.tm:
                 if source_initiative is not None:
                     roll_advice = source_initiative
@@ -1362,7 +1364,7 @@ class JoinCombat(Command):
             print("Combat group is empty; switching...")
             SwitchCombat.do_command(self)
             self.game.combats.remove(source_combat)
-        
+
         source_combat.tm.remove_empty_initiatives()
 
 
@@ -1519,13 +1521,13 @@ def get_bottom_toolbar_tokens(cli):
 
 
 @click.command()
-@click.option('--encounters', default='./encounters',
+@click.option('--encounters', default=default_encounters_dir,
         help="Directory containing encounters TOML files; "
             f"default: {default_encounters_dir}")
-@click.option('--monsters', default='./monsters',
+@click.option('--monsters', default=default_monsters_dir,
         help="Directory containing monsters TOML files; "
             f"default: {default_monsters_dir}")
-@click.option('--party', default='party.toml',
+@click.option('--party', default=default_party_file,
         help="Player character party TOML file to use; "
             f"default: {default_party_file}")
 def main_loop(encounters, monsters, party):
