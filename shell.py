@@ -1306,7 +1306,10 @@ class JoinCombat(Command):
                 continue
 
             if source_combat.tm:
+                source_initiative = source_combat.tm.get_initiative_value(target)
                 source_combat.tm.remove_combatant(target)
+            else:
+                source_initiative = None
 
             if hasattr(target, 'mtype'):
                 source_combat.monsters.pop(target_name)
@@ -1314,6 +1317,19 @@ class JoinCombat(Command):
             else:
                 source_combat.characters.pop(target_name)
                 dest_combat.characters[target_name] = target
+            
+            if dest_combat.tm:
+                if source_initiative is not None:
+                    roll_advice = source_initiative
+                else:
+                    roll_advice = f"1d20{target.initiative_mod:+}" \
+                            if target.initiative_mod else "1d20"
+                roll = safe_input(
+                    f"Initiative for {target.name}",
+                    default=roll_advice,
+                    converter=convert_to_int_or_dice_expr)
+                print(f"Adding to turn order at {roll}")
+                dest_combat.tm.add_combatant(target, roll)
 
         if source_combat.monsters and not source_combat.characters:
             print("Monsters remain, stashing them:\n")

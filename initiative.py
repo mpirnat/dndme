@@ -79,6 +79,12 @@ class TurnManager:
                         continue
                     yield self.round_number, initiative_roll, combatant
 
+    def get_initiative_value(self, combatant):
+        for initiative_value, combatants in self.initiative.items():
+            if combatant in combatants:
+                return initiative_value
+        raise Exception("Could not find combatant")
+
     @property
     def turn_order(self):
         return list(reversed(sorted(self.initiative.items())))
