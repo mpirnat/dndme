@@ -85,6 +85,11 @@ class TurnManager:
                 return initiative_value
         raise Exception("Could not find combatant")
 
+    def remove_empty_initiatives(self):
+        for initiative_value, combatants in list(self.initiative.items()):
+            if not combatants:
+                del self.initiative[initiative_value]
+
     @property
     def turn_order(self):
         return list(reversed(sorted(self.initiative.items())))
