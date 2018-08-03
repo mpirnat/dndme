@@ -106,3 +106,6 @@ ENV/
 
 # vim
 *.swp
+
+# VSCode
+.vscode
