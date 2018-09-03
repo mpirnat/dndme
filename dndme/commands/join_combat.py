@@ -98,4 +98,5 @@ Example: {keyword} Aragorn Gimli Legolas 1
             SwitchCombat.do_command(self)
             self.game.combats.remove(source_combat)
 
-        source_combat.tm.remove_empty_initiatives()
+        if source_combat.tm:
+            source_combat.tm.remove_empty_initiatives()
