@@ -12,7 +12,6 @@ Summary: quit the shell
 Usage: {keyword}
 """
 
-    #@manager.registry.add_binding(Keys.ControlD)
     def do_command(self, *args):
         print("Goodbye!")
         sys.exit(1)

@@ -1,11 +1,8 @@
-import glob
 from importlib import import_module
-from math import inf, floor
 import os
 import pkgutil
 import sys
 
-from attr import attrs, attrib
 import click
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
@@ -15,9 +12,7 @@ from prompt_toolkit.key_binding.manager import KeyBindingManager
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.styles import style_from_dict
 from prompt_toolkit.token import Token
-import pytoml as toml
 
-from dndme.dice import roll_dice, roll_dice_expr
 from dndme.models import Game
 
 
@@ -118,7 +113,7 @@ def load_commands(game):
 
 
 def get_bottom_toolbar_tokens(cli):
-    return [(Token.Toolbar, 'Exit: quit ')]
+    return [(Token.Toolbar, "Exit: Ctrl-D")]
 
 
 @click.command()
@@ -135,6 +130,13 @@ def main_loop(encounters, monsters, party):
     game = Game(encounters_dir=encounters, monsters_dir=monsters,
             party_file=party)
     load_commands(game)
+
+    # We can't apply key bindings directly in command classes due to
+    # current structural restrictions, so we'll have to do them here...
+    if 'quit' in game.commands:
+        @manager.registry.add_binding(Keys.ControlD)
+        def quit_shell(*args):
+            game.commands['quit'].do_command(*args)
 
     while True:
         try:
