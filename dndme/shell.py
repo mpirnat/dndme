@@ -208,9 +208,10 @@ class Command:
         print("Nothing happens.")
 
     def show_help_text(self, keyword):
-        if hasattr(self, 'help_text'):
+        help_text = getattr(self, 'help_text', None)
+        if help_text:
             divider = "-" * len(keyword)
-            print(self.help_text.format(**locals()).strip())
+            print(help_text.format(**locals()).strip())
         else:
             print(f"No help text available for: {keyword}")
 
