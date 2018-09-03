@@ -160,6 +160,12 @@ class Combat:
     def get_target(self, name):
         return self.characters.get(name) or \
                 self.monsters.get(name)
+    
+    @property
+    def current_combatant(self):
+        if self.tm and self.tm.cur_turn:
+            return self.tm.cur_turn[-1]
+        return None
 
 
 @attrs

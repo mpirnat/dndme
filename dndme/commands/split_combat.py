@@ -1,6 +1,7 @@
 from dndme.commands import Command
 from dndme.commands import safe_input, convert_to_int, \
         convert_to_int_or_dice_expr
+from dndme.commands.next_turn import NextTurn
 from dndme.initiative import TurnManager
 from dndme.models import Combat
 
@@ -68,7 +69,16 @@ Example: {keyword} Frodo Sam
         if dest_combat.tm:
             dest_combat.tm.turns = dest_combat.tm.generate_turns()
 
-        source_combat.tm.remove_empty_initiatives()
+        if source_combat.tm:
+            source_combat.tm.remove_empty_initiatives()
 
         print("Okay; created new combat with "
                 f"{', '.join(dest_combat.combatant_names)}")
+        
+        # If we split the current turnholder to a separate combat group,
+        # we should automatically advance the turn to the next remaining
+        # combatant.
+        current_combatant = source_combat.current_combatant
+        if current_combatant and \
+                current_combatant in dest_combat.combatant_names:
+            NextTurn.do_command(self)
