@@ -10,7 +10,7 @@ initiative_mod = 4
 
 [Sariel.senses]
 perception = 15
-darkvision = true
+darkvision = 60 
 
 [Lander]
 name = "Lander"
@@ -23,7 +23,6 @@ ac = 17
 
 [Lander.senses]
 perception = 14
-darkvision = false
 
 [Armek]
 name = "Armek"
@@ -36,7 +35,7 @@ ac = 18
 
 [Armek.senses]
 perception = 13
-darkvision = true
+darkvision = 60
 
 [Pip]
 name = "Pip"
@@ -49,7 +48,6 @@ ac = 16
 
 [Pip.senses]
 perception = 10
-darkvision = false
 
 [Dewain]
 name = "Dewain"
@@ -62,7 +60,7 @@ ac = 14
 
 [Dewain.senses]
 perception = 13
-darkvision = true
+darkvision = 60
 
 [Elwing]
 name = "Elwing"
@@ -75,4 +73,3 @@ ac = 16
 
 [Elwing.senses]
 perception = 13
-darkvision = false
