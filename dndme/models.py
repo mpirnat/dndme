@@ -130,4 +130,60 @@ class Encounter:
     groups = attrib(default=[])
 
 
+@attrs
+class Combat:
+    characters = attrib()
 
+    @characters.default
+    def _characters(self):
+        return {}
+
+    monsters = attrib()
+
+    @monsters.default
+    def _monsters(self):
+        return {}
+
+    defeated = attrib()
+
+    @defeated.default
+    def _defeated(self):
+        return []
+
+    tm = attrib(default=None)
+
+    @property
+    def combatant_names(self):
+        return sorted(list(self.characters.keys()) +
+                list(self.monsters.keys()))
+
+    def get_target(self, name):
+        return self.characters.get(name) or \
+                self.monsters.get(name)
+
+
+@attrs
+class Game:
+    encounters_dir = attrib()
+    monsters_dir = attrib()
+    party_file = attrib()
+
+    stash = attrib(default={})
+    combats = attrib(default=[])
+    combat = attrib()
+
+    commands = attrib(default={})
+
+    @combat.default
+    def _combat(self):
+        combat = Combat()
+        self.combats.append(combat)
+        return combat
+
+    @property
+    def stashed_monster_names(self):
+        return [k for k, v in self.stash.items() if hasattr(v, 'mtype')]
+
+    @property
+    def stashed_character_names(self):
+        return [k for k, v in self.stash.items() if hasattr(v, 'cclass')]
