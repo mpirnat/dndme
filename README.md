@@ -45,7 +45,7 @@ where characters and monsters are proper, rich objects
 with lots of interesting data:
 
 ```
-    $ python dndme/shell.py 
+    $ python dndme/shell.py
     Registered CastSpell
     Registered CombatantDetails
     Registered DamageCombatant
@@ -179,16 +179,16 @@ with lots of interesting data:
 
     > start
     Enter initiative rolls or press enter to 'roll' automatically.
-    Initiative for goblin-01/7b98 [1d20+2]: 
+    Initiative for goblin-01/7b98 [1d20+2]:
     Added to turn order in 20
 
-    Initiative for goblin-02/b3d2 [1d20+2]: 
+    Initiative for goblin-02/b3d2 [1d20+2]:
     Added to turn order in 12
 
-    Initiative for goblin-03/4bd4 [1d20+2]: 
+    Initiative for goblin-03/4bd4 [1d20+2]:
     Added to turn order in 8
 
-    Initiative for goblin-04/ccbe [1d20+2]: 
+    Initiative for goblin-04/ccbe [1d20+2]:
     Added to turn order in 15
 
     Initiative for Sariel [1d20+4]: 23
@@ -210,7 +210,7 @@ with lots of interesting data:
     Added to turn order in 16
 
 
-    Beginning combat with: 
+    Beginning combat with:
     23: Sariel
     20: goblin-01/7b98
     16: Elwing
@@ -237,13 +237,13 @@ with lots of interesting data:
     Round: 1 Initiative: 20 Name: goblin-01/7b98
 
     > split goblin-01/7b98 goblin-02/b3d2 Elwing Lander
-    Initiative for goblin-01/7b98 [20]: 
+    Initiative for goblin-01/7b98 [20]:
     Adding to turn order at 20
-    Initiative for goblin-02/b3d2 [12]: 
+    Initiative for goblin-02/b3d2 [12]:
     Adding to turn order at 12
-    Initiative for Elwing [16]: 
+    Initiative for Elwing [16]:
     Adding to turn order at 16
-    Initiative for Lander [14]: 
+    Initiative for Lander [14]:
     Adding to turn order at 14
     Okay; created new combat with Elwing, Lander, goblin-01/7b98, goblin-02/b3d2
 
@@ -264,7 +264,7 @@ with lots of interesting data:
 
     > hit goblin-01/7b98 10
     Okay; damaged goblin-01/7b98. Now: 0/6
-    goblin-01/7b98 reduced to 0 HP--mark as defeated? [Y]: 
+    goblin-01/7b98 reduced to 0 HP--mark as defeated? [Y]:
     Defeated goblin-01/7b98
 
     > show defeated
@@ -276,7 +276,7 @@ with lots of interesting data:
 
     > hit goblin-02/b3d2 8
     Okay; damaged goblin-02/b3d2. Now: 0/5
-    goblin-02/b3d2 reduced to 0 HP--mark as defeated? [Y]: 
+    goblin-02/b3d2 reduced to 0 HP--mark as defeated? [Y]:
     Defeated goblin-02/b3d2
 
     > next
@@ -289,9 +289,9 @@ with lots of interesting data:
     Combat ended in 2 rounds (12 sec)
 
     > join 1 Elwing Lander
-    Initiative for Elwing [1d20]: 
+    Initiative for Elwing [1d20]:
     Adding to turn order at 14
-    Initiative for Lander [1d20]: 
+    Initiative for Lander [1d20]:
     Adding to turn order at 11
     Combat group is empty; switching...
     Okay; switched to combat 1
@@ -350,7 +350,7 @@ with lots of interesting data:
 
     > hit goblin-04/ccbe 4
     Okay; damaged goblin-04/ccbe. Now: 0/4
-    goblin-04/ccbe reduced to 0 HP--mark as defeated? [Y]: 
+    goblin-04/ccbe reduced to 0 HP--mark as defeated? [Y]:
     Defeated goblin-04/ccbe
 
     > next
@@ -365,7 +365,7 @@ with lots of interesting data:
 
     > hit goblin-03/4bd4 5
     Okay; damaged goblin-03/4bd4. Now: 0/7
-    goblin-03/4bd4 reduced to 0 HP--mark as defeated? [Y]: 
+    goblin-03/4bd4 reduced to 0 HP--mark as defeated? [Y]:
     Defeated goblin-03/4bd4
 
     > show monsters
@@ -391,6 +391,10 @@ being simple to implement. If the implementation is really tricky, or is a
 struggle, that's a sign that we might be trying to be too clever or take too
 much of the judgment away from the DM. We are not attempting to model the
 entire ruleset or automate the game, just make the DM's life a little easier.
+
+This project has recently embraced the
+[gitmoji standard](https://gitmoji.carloscuesta.me);
+please prefix commits with the appropriate joyful symbol.
 
 
 ## Getting Started / Installing dndme
