@@ -4,6 +4,22 @@ from dndme.commands import Command
 class StashCombatant(Command):
 
     keywords = ['stash']
+    help_text = """{keyword}
+{divider}
+Summary: Remove a combatant from a combat group and place them into a 'stash'
+for temporary storage. This might be used to handle monsters who have
+retreated and might later rejoin combat, or any other cases where you want
+to have a combatant "waiting in the wings".
+
+Use 'unstash' to move them back into a combat group.
+
+Usage: {keyword} <combatant1> [<combatant2> ...]
+
+Examples:
+
+    {keyword} Gandalf
+    {keyword} Frodo Sam
+"""
 
     def get_suggestions(self, words):
         combat = self.game.combat

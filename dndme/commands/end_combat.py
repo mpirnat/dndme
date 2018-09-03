@@ -5,7 +5,12 @@ from dndme.commands.show import Show
 class EndCombat(Command):
 
     keywords = ['end']
+    help_text = """{keyword}
+{divider}
+Summary: End the current combat and distribute experience points.
 
+Usage: {keyword} 
+"""
     def do_command(self, *args):
         combat = self.game.combat
         if not combat.tm:

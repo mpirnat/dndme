@@ -7,7 +7,8 @@ class RollDice(Command):
     keywords = ['roll', 'dice']
     help_text = """{keyword}
 {divider}
-Summary: Roll dice using a dice expression
+Summary: Roll dice using a dice expression. Use multiple dice expressions to
+get multiple, separate results.
 
 Usage: {keyword} <dice expression> [<dice expression> ...]
 

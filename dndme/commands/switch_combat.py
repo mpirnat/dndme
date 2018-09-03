@@ -5,6 +5,19 @@ from dndme.commands.show import Show
 class SwitchCombat(Command):
 
     keywords = ['switch']
+    help_text = """{keyword}
+{divider}
+Summary: Pause one combat group and switch to another. By itself, 'switch'
+just cycles through combat groups in order of their creation. You can instead
+specify a particular group to jump to.
+
+Usage: {keyword} [<number>]
+
+Examples:
+
+    {keyword}
+    {keyword} 2
+"""
 
     def get_suggestions(self, words):
         if len(words) == 2:

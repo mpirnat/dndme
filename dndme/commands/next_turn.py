@@ -5,6 +5,12 @@ from dndme.commands.show import Show
 class NextTurn(Command):
 
     keywords = ['next']
+    help_text = """{keyword}
+{divider}
+Summary: Advance to the next turn of combat.
+
+Usage: {keyword} 
+"""
 
     def do_command(self, *args):
         combat = self.game.combat

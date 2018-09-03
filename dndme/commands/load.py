@@ -9,9 +9,16 @@ class Load(Command):
     keywords = ['load']
     help_text = """{keyword}
 {divider}
-Summary: Load stuff
+Summary: Load stuff!
+
+Load a party of characters to have characters to work with.
+
+Load an encounter to have a predefined set of monsters to contend with.
+
+Load a specific monster as needed to spice things up.
 
 Usage:
+
     {keyword} party
     {keyword} encounter
     {keyword} monster <monster>

@@ -10,9 +10,7 @@ Summary: Remove a condition from a target
 
 Usage: {keyword} <target> <condition>
 
-Examples:
-
-    {keyword} Frodo prone
+Example: {keyword} Frodo prone
 """
 
     def get_suggestions(self, words):

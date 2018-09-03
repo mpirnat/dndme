@@ -7,6 +7,13 @@ from dndme.initiative import TurnManager
 class StartCombat(Command):
 
     keywords = ['start']
+    help_text = """{keyword}
+{divider}
+Summary: Begin combat turn management and prompt for initiative for all
+combatants.
+
+Usage: {keyword} 
+"""
 
     def do_command(self, *args):
         combat = self.game.combat

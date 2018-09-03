@@ -8,7 +8,9 @@ class ReorderInitiative(Command):
 {divider}
 Summary: Reorder the combatants with a particular initiative value.
 
-Usage: reorder <initiative value> <combatant1> [<combatant2> ...]
+Usage: {keyword} <initiative value> <combatant1> [<combatant2> ...]
+
+Example: {keyword} 17 Frodo Sam Gandalf
 """
 
     def get_suggestions(self, words):

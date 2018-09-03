@@ -4,6 +4,18 @@ from dndme.commands import Command
 class RemoveCombatant(Command):
 
     keywords = ['remove']
+    help_text = """{keyword}
+{divider}
+Summary: Remove one or more combatants from the game. They will not be marked
+as defeated, nor will any experience points be credited for them.
+
+Usage: {keyword} <combatant1> [<combatant2> ...]
+
+Examples:
+
+    {keyword} orc
+    {keyword} orc_1 orc_2 orc_3
+"""
 
     def get_suggestions(self, words):
         combat = self.game.combat

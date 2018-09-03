@@ -6,6 +6,18 @@ from dndme.commands import safe_input, convert_to_int, \
 class UnstashCombatant(Command):
 
     keywords = ['unstash']
+    help_text = """{keyword}
+{divider}
+Summary: Move one or more stashed combatants back into the current combat
+group.
+
+Usage: {keyword} <combatant> [<combatant2> ...]
+
+Examples:
+
+    {keyword} Gandalf
+    {keyword} Sam Frodo
+"""
 
     def get_suggestions(self, words):
         names_already_chosen = words[1:]

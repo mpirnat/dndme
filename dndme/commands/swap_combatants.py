@@ -9,6 +9,8 @@ class SwapCombatants(Command):
 Summary: Swap two combatants in turn order.
 
 Usage: {keyword} <combatant1> <combatant2>
+
+Example: {keyword} Sam Frodo
 """
 
     def get_suggestions(self, words):

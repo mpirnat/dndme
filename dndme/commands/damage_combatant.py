@@ -5,7 +5,17 @@ from dndme.commands.defeat_monster import DefeatMonster
 class DamageCombatant(Command):
 
     keywords = ['damage', 'hurt', 'hit']
+    help_text = """{keyword}
+{divider}
+Summary: Apply damage to one or more combatants.
 
+Usage: {keyword} <combatant1> [<combatant2> ...] <number>
+
+Examples:
+    
+    {keyword} Frodo 10
+    {keyword} Frodo Merry Pippin 10
+"""
     def get_suggestions(self, words):
         combat = self.game.combat
         names_already_chosen = words[1:]

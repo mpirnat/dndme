@@ -4,6 +4,19 @@ from dndme.commands import Command
 class DefeatMonster(Command):
 
     keywords = ['defeat']
+    help_text = """{keyword}
+{divider}
+Summary: Mark one or more monsters as defeated; the monster will be removed
+from combat and its experience point value will be available to credit to
+players when combat has concluded.
+
+Usage: {keyword} <combatant1> [<combatant2> ...]
+
+Examples:
+
+    {keyword} balrog
+    {keyword} orc_1 orc_2 orc_3
+"""
 
     def get_suggestions(self, words):
         combat = self.game.combat

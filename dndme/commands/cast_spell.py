@@ -10,11 +10,12 @@ Summary: Make a combatant cast a spell at a particular spell level. By default
 selects the current combatant, but the caster may be explicitly specified in
 (for example) cases where spells might be cast as reactions.
 
-Usage: {keyword} <spell level>
-       {keyword} <spell level> <caster>
+Usage: {keyword} <spell level> [<caster>]
 
-Example: {keyword} 2
-         {keyword} evil_wizard 2
+Examples:
+
+    {keyword} 2
+    {keyword} evil_wizard 2
 """
 
     def get_suggestions(self, words):

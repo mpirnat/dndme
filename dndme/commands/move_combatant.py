@@ -9,6 +9,8 @@ class MoveCombatant(Command):
 Summary: Move a combatant to a different initiative value.
 
 Usage: {keyword} <combatant> <initiative>
+
+Example: {keyword} Frodo 12
 """
 
     def get_suggestions(self, words):

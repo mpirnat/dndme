@@ -8,6 +8,16 @@ from dndme.models import Combat
 class SplitCombat(Command):
 
     keywords = ['split']
+    help_text = """{keyword}
+{divider}
+Summary: Split the party! Make a new combat group with an independent turn
+order and move one or more combatants into it. You can then 'switch' between
+combat groups or use 'join' to recombine groups.
+
+Usage: {keyword} <combatants>
+
+Example: {keyword} Frodo Sam
+"""
 
     def get_suggestions(self, words):
         combat = self.game.combat

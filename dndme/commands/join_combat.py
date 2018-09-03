@@ -9,6 +9,15 @@ from dndme.commands.switch_combat import SwitchCombat
 class JoinCombat(Command):
 
     keywords = ['join']
+    help_text = """{keyword}
+{divider}
+Summary: Move one or more combatants into a different combat group;
+this is effectively the inverse of splitting the party.
+
+Usage: {keyword} <combatant1> [<combatant2> ...] <number>
+
+Example: {keyword} Aragorn Gimli Legolas 1
+"""
 
     def get_suggestions(self, words):
         if len(words) == 2:

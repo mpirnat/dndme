@@ -4,6 +4,17 @@ from dndme.commands import Command
 class HealCombatant(Command):
 
     keywords = ['heal']
+    help_text = """{keyword}
+{divider}
+Summary: Heal one or more combatants.
+
+Usage: {keyword} <combatant1> [<combatant2> ...] <number>
+
+Examples:
+
+    {keyword} Frodo 10
+    {keyword} Frodo Sam Gandalf 10
+"""
 
     def get_suggestions(self, words):
         combat = self.game.combat

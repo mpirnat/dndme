@@ -5,6 +5,21 @@ from dndme.commands import Command
 class Show(Command):
 
     keywords = ['show']
+    help_text = """{keyword}
+{divider}
+Summary: Show various things:
+
+    * monsters: a list of monsters in the current combat group
+    * party: a list of characters in the current combat group
+    * stash: a list of combatants that have been stashed aside
+    * defeated: a list of monsters that have been defeated
+    * turn: the combatant who has the current turn
+    * initiative: show the turn order
+    * turns: show the turn order
+    * combats: a list of combat groups and their combatants
+
+Usage: {keyword} <what>
+"""
 
     def get_suggestions(self, words):
         if len(words) == 2:

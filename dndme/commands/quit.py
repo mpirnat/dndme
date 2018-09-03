@@ -7,7 +7,7 @@ class Quit(Command):
     keywords = ['quit', 'exit']
     help_text = """{keyword}
 {divider}
-Summary: quit the shell
+Summary: Quit the shell
 
 Usage: {keyword}
 """

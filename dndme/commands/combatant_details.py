@@ -4,6 +4,19 @@ from dndme.commands import Command
 class CombatantDetails(Command):
 
     keywords = ['details']
+    help_text = """{keyword}
+{divider}
+Summary: Get details about a combatant--whether a character or a monster.
+With no arguments, it will display details of whoever has the current turn.
+It can also look up the details of a specific combatant.
+
+Usage: {keyword} [<combatant>]
+
+Examples:
+
+    {keyword}
+    {keyword} Frodo
+"""
 
     def mod_fmt(self, modifier):
         return f"+{modifier}" if modifier > -1 else f"{modifier}"
