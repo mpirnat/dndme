@@ -1,3 +1,4 @@
+from math import inf
 from dndme.commands import Command
 
 
