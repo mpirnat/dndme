@@ -13,7 +13,7 @@ setup(
     install_requires=[
         'attrs',
         'click',
-        'prompt-toolkit<2',
+        'prompt-toolkit',
         'pytoml',
         'six',
         'wcwidth',
