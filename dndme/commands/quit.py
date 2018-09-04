@@ -14,4 +14,7 @@ Usage: {keyword}
 
     def do_command(self, *args):
         print("Goodbye!")
-        sys.exit(1)
+        try:
+            sys.exit(0)
+        except:
+            exit(0)

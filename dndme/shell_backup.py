@@ -1,41 +1,37 @@
-#!/usr/bin/env python
-from __future__ import unicode_literals
+from importlib import import_module
+import os
+import pkgutil
+import sys
 
 import click
-import os
-import sys
-import pkgutil
-
-from importlib import import_module
-from prompt_toolkit.application import Application
+from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
-from prompt_toolkit.document import Document
-from prompt_toolkit.filters import has_focus
-from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.layout.containers import HSplit, Window
-from prompt_toolkit.layout.layout import Layout
-from prompt_toolkit.styles import Style
-from prompt_toolkit.widgets import TextArea
+from prompt_toolkit.contrib.completers import WordCompleter
+from prompt_toolkit.history import InMemoryHistory
+from prompt_toolkit.key_binding.manager import KeyBindingManager
+from prompt_toolkit.keys import Keys
+from prompt_toolkit.styles import style_from_dict
+from prompt_toolkit.token import Token
 
 from dndme.models import Game
+
 
 default_encounters_dir = './encounters'
 default_monsters_dir = './monsters'
 default_party_file = './parties/party.toml'
 
-help_text = """
-Type help to view available commands.
-Press Control-C to exit.
-"""
+manager = KeyBindingManager.for_prompt()
+history = InMemoryHistory()
+style = style_from_dict({
+    Token.Toolbar: '#ffffff bg:#333333',
+})
 
-class MyCustomCompleter(Completer):
-    def get_completions(self, document, complete_event):
-        yield Completion('completion', start_position=0)
 
 class DnDCompleter(Completer):
     """
-    Simple auto completion on a list of words.
+    Simple autocompletion on a list of words.
 
+    :param base_commands: List of base commands.
     :param ignore_case: If True, case-insensitive completion.
     :param meta_dict: Optional dict mapping words to their meta-information.
     :param WORD: When True, use WORD characters.
@@ -63,7 +59,7 @@ class DnDCompleter(Completer):
             word_before_cursor = document.text_before_cursor
         else:
             word_before_cursor = document.get_word_before_cursor(
-                WORD=self.WORD)
+                    WORD=self.WORD)
 
         if self.ignore_case:
             word_before_cursor = word_before_cursor.lower()
@@ -92,7 +88,8 @@ class DnDCompleter(Completer):
             if word_matcher(word):
                 display_meta = self.meta_dict.get(word, '')
                 yield Completion(word, -len(word_before_cursor),
-                                 display_meta=display_meta)
+                                    display_meta=display_meta)
+
 
 
 def load_commands(game):
@@ -115,78 +112,54 @@ def load_commands(game):
             instance = loaded_class(game)
 
 
+def get_bottom_toolbar_tokens(cli):
+    return [(Token.Toolbar, "Exit: Ctrl-D")]
+
+
 @click.command()
 @click.option('--encounters', default=default_encounters_dir,
-              help="Directory containing encounters TOML files; "
-                   f"default: {default_encounters_dir}")
+        help="Directory containing encounters TOML files; "
+            f"default: {default_encounters_dir}")
 @click.option('--monsters', default=default_monsters_dir,
-              help="Directory containing monsters TOML files; "
-                   f"default: {default_monsters_dir}")
+        help="Directory containing monsters TOML files; "
+            f"default: {default_monsters_dir}")
 @click.option('--party', default=default_party_file,
-              help="Player character party TOML file to use; "
-                   f"default: {default_party_file}")
-def main(encounters, monsters, party):
-
-    # Load game needs
+        help="Player character party TOML file to use; "
+            f"default: {default_party_file}")
+def main_loop(encounters, monsters, party):
     game = Game(encounters_dir=encounters, monsters_dir=monsters,
-                party_file=party)
+            party_file=party)
     load_commands(game)
 
-    # The layout.
-    output_field = TextArea(style='class:output-field', text=help_text)
-    input_field = TextArea(height=1, prompt='>>> ', completer=MyCustomCompleter(),
-                           style='class:input-field')
+    # We can't apply key bindings directly in command classes due to
+    # current structural restrictions, so we'll have to do them here...
+    if 'quit' in game.commands:
+        @manager.registry.add_binding(Keys.ControlD)
+        def quit_shell(*args):
+            game.commands['quit'].do_command(*args)
 
-    container = HSplit([
-        output_field,
-        Window(height=1, char='-', style='class:line'),
-        input_field
-    ])
-
-    # The key bindings.
-    kb = KeyBindings()
-
-    @kb.add('c-c')
-    @kb.add('c-q')
-    def _(event):
-        """ Pressing Ctrl-Q or Ctrl-C will exit the user interface. """
-        event.app.exit()
-
-    @kb.add('enter', filter=has_focus(input_field))
-    def _(event):
+    while True:
         try:
-            user_input = input_field.text.split()
+            user_input = prompt("> ",
+                completer=DnDCompleter(commands=game.commands,
+                        ignore_case=True),
+                history=history,
+                get_bottom_toolbar_tokens=get_bottom_toolbar_tokens,
+                key_bindings_registry=manager.registry,
+                style=style).split()
+            if not user_input:
+                continue
+
             command = game.commands.get(user_input[0]) or None
             if not command:
-                result = "Unknown command."
-            else:
-                result = command.do_command(*user_input[1:])
-            output = '\n\n>>>  {}\n {}'.format(input_field.text, result)
-        except BaseException as e:
-            output = '\n\n{}'.format(e)
-        new_text = output_field.text + output
+                print("Unknown command.")
+                continue
 
-        output_field.buffer.document = Document(
-            text=new_text, cursor_position=len(new_text))
-        input_field.text = ''
-
-    # Style.
-    style = Style([
-        ('output-field', 'bg:#000044 #ffffff'),
-        ('input-field', 'bg:#000000 #ffffff'),
-        ('line',        '#004400'),
-    ])
-
-    # Run application.
-    application = Application(
-        layout=Layout(container, focused_element=input_field),
-        key_bindings=kb,
-        style=style,
-        mouse_support=True,
-        full_screen=True)
-
-    application.run()
+            command.do_command(*user_input[1:])
+            print()
+        except (EOFError, KeyboardInterrupt):
+            pass
 
 
 if __name__ == '__main__':
-    main()
+    main_loop()

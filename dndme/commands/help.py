@@ -25,8 +25,9 @@ Usage: {keyword} <command>
         if not command:
             print(f"Unknown command: {keyword}")
             return
-        command.show_help_text(keyword)
+        return command.show_help_text(keyword)
 
     def show_help_text(self, keyword):
-        super().show_help_text(keyword)
-        ListCommands.do_command(self, *[])
+        if keyword:
+            super().show_help_text(keyword)
+        #ListCommands.do_command(self, *[])

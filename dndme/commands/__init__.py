@@ -21,9 +21,9 @@ class Command:
         help_text = getattr(self, 'help_text', None)
         if help_text:
             divider = "-" * len(keyword)
-            print(help_text.format(**locals()).strip())
+            return help_text.format(**locals()).strip()
         else:
-            print(f"No help text available for: {keyword}")
+            return f"No help text available for: {keyword}"
 
 
 def safe_input(text, default=None, converter=None):
