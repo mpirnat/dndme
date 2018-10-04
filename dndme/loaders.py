@@ -71,8 +71,12 @@ class EncounterLoader:
 
     def _set_names(self, group, monsters):
         if 'name' in group:
-            for monster in monsters:
-                monster.name = group['name']
+            if hasattr(group['name'], 'islower'):
+                for monster in monsters:
+                    monster.name = group['name']
+            else:
+                for i, name in enumerate(group['name']):
+                    monsters[i].name = name
 
         for i, monster in enumerate(monsters, 1):
             if monster.name.islower():
