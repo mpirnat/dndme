@@ -30,7 +30,7 @@ Examples:
 
         for target_name in args:
             target = combat.get_target(target_name)
-            if target and hasattr(target, 'mytpe'):
+            if target and hasattr(target, 'mtype'):
                 if combat.tm:
                     combat.tm.remove_combatant(target)
                 combat.monsters.pop(target_name)
