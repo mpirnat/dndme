@@ -6,12 +6,12 @@ import sys
 import click
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
-from prompt_toolkit.contrib.completers import WordCompleter
 from prompt_toolkit.history import InMemoryHistory
-from prompt_toolkit.key_binding.manager import KeyBindingManager
-from prompt_toolkit.keys import Keys
-from prompt_toolkit.styles import style_from_dict
-from prompt_toolkit.token import Token
+from prompt_toolkit.key_binding import KeyBindings
+#from prompt_toolkit.keys import Keys
+#from prompt_toolkit.styles import style_from_dict
+from prompt_toolkit.styles import Style
+#from prompt_toolkit.token import Token
 
 from dndme.models import Game
 
@@ -20,11 +20,11 @@ default_encounters_dir = './encounters'
 default_monsters_dir = './monsters'
 default_party_file = './parties/party.toml'
 
-manager = KeyBindingManager.for_prompt()
+kb = KeyBindings()
 history = InMemoryHistory()
-style = style_from_dict({
-    Token.Toolbar: '#ffffff bg:#333333',
-})
+style = Style([
+    ('toolbar', '#ffffff bg:#333333')
+])
 
 
 class DnDCompleter(Completer):
@@ -134,7 +134,7 @@ def main_loop(encounters, monsters, party):
     # We can't apply key bindings directly in command classes due to
     # current structural restrictions, so we'll have to do them here...
     if 'quit' in game.commands:
-        @manager.registry.add_binding(Keys.ControlD)
+        @kb.add('c-d')
         def quit_shell(*args):
             game.commands['quit'].do_command(*args)
 
@@ -144,8 +144,6 @@ def main_loop(encounters, monsters, party):
                 completer=DnDCompleter(commands=game.commands,
                         ignore_case=True),
                 history=history,
-                get_bottom_toolbar_tokens=get_bottom_toolbar_tokens,
-                key_bindings_registry=manager.registry,
                 style=style).split()
             if not user_input:
                 continue
