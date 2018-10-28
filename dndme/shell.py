@@ -4,14 +4,12 @@ import pkgutil
 import sys
 
 import click
-from prompt_toolkit import prompt
+from prompt_toolkit import HTML
+from prompt_toolkit import PromptSession
+from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import Completer, Completion
-from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.key_binding import KeyBindings
-#from prompt_toolkit.keys import Keys
-#from prompt_toolkit.styles import style_from_dict
 from prompt_toolkit.styles import Style
-#from prompt_toolkit.token import Token
 
 from dndme.models import Game
 
@@ -19,12 +17,6 @@ from dndme.models import Game
 default_encounters_dir = './encounters'
 default_monsters_dir = './monsters'
 default_party_file = './parties/party.toml'
-
-kb = KeyBindings()
-history = InMemoryHistory()
-style = Style([
-    ('toolbar', '#ffffff bg:#333333')
-])
 
 
 class DnDCompleter(Completer):
@@ -112,10 +104,6 @@ def load_commands(game):
             instance = loaded_class(game)
 
 
-def get_bottom_toolbar_tokens(cli):
-    return [(Token.Toolbar, "Exit: Ctrl-D")]
-
-
 @click.command()
 @click.option('--encounters', default=default_encounters_dir,
         help="Directory containing encounters TOML files; "
@@ -131,22 +119,31 @@ def main_loop(encounters, monsters, party):
             party_file=party)
     load_commands(game)
 
-    # We can't apply key bindings directly in command classes due to
-    # current structural restrictions, so we'll have to do them here...
-    if 'quit' in game.commands:
-        @kb.add('c-d')
-        def quit_shell(*args):
-            game.commands['quit'].do_command(*args)
+    kb = KeyBindings()
+
+    def bottom_toolbar():
+        return [('class:bottom-toolbar',
+            ' dndme 0.0.2 - help for help, exit to exit')]
+
+    style = Style.from_dict({
+        'bottom-toolbar': '#333333 bg:yellow',
+    })
+
+    session = PromptSession()
 
     while True:
         try:
-            user_input = prompt("> ",
+            user_input = session.prompt("> ",
                 completer=DnDCompleter(commands=game.commands,
                         ignore_case=True),
-                history=history,
-                style=style).split()
+                bottom_toolbar=bottom_toolbar,
+                auto_suggest=AutoSuggestFromHistory(),
+                key_bindings=kb,
+                style=style)
             if not user_input:
                 continue
+            else:
+                user_input = user_input.split()
 
             command = game.commands.get(user_input[0]) or None
             if not command:
