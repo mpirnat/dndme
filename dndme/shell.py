@@ -126,7 +126,7 @@ def main_loop(encounters, monsters, party):
             ' dndme 0.0.2 - help for help, exit to exit')]
 
     style = Style.from_dict({
-        'bottom-toolbar': '#333333 bg:yellow',
+        'bottom-toolbar': '#333333 bg:#ffcc00',
     })
 
     session = PromptSession()

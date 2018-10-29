@@ -1,9 +1,16 @@
 from dndme.dice import roll_dice_expr
+from prompt_toolkit import print_formatted_text, HTML
+from prompt_toolkit.styles import Style
 
 
 class Command:
 
     keywords = ['command']
+
+    style = Style.from_dict({
+        'x1': '#ffcc00 bold',
+        'x': '#ffcc00',
+    })
 
     def __init__(self, game):
         self.game = game
@@ -24,6 +31,9 @@ class Command:
             print(help_text.format(**locals()).strip())
         else:
             print(f"No help text available for: {keyword}")
+
+    def print(self, content):
+        print_formatted_text(HTML(content), style=self.style)
 
 
 def safe_input(text, default=None, converter=None):

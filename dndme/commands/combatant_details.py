@@ -1,4 +1,6 @@
 from math import inf
+from prompt_toolkit import print_formatted_text, HTML
+from prompt_toolkit.styles import Style
 from dndme.commands import Command
 
 
@@ -42,94 +44,94 @@ Examples:
         t = target
 
         if hasattr(target, 'cclass'):
-            print(f"{t.name}: Level {t.level} {t.race} {t.cclass}")
-            print(f"AC: {t.ac} HP: {t.cur_hp}/{t.max_hp}")
-            print(', '.join([f"{x}: {y}"
+            self.print(f"<x1>{t.name}:</x1> Level {t.level} {t.race} {t.cclass}")
+            self.print(f"<x>AC:</x> {t.ac} <x>HP:</x> {t.cur_hp}/{t.max_hp}")
+            self.print(', '.join([f"<x>{x}:</x> {y}"
                     for x, y in t.senses.items()]))
 
             if t.conditions:
                 conds = ', '.join([f"{x}:{y}"
                         if y != inf else x
                         for x, y in t.conditions.items()])
-                print(f"Conditions: {conds}")
+                self.print(f"<x>Conditions:</x> {conds}")
 
         else:
             mf = self.mod_fmt
 
             print()
-            print(f"{t.name}: {t.race} - {t.size} {t.mtype}, {t.alignment}")
-            print(f"AC: {t.ac} ({t.armor or None}) HP: {t.cur_hp}/{t.max_hp}")
-            print(f"Speed: {t.speed}")
-            print(f"STR: {t.str} ({mf(t.str_mod)}) "
-                    f"DEX: {t.dex} ({mf(t.dex_mod)}) "
-                    f"CON: {t.con} ({mf(t.con_mod)}) "
-                    f"INT: {t.int} ({mf(t.int_mod)}) "
-                    f"WIS: {t.wis} ({mf(t.wis_mod)}) "
-                    f"CHA: {t.cha} ({mf(t.cha_mod)})")
+            self.print(f"<x1>{t.name}:</x1> {t.race} - {t.size} {t.mtype}, {t.alignment}")
+            self.print(f"<x>AC:</x> {t.ac} ({t.armor or None}) <x>HP:</x> {t.cur_hp}/{t.max_hp}")
+            self.print(f"<x>Speed:</x> {t.speed}")
+            self.print(f"<x>STR:</x> {t.str} ({mf(t.str_mod)}) "
+                    f"<x>DEX:</x> {t.dex} ({mf(t.dex_mod)}) "
+                    f"<x>CON:</x> {t.con} ({mf(t.con_mod)}) "
+                    f"<x>INT:</x> {t.int} ({mf(t.int_mod)}) "
+                    f"<x>WIS:</x> {t.wis} ({mf(t.wis_mod)}) "
+                    f"<x>CHA:</x> {t.cha} ({mf(t.cha_mod)})")
 
             if t.senses:
-                print("Senses: " + \
+                self.print("<x>Senses:</x> " + \
                         ', '.join([f"{x}: {y}"
                                 for x, y in t.senses.items()]))
             if t.skills:
-                print("Skills: " + \
-                        ', '.join([f"{x}: {y}"
+                self.print("<x>Skills:</x> " + \
+                        ', '.join([f"{x}: {mf(y)}"
                                 for x, y in t.skills.items()]))
             if t.immune:
-                print(f"Immune: {', '.join(t.immune)}")
+                self.print(f"<x>Immune:</x> {', '.join(t.immune)}")
             if t.resist:
-                print(f"Resist: {', '.join(t.resist)}")
+                self.print(f"<x>Resist:</x> {', '.join(t.resist)}")
             if t.vulnerable:
-                print(f"Vulnerable: {', '.join(t.vulnerable)}")
+                self.print(f"<x>Vulnerable:</x> {', '.join(t.vulnerable)}")
             if t.languages:
-                print(f"Languages: {', '.join(t.languages)}")
+                self.print(f"<x>Languages:</x> {', '.join(t.languages)}")
 
             if t.conditions:
                 conds = ', '.join([f"{x}:{y}"
                         if y != inf else x
                         for x, y in t.conditions.items()])
-                print(f"Conditions: {conds}")
+                self.print(f"<x>Conditions:</x> {conds}")
 
             print()
 
             if t.features:
-                print("Features")
-                print("--------")
+                self.print("<x1>Features</x1>")
+                self.print("--------")
 
                 for k, s in t.features.items():
-                    print(f"{s['name']}\n{s['description'].strip()}")
+                    self.print(f"<x>{s['name']}</x>\n{s['description'].strip()}")
 
                     if k == 'spellcasting':
-                        print(f"Cantrips: {', '.join(s['cantrips'])}")
-                        print(f"Spells: ")
+                        self.print(f"<x>Cantrips:</x> {', '.join(s['cantrips'])}")
+                        self.print(f"<x>Spells:</x> ")
                         for i, spells in enumerate(s['spells']):
-                            print(f"Level {i+1} "
+                            self.print(f"Level {i+1} "
                                     f"({s['slots_used'][i]}/{s['slots'][i]}): "
                                     f"{', '.join(spells)}")
                     print()
 
             if t.actions:
-                print("Actions")
-                print("-------")
+                self.print("<x1>Actions</x1>")
+                self.print("-------")
                 for a in t.actions.values():
-                    print(a['name'])
-                    print(a['description'].strip())
+                    self.print(f"<x>{a['name']}</x>")
+                    self.print(a['description'].strip())
                     print()
 
             if t.legendary_actions:
-                print("Legendary Actions")
-                print("-----------------")
+                self.print("<x1>Legendary Actions</x1>")
+                self.print("-----------------")
                 for a in t.legendary_actions.values():
-                    print(a['name'])
-                    print(a['description'].strip())
+                    self.print(f"<x>{a['name']}</x>")
+                    self.print(a['description'].strip())
                     print()
 
             if t.reactions:
-                print("Reactions")
-                print("---------")
+                self.print("<x1>Reactions</x1>")
+                self.print("---------")
                 for r in t.reactions.values():
-                    print(r['name'])
-                    print(r['description'].strip())
+                    self.print(f"<x>{r['name']}</x>")
+                    self.print(r['description'].strip())
                     print()
 
-            print(t.notes.strip())
+            self.print(t.notes.strip())
