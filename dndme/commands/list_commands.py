@@ -12,6 +12,6 @@ Usage: {keyword}
 """
 
     def do_command(self, *args):
-        print("Available commands:\n")
+        self.print("<x>Available commands:</x>\n")
         for keyword in list(sorted(self.game.commands.keys())):
             print('*', keyword)

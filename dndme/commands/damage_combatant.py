@@ -12,10 +12,11 @@ Summary: Apply damage to one or more combatants.
 Usage: {keyword} <combatant1> [<combatant2> ...] <number>
 
 Examples:
-    
+
     {keyword} Frodo 10
     {keyword} Frodo Merry Pippin 10
 """
+
     def get_suggestions(self, words):
         combat = self.game.combat
         names_already_chosen = words[1:]
@@ -47,7 +48,8 @@ Examples:
                     f"Now: {target.cur_hp}/{target.max_hp}")
 
             if target_name in combat.monsters and target.cur_hp == 0:
-                if (input(f"{target_name} reduced to 0 HP--"
+                if (self.session.prompt(
+                        f"{target_name} reduced to 0 HP--"
                         "mark as defeated? [Y]: ")
                         or 'y').lower() != 'y':
                     continue

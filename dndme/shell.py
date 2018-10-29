@@ -84,7 +84,7 @@ class DnDCompleter(Completer):
 
 
 
-def load_commands(game):
+def load_commands(game, session):
     path = os.path.join(os.path.dirname(__file__), "commands")
     modules = pkgutil.iter_modules(path=[path])
 
@@ -101,7 +101,7 @@ def load_commands(game):
                 continue
 
             # Create an instance of the class
-            instance = loaded_class(game)
+            instance = loaded_class(game, session)
 
 
 @click.command()
@@ -115,11 +115,6 @@ def load_commands(game):
         help="Player character party TOML file to use; "
             f"default: {default_party_file}")
 def main_loop(encounters, monsters, party):
-    game = Game(encounters_dir=encounters, monsters_dir=monsters,
-            party_file=party)
-    load_commands(game)
-
-    kb = KeyBindings()
 
     def bottom_toolbar():
         return [('class:bottom-toolbar',
@@ -129,7 +124,12 @@ def main_loop(encounters, monsters, party):
         'bottom-toolbar': '#333333 bg:#ffcc00',
     })
 
+    kb = KeyBindings()
     session = PromptSession()
+
+    game = Game(encounters_dir=encounters, monsters_dir=monsters,
+            party_file=party)
+    load_commands(game, session)
 
     while True:
         try:

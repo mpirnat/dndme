@@ -1,6 +1,5 @@
 from dndme.commands import Command
-from dndme.commands import safe_input, convert_to_int, \
-        convert_to_int_or_dice_expr
+from dndme.commands import convert_to_int, convert_to_int_or_dice_expr
 from dndme.loaders import EncounterLoader, MonsterLoader, PartyLoader
 
 
@@ -52,7 +51,7 @@ Usage:
     def load_encounter(self):
 
         def prompt_count(count, monster_name="monsters"):
-            count = safe_input(
+            count = self.safe_input(
                     f"Number of {monster_name}",
                     default=count,
                     converter=convert_to_int_or_dice_expr)
@@ -62,7 +61,7 @@ Usage:
             # prompt to add the monsters to initiative order
             roll_advice = f"1d20{monster.initiative_mod:+}" \
                     if monster.initiative_mod else "1d20"
-            roll = safe_input(
+            roll = self.safe_input(
                     f"Initiative for {monster.name}",
                     default=roll_advice,
                     converter=convert_to_int_or_dice_expr)
@@ -108,7 +107,7 @@ Usage:
             # prompt to add the monsters to initiative order
             roll_advice = f"1d20{monster.initiative_mod:+}" \
                     if monster.initiative_mod else "1d20"
-            roll = safe_input(
+            roll = self.safe_input(
                     f"Initiative for {monster.name}",
                     default=roll_advice,
                     converter=convert_to_int_or_dice_expr)
@@ -116,7 +115,7 @@ Usage:
             return roll
 
         monster_loader = MonsterLoader(self.game.monsters_dir)
-        count = safe_input(
+        count = self.safe_input(
                 "Number of monsters",
                 converter=convert_to_int_or_dice_expr)
         monsters = monster_loader.load(monster_name, count=count)

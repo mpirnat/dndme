@@ -1,6 +1,5 @@
 from dndme.commands import Command
-from dndme.commands import safe_input, convert_to_int, \
-        convert_to_int_or_dice_expr
+from dndme.commands import convert_to_int, convert_to_int_or_dice_expr
 
 
 class UnstashCombatant(Command):
@@ -43,7 +42,7 @@ Examples:
             if combat.tm:
                 roll_advice = f"1d20{target.initiative_mod:+}" \
                         if target.initiative_mod else "1d20"
-                roll = safe_input(
+                roll = self.safe_input(
                         f"Initiative for {target.name}",
                         default=roll_advice,
                         converter=convert_to_int_or_dice_expr)

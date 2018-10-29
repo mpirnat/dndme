@@ -12,10 +12,13 @@ class Command:
         'x': '#ffcc00',
     })
 
-    def __init__(self, game):
+    def __init__(self, game, session):
         self.game = game
+        self.session = session
+
         for kw in self.keywords:
             game.commands[kw] = self
+
         print("Registered "+self.__class__.__name__)
 
     def get_suggestions(self, words):
@@ -35,23 +38,22 @@ class Command:
     def print(self, content):
         print_formatted_text(HTML(content), style=self.style)
 
+    def safe_input(self, text, default=None, converter=None):
+        data = None
 
-def safe_input(text, default=None, converter=None):
-    data = None
+        while data is None:
+            if default is not None:
+                data = self.session.prompt(f"{text} [{default}]: ").strip()
+            else:
+                data = self.session.prompt(f"{text}: ").strip()
 
-    while data is None:
-        if default is not None:
-            data = input(f"{text} [{default}]: ").strip()
-        else:
-            data = input(f"{text}: ").strip()
+            if default and not data:
+                data = default
 
-        if default and not data:
-            data = default
+            if converter:
+                data = converter(data)
 
-        if converter:
-            data = converter(data)
-
-    return data
+        return data
 
 
 def convert_to_int(value):

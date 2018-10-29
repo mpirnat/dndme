@@ -9,8 +9,9 @@ class EndCombat(Command):
 {divider}
 Summary: End the current combat and distribute experience points.
 
-Usage: {keyword} 
+Usage: {keyword}
 """
+
     def do_command(self, *args):
         combat = self.game.combat
         if not combat.tm:

@@ -9,7 +9,7 @@ class NextTurn(Command):
 {divider}
 Summary: Advance to the next turn of combat.
 
-Usage: {keyword} 
+Usage: {keyword}
 """
 
     def do_command(self, *args):
@@ -26,7 +26,7 @@ Usage: {keyword}
                 combatant = turn[-1]
                 conditions_removed = combatant.decrement_condition_durations()
                 if conditions_removed:
-                    print(f"{combatant.name} conditions removed: "
+                    self.print(f"<x>{combatant.name}</x> conditions removed: "
                             f"{', '.join(conditions_removed)}")
 
             turn = next(combat.tm.turns)
