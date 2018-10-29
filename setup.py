@@ -6,14 +6,14 @@ import setuptools
 
 setup(
     name='dndme',
-    version='0.0.1',
+    version='0.0.2',
     description='Tools for helping the DM run Dungeons & Dragons sessions.',
     author='Mike Pirnat',
     packages=setuptools.find_packages(),
     install_requires=[
         'attrs',
         'click',
-        'prompt-toolkit<2',
+        'prompt-toolkit',
         'pytoml',
         'six',
         'wcwidth',
