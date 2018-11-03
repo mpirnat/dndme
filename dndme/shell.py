@@ -114,7 +114,10 @@ def load_commands(game, session):
 @click.option('--party', default=default_party_file,
         help="Player character party TOML file to use; "
             f"default: {default_party_file}")
-def main_loop(encounters, monsters, party):
+@click.option('--log', default=None,
+        help="Campaign log filename; will just log in memory"
+            "if omitted")
+def main_loop(encounters, monsters, party, log):
 
     def bottom_toolbar():
         return [('class:bottom-toolbar',
@@ -128,7 +131,7 @@ def main_loop(encounters, monsters, party):
     session = PromptSession()
 
     game = Game(encounters_dir=encounters, monsters_dir=monsters,
-            party_file=party)
+            party_file=party, log_file=log)
     load_commands(game, session)
 
     while True:

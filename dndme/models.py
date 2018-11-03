@@ -173,6 +173,7 @@ class Game:
     encounters_dir = attrib()
     monsters_dir = attrib()
     party_file = attrib()
+    log_file = attrib()
 
     stash = attrib(default={})
     combats = attrib(default=[])
