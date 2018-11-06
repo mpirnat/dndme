@@ -28,7 +28,7 @@ Examples:
         self.log_buf = []
         self.log_file = game.log_file
         self.log_message(f"Session started {now:%Y-%m-%d %H:%M:%S}",
-                with_leading_newline=os.path.exists(self.log_file))
+                with_leading_newline=os.path.exists(self.log_file or ''))
 
     def do_command(self, *args):
         if args:
