@@ -1,3 +1,4 @@
+import math
 from dndme.commands import Command
 from dndme.commands.show import Show
 
@@ -38,3 +39,6 @@ Usage: {keyword}
             duration = f"{duration_sec} sec"
 
         print(f"Combat ended in {rounds} rounds ({duration})")
+
+        self.game.clock.adjust_time(minutes=math.ceil(duration_sec / 60))
+        print(f"Game time is now {self.game.clock}")

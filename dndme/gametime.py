@@ -18,4 +18,3 @@ class Clock:
 
         self.hour = new_hour
         self.minute = new_minute
-        print(self)
