@@ -174,6 +174,7 @@ class Game:
     monsters_dir = attrib()
     party_file = attrib()
     log_file = attrib()
+    clock = attrib()
 
     stash = attrib(default={})
     combats = attrib(default=[])

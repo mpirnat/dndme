@@ -11,6 +11,7 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
 
+from dndme.gametime import Clock
 from dndme.models import Game
 
 
@@ -119,20 +120,23 @@ def load_commands(game, session):
             "if omitted")
 def main_loop(encounters, monsters, party, log):
 
+    game = Game(encounters_dir=encounters, monsters_dir=monsters,
+            party_file=party, log_file=log, clock=Clock())
+
+    session = PromptSession()
+
+    load_commands(game, session)
+
     def bottom_toolbar():
         return [('class:bottom-toolbar',
-            ' dndme 0.0.2 - help for help, exit to exit')]
+            ' dndme 0.0.2 - help for help, exit to exit'
+            f' - {game.clock}')]
 
     style = Style.from_dict({
         'bottom-toolbar': '#333333 bg:#ffcc00',
     })
 
     kb = KeyBindings()
-    session = PromptSession()
-
-    game = Game(encounters_dir=encounters, monsters_dir=monsters,
-            party_file=party, log_file=log)
-    load_commands(game, session)
 
     while True:
         try:
