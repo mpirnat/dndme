@@ -33,4 +33,9 @@ setup(
     },
     tests_require=['pytest'],
     setup_requires=['pytest-runner'],
+    entry_points={
+        'console_scripts': [
+            'dndme = dndme.shell:main_loop',
+        ],
+    }
 )
