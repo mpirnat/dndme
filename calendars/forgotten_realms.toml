@@ -1,0 +1,117 @@
+name = "Forgotten Realms"
+hours_in_day = 24
+minutes_in_hour = 60
+leap_year_rule = "year % 4 == 0"
+
+default_month = "Hammer"
+default_day = 1
+default_year = 1488
+
+[months.hammer]
+name = "Hammer"
+alt_name = "Deepwinter"
+days = 30
+
+[months.midwinter]
+name = "Midwinter"
+days = 1
+
+[months.alturiak]
+name = "Alturiak"
+alt_name = "The Claw of Winter"
+days = 30
+
+[months.ches]
+name = "Ches"
+alt_name = "The Claw of the Sunsets"
+days = 30
+
+[months.tarsakh]
+name = "Tarsakh"
+alt_name = "The Claw of the Storms"
+days = 30
+
+[months.greengrass]
+name = "Greengrass"
+days = 1
+
+[months.mirtul]
+name = "Mirtul"
+alt_name = "The Melting"
+days = 30
+
+[months.kythorn]
+name = "Kythorn"
+alt_name = "The Time of Flowers"
+days = 30
+
+[months.flamerule]
+name = "Flamerule"
+alt_name = "Summertide"
+days = 30
+
+[months.midsummer]
+name = "Midsummer"
+days = 1
+
+[months.shieldmeet]
+name = "Shieldmeet"
+days = 0
+leap_year_days = 1
+
+[months.eleasis]
+name = "Eleasis"
+alt_name = "Highsun"
+days = 30
+
+[months.eleint]
+name = "Eleint"
+alt_name = "The Fading"
+days = 30
+
+[months.highharvestide]
+name = "Highharvestide"
+days = 1
+
+[months.marpenoth]
+name = "Marpenoth"
+alt_name = "Leaffall"
+days = 30
+
+[months.uktar]
+name = "Uktar"
+alt_name = "The Rotting"
+days = 30
+
+[months.moonfeast]
+name = "Moonfeast"
+alt_name = "The Feast of the Moon"
+days = 1
+
+[months.nightal]
+name = "Nightal"
+alt_name = "The Drawing Down"
+days = 30
+
+[seasons.spring_equinox]
+name = "Spring Equinox"
+month = "Ches"
+day = 19
+
+[seasons.summer_solstice]
+name = "Summer Solstice"
+month = "Kythorn"
+day = 20
+
+[seasons.autumn_equinox]
+month = "Eleint"
+day = 21
+
+[seasons.winter_solstice]
+name = "Winter Solstice"
+month = "Nightal"
+day = 20
+
+[moons.selune]
+name = "Selûne"
+period = "30.4375"

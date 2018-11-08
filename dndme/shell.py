@@ -4,6 +4,7 @@ import pkgutil
 import sys
 
 import click
+import pytoml as toml
 from prompt_toolkit import HTML
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -11,13 +12,14 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
 
-from dndme.gametime import Clock
+from dndme.gametime import Calendar, Clock
 from dndme.models import Game
 
 
 default_encounters_dir = './encounters'
 default_monsters_dir = './monsters'
 default_party_file = './parties/party.toml'
+default_calendar_file = './calendars/forgotten_realms.toml'
 
 
 class DnDCompleter(Completer):
@@ -115,13 +117,20 @@ def load_commands(game, session):
 @click.option('--party', default=default_party_file,
         help="Player character party TOML file to use; "
             f"default: {default_party_file}")
+@click.option('--calendar', default=default_calendar_file,
+        help="Calendar definition TOML file to use;"
+            f"default: {default_calendar_file}")
 @click.option('--log', default=None,
         help="Campaign log filename; will just log in memory"
             "if omitted")
-def main_loop(encounters, monsters, party, log):
+def main_loop(encounters, monsters, party, calendar, log):
+
+    cal_data = toml.load(open(calendar, 'r'))
+    calendar = Calendar(cal_data)
+    clock = Clock(cal_data['hours_in_day'], cal_data['minutes_in_hour'])
 
     game = Game(encounters_dir=encounters, monsters_dir=monsters,
-            party_file=party, log_file=log, clock=Clock())
+            party_file=party, log_file=log, calendar=calendar, clock=clock)
 
     session = PromptSession()
 
@@ -130,7 +139,7 @@ def main_loop(encounters, monsters, party, log):
     def bottom_toolbar():
         return [('class:bottom-toolbar',
             ' dndme 0.0.2 - help for help, exit to exit'
-            f' - {game.clock}')]
+            f' - {game.calendar} {game.clock}')]
 
     style = Style.from_dict({
         'bottom-toolbar': '#333333 bg:#ffcc00',
