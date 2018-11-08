@@ -58,8 +58,6 @@ class Calendar:
         self.day = day
         self.month = month
         self.year = year
-
-        print(self)
     
     def _date_is_valid(self, day, month, year):
         if month.lower() not in self.cal_data['months']:
@@ -111,4 +109,3 @@ class Calendar:
                 self.day = self.days_in_month(self.month, self.year)
             
             self.day -= days
-        print(self)
