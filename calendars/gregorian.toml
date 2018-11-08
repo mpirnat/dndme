@@ -3,6 +3,10 @@ hours_in_day = 24
 minutes_in_hour = 60
 leap_year_rule = "(year % 4 == 0) and (year % 100 != 0) or (year % 400 == 0)"
 
+default_day = 1
+default_month = "January"
+default_year = 1970
+
 [months.january]
 name = "January"
 days = 31

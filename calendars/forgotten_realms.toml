@@ -3,8 +3,8 @@ hours_in_day = 24
 minutes_in_hour = 60
 leap_year_rule = "year % 4 == 0"
 
-default_month = "Hammer"
 default_day = 1
+default_month = "Hammer"
 default_year = 1488
 
 [months.hammer]
