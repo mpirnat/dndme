@@ -139,7 +139,7 @@ def main_loop(encounters, monsters, party, calendar, log):
     def bottom_toolbar():
         return [('class:bottom-toolbar',
             ' dndme 0.0.2 - help for help, exit to exit'
-            f' - {game.calendar} {game.clock}')]
+            f' - 📆 {game.calendar} ⏰ {game.clock}')]
 
     style = Style.from_dict({
         'bottom-toolbar': '#333333 bg:#ffcc00',
