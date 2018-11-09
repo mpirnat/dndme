@@ -2,7 +2,10 @@ dist: xenial
 sudo: required
 language: python
 python:
-  - "3.6"
-  - "3.7"
+- '3.6'
+- '3.7'
 install: pip install tox-travis
 script: tox
+notifications:
+  slack:
+    secure: 0OXmZXpwecbvEZeyiahYSeJItLqWjPRM9gwYkxYzlQmF6AekzTeJztKcAVE5cdlGJ6/mTBVSOE0ZFS4G1zfsX8HHe80mffCl/xnZQeCmOJd1vtpXYHS5b0iVoXVmgHopIoxMCNobvBXjBP/n55CUu5CEaF5iIeHLRks28GLFTL5foTChu3rV1mwaAKMXhnzij3Lk0KipCCNpGfLJreggp+iUF1Kpbfega6BE5Esu1WiB75F+LGRZWwHATT+bAGQMe8fK02mip4d8ialQVmjIj59zbk2UJRSRYQ+VFegwOxEFJ7U/ZhffE8jRxFdvUpI5bvK8b7B4B96L/KHVWwYBQipUcDJ+ukzna/RFmHq/L38n5SH7JAXRYEmBEEjbE7gRaKzZK0bbiv/+w41hNcG3GYipybYthXS/I/ZR4dTPwjdpUQxxNm0Tr1QCD6wOvsCV/9oJhdzDFwqKyVVN/I9HclNtiItpxI1YIjLEuOvGz43QjrTPPTmPDU8OTJpkV7AgiOvJwtSD+U/D1o++jZKSMrcfgqzSuJViVxfW0wyUtB7g+PSCcaoRIt8YeXg5jV/BbE+5UfPefu8dLbgNQQI0+pO/FYasrBiP2MTmPLHgMdIFLli33xR9LKJRzwfA6kdBW8heFG2TonWXw9PPIaZnN8tkBdfQ04Ym7LtAq3Lr0Rg=
