@@ -33,6 +33,23 @@ class Calendar:
             return f"{self.day} {self.month} {self.year}"
         return f"{self.month} {self.year}"
     
+    def day_of_year(self, day=None, month=None, year=None):
+        day = day or self.day
+        month = month or self.month
+        year = year or self.year
+
+        day_of_year = 0
+        month = month.lower()
+
+        for month_key in self.cal_data['months']:
+            if month_key == month:
+                day_of_year += day
+                break
+            else:
+                day_of_year += self.days_in_month(month_key, year)
+
+        return day_of_year
+
     def days_in_month(self, month, year):
         month = month.lower()
         days = self.cal_data['months'][month]['days']
