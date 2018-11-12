@@ -2,6 +2,8 @@ name = "Gregorian"
 hours_in_day = 24
 minutes_in_hour = 60
 leap_year_rule = "(year % 4 == 0) and (year % 100 != 0) or (year % 400 == 0)"
+axial_tilt = 23.44
+solar_days_in_year = 365.25
 
 default_day = 1
 default_month = "January"
@@ -55,6 +57,25 @@ days = 30
 [months.december]
 name = "December"
 days = 31
+
+[seasons.spring_equinox]
+name = "Spring Equinox"
+month = "March"
+day = 20
+
+[seasons.summer_solstice]
+name = "Summer Solstice"
+month = "June"
+day = 21
+
+[seasons.autumn_equinox]
+month = "September"
+day = 22
+
+[seasons.winter_solstice]
+name = "Winter Solstice"
+month = "December"
+day = 21
 
 [moons.Luna]
 name = "Luna"

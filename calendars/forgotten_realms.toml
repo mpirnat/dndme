@@ -2,6 +2,8 @@ name = "Forgotten Realms"
 hours_in_day = 24
 minutes_in_hour = 60
 leap_year_rule = "year % 4 == 0"
+axial_tilt = 28.883333
+solar_days_in_year = 365.25
 
 default_day = 1
 default_month = "Hammer"
@@ -114,4 +116,4 @@ day = 20
 
 [moons.selune]
 name = "Selûne"
-period = "30.4375"
+period = 30.4375
