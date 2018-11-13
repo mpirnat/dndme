@@ -29,23 +29,11 @@ class Clock:
 
 class Calendar:
 
-    depression_civil = -6
-    depression_nautical = -12
-    depression_astronomical = -18
-
-    rising = 1
-    setting = -1
-
     def __init__(self, cal_data):
         self.cal_data = cal_data
         self.year = cal_data['default_year']
         self.month = cal_data['default_month']
         self.day = cal_data['default_day']
-
-        self.minutes_in_hour = cal_data['minutes_in_hour']
-        self.hours_in_day = cal_data['hours_in_day']
-        self.solar_days_in_year = cal_data['solar_days_in_year']
-        self.axial_tilt = cal_data['axial_tilt']
 
     def __str__(self):
         if self.days_in_month(self.month, self.year) > 1:
@@ -80,8 +68,8 @@ class Calendar:
         year = year or self.year
 
         if not self._date_is_valid(day, month, year):
-            return "lol nope"
-        
+            return "lol nope" # TODO: raise an exception here
+
         self.day = day
         self.month = month
         self.year = year
@@ -136,6 +124,67 @@ class Calendar:
                 self.day = self.days_in_month(self.month, self.year)
             
             self.day -= days
+
+    def days_since_date(self, date_then, date_now):
+        days_since = 0
+
+        if date_now.year == date_then.year and \
+                date_now.month == date_then.month and \
+                date_now.day >= date_then.day:
+            days_since += date_now.day - date_then.day
+        else:
+            # get the days until the end of the year
+            days_since += self.days_in_year(date_then.year) - \
+                    self.day_of_year(date_then)
+            year_diff = date_now.year - date_then.year
+
+            # get days for intervening years
+            if year_diff > 1:
+                for i in range(1, year_diff):
+                    days_since += self.days_in_year(date_then.year + i)
+            
+            # get elapsed days of current year
+            days_since += self.day_of_year(date_now) - 1 # -1 because the day ain't over yet
+        
+        return days_since
+
+    def day_of_year(self, date):
+        day = date.day or self.day
+        month = date.month or self.month
+        year = date.year or self.year
+
+        if not self._date_is_valid(day, month, year):
+            return "lol nope" # TODO: raise an exception here
+
+        day_of_year = 0
+        month = month.lower()
+
+        for month_key in self.cal_data['months']:
+            if month_key == month:
+                day_of_year += day
+                break
+            else:
+                day_of_year += self.days_in_month(month_key, year)
+
+        return day_of_year
+
+
+class Almanac:
+
+    depression_civil = -6
+    depression_nautical = -12
+    depression_astronomical = -18
+
+    rising = 1
+    setting = -1
+
+    def __init__(self, calendar):
+        self.calendar = calendar
+
+        self.minutes_in_hour = calendar.cal_data['minutes_in_hour']
+        self.hours_in_day = calendar.cal_data['hours_in_day']
+        self.solar_days_in_year = calendar.cal_data['solar_days_in_year']
+        self.axial_tilt = calendar.cal_data['axial_tilt']
 
     def dawn(self, date, latitude, depression=0):
         if not depression:
@@ -196,22 +245,23 @@ class Calendar:
         declination = self.solar_declination(date)
 
         # Gotta be in radians for Python's math functions
-        a = math.radians(depression) # altitude of center of solar disc
+        alt = math.radians(depression) # altitude of center of solar disc
         latitude = math.radians(latitude)
         declination = math.radians(declination)
         
         cos_hour_angle = (
-            (math.sin(a) - math.sin(latitude) * math.sin(declination)) /
+            (math.sin(alt) - math.sin(latitude) * math.sin(declination)) /
             (math.cos(latitude) * math.cos(declination))
         )
         hour_angle = math.degrees(math.acos(cos_hour_angle))
         return hour_angle
-
+    
     def solar_declination(self, date):
         # Get the solar declination in degrees...
 
         # Figure out days since the previous winter solstice
-        ws = self.cal_data['seasons']['winter_solstice']
+        # TODO: this section should be extracted into the Calendar?
+        ws = self.calendar.cal_data['seasons']['winter_solstice']
         
         ws_year = date.year \
                 if date.month == ws['month'] \
@@ -220,7 +270,7 @@ class Calendar:
 
         ws_date = Date(ws['day'], ws['month'].lower(), ws_year)
 
-        days_since_ws = self.days_since_date(ws_date, date)
+        days_since_ws = self.calendar.days_since_date(ws_date, date)
 
         # Figure out how much rotation has happened since the winter solstice
         deg_per_day = 360 / self.solar_days_in_year
@@ -230,46 +280,3 @@ class Calendar:
         declination = -self.axial_tilt * math.cos(math.radians(rotation))
 
         return declination
-
-    def days_since_date(self, date_then, date_now):
-        days_since = 0
-
-        if date_now.year == date_then.year and \
-                date_now.month == date_then.month and \
-                date_now.day >= date_then.day:
-            days_since += date_now.day - date_then.day
-        else:
-            # get the days until the end of the year
-            days_since += self.days_in_year(date_then.year) - \
-                    self.day_of_year(date_then)
-            year_diff = date_now.year - date_then.year
-
-            # get days for intervening years
-            if year_diff > 1:
-                for i in range(1, year_diff):
-                    days_since += self.days_in_year(date_then.year + i)
-            
-            # get elapsed days of current year
-            days_since += self.day_of_year(date_now) - 1 # -1 because the day ain't over yet
-        
-        return days_since
-
-    def day_of_year(self, date):
-        day = date.day or self.day
-        month = date.month or self.month
-        year = date.year or self.year
-
-        if not self._date_is_valid(day, month, year):
-            return "lol nope"
-
-        day_of_year = 0
-        month = month.lower()
-
-        for month_key in self.cal_data['months']:
-            if month_key == month:
-                day_of_year += day
-                break
-            else:
-                day_of_year += self.days_in_month(month_key, year)
-
-        return day_of_year
