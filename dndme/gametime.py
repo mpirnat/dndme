@@ -31,14 +31,16 @@ class Calendar:
 
     def __init__(self, cal_data):
         self.cal_data = cal_data
-        self.year = cal_data['default_year']
-        self.month = cal_data['default_month']
-        self.day = cal_data['default_day']
+        self.date = Date(
+                cal_data['default_day'],
+                cal_data['default_month'],
+                cal_data['default_year'])
 
     def __str__(self):
-        if self.days_in_month(self.month, self.year) > 1:
-            return f"{self.day} {self.month} {self.year}"
-        return f"{self.month} {self.year}"
+        date = self.date
+        if self.days_in_month(date.month, date.year) > 1:
+            return f"{date.day} {date.month} {date.year}"
+        return f"{date.month} {date.year}"
 
     def days_in_year(self, year):
         days = 0
@@ -59,71 +61,74 @@ class Calendar:
         leap_year_rule = self.cal_data.get('leap_year_rule')
         if not leap_year_rule:
             return False
+        # TODO: check validity of leap_year_rule because SECURITY
         return eval(leap_year_rule.replace('year', str(year)))
     
-    def set_date(self, day=None, month=None, year=None):
-        # Allow changing any of the elements of the date
-        day = day or self.day
-        month = month or self.month
-        year = year or self.year
-
-        if not self._date_is_valid(day, month, year):
+    def set_date(self, date):
+        if not self._date_is_valid(date):
             return "lol nope" # TODO: raise an exception here
-
-        self.day = day
-        self.month = month
-        self.year = year
+        self.date = date
     
-    def _date_is_valid(self, day, month, year):
-        if month.lower() not in self.cal_data['months']:
+    def _date_is_valid(self, date):
+        if date.month.lower() not in self.cal_data['months']:
             return False
-        elif day < 1 or day > self.days_in_month(month, year):
+        elif date.day < 1 or date.day > \
+                self.days_in_month(date.month, date.year):
             return False
         return True
-
+        
     def adjust_date(self, days):
+        new_date = self.date_from_date_and_offset(self.date, days)
+        self.date = new_date
+
+    def date_from_date_and_offset(self, date, days):
         month_keys = list(self.cal_data['months'].keys())
 
+        day, month, year = date
+
         if days > 0:   
-            while (self.day + days) > self.days_in_month(self.month, self.year):
+            while (day + days) > self.days_in_month(month, year):
                 # bleed off days to the end of the month
-                days -= (self.days_in_month(self.month, self.year) - self.day)
+                days -= (self.days_in_month(month, year) - day)
 
                 # move to the next month
-                i = month_keys.index(self.month.lower())
+                i = month_keys.index(month.lower())
                 
                 # advancing the month would roll over to next year
                 if i+1 == len(month_keys):
                     i = -1
-                    self.year += 1
+                    year += 1
                 
                 new_month = self.cal_data['months'][month_keys[i+1]]['name']
 
-                self.month = new_month
-                self.day = 0
+                month = new_month
+                day = 0
             
-            self.day += days
+            day += days
 
         elif days < 0:
             days = abs(days)
-            while (self.day - days) < 1:
+            while (day - days) < 1:
                 # bleed off days to the beginning of the month
-                days -= self.day
+                days -= day
 
                 # move to the previous month
-                i = month_keys.index(self.month.lower())
+                i = month_keys.index(month.lower())
 
                 # going back a month would roll over to the prior year
                 if i-1 < 0:
                     i = 0
-                    self.year -= 1
+                    year -= 1
                 
                 new_month = self.cal_data['months'][month_keys[i-1]]['name']
 
-                self.month = new_month
-                self.day = self.days_in_month(self.month, self.year)
+                month = new_month
+                day = self.days_in_month(month, year)
             
-            self.day -= days
+            day -= days
+        
+        new_date = Date(day, month, year)
+        return new_date
 
     def days_since_date(self, date_then, date_now):
         days_since = 0
@@ -235,14 +240,14 @@ class Almanac:
         
         if hour > self.hours_in_day - 1:
             hour -= self.hours_in_day
-            day = date.day + 1 #TODO: replace this - need a real "next" date fn
+            new_date = self.calendar.date_from_date_and_offset(date, 1)
         elif hour < 0:
             hour += self.hours_in_day
-            day = date.day - 1 #TODO: replace this - need a real "prev" date fn
+            new_date = self.calendar.date_from_date_and_offset(date, -1)
         else:
-            day = date.day
+            new_date = date
 
-        return Time(hour, minute), Date(day, date.month, date.year)
+        return Time(hour, minute), new_date
 
     def hour_angle(self, depression, date, latitude):
         declination = self.solar_declination(date)

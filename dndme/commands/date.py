@@ -1,5 +1,6 @@
 import re
 from dndme.commands import Command
+from dndme.gametime import Date
 
 
 class Date(Command):
@@ -50,8 +51,9 @@ Examples:
         if m_set:
             day, month, year = m_set.groups()
             day = int(day)
-            year = int(year) if year else None
-            calendar.set_date(day=day, month=month, year=year)
+            year = int(year) if year else calendar.year
+
+            calendar.set_date(Date(day, month, year))
             print(f"The date is now {calendar}")
             return
 
