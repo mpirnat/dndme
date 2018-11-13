@@ -42,6 +42,7 @@ class Calendar:
         self.month = cal_data['default_month']
         self.day = cal_data['default_day']
 
+        self.minutes_in_hour = cal_data['minutes_in_hour']
         self.hours_in_day = cal_data['hours_in_day']
         self.solar_days_in_year = cal_data['solar_days_in_year']
         self.axial_tilt = cal_data['axial_tilt']
@@ -171,40 +172,27 @@ class Calendar:
             return None
 
     def calc_time(self, depression, direction, date, latitude):
-        hour_angle = self.hour_angle(latitude, date, depression) * direction
-        delta = -hour_angle
+        hour_angle = direction * self.hour_angle(depression, date, latitude)
+        delta = -hour_angle # longitude would factor in here if we cared
         time_diff = 4 * delta
-        time_utc = 720 + time_diff # - eqtime
+        noon_minutes = (self.hours_in_day / 2) * self.minutes_in_hour 
+        time_utc = noon_minutes + time_diff # - eqtime
 
-        time_utc = time_utc / 60
-        hour = int(time_utc)
-        minute = int((time_utc - hour) * 60)
-        second = int((((time_utc - hour) * 60) - minute) * 60)
-
-        if second > 59:
-            second -= 60
-            minute += 1
-        elif second < 0:
-            second += 60
-            minute -= 1
-        
-        if minute > 59:
-            minute -= 60
-            hour += 1
-        elif minute < 0:
-            minute += 60
-            hour -= 1
+        hour = int(time_utc // self.minutes_in_hour)
+        minute = int(time_utc % self.minutes_in_hour)
         
         if hour > self.hours_in_day - 1:
             hour -= self.hours_in_day
-            date.day += 1 # replace this - need a real "next" date fn
+            day = date.day + 1 #TODO: replace this - need a real "next" date fn
         elif hour < 0:
             hour += self.hours_in_day
-            date.day -= 1 # replace this - need a real "prev" date fn
-        
-        return Time(hour, minute), Date(date.day, date.month, date.year)
+            day = date.day - 1 #TODO: replace this - need a real "prev" date fn
+        else:
+            day = date.day
 
-    def hour_angle(self, depression, data, latitude):
+        return Time(hour, minute), Date(day, date.month, date.year)
+
+    def hour_angle(self, depression, date, latitude):
         declination = self.solar_declination(date)
 
         # Gotta be in radians for Python's math functions
