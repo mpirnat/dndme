@@ -169,6 +169,9 @@ class Calendar:
         return day_of_year
 
 
+# This class is based largely on the awesome Astral library:
+# https://github.com/sffjunkie/astral/
+# which was great at Earth but not abstract enough for fantasy settings.
 class Almanac:
 
     depression_civil = -6
