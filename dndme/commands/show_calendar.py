@@ -30,7 +30,7 @@ Examples:
                 print(f"Invalid year: {year}")
                 return
         else:
-            year = calendar.year
+            year = calendar.date.year
 
         self.print(f"<x1>{year}</x1>")
         print("-" * 20)

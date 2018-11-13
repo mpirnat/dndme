@@ -176,6 +176,8 @@ class Game:
     log_file = attrib()
     calendar = attrib()
     clock = attrib()
+    almanac = attrib()
+    latitude = attrib()
 
     stash = attrib(default={})
     combats = attrib(default=[])

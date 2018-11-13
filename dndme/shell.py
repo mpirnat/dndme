@@ -12,7 +12,7 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
 
-from dndme.gametime import Calendar, Clock
+from dndme.gametime import Calendar, Clock, Almanac
 from dndme.models import Game
 
 
@@ -128,18 +128,31 @@ def main_loop(encounters, monsters, party, calendar, log):
     cal_data = toml.load(open(calendar, 'r'))
     calendar = Calendar(cal_data)
     clock = Clock(cal_data['hours_in_day'], cal_data['minutes_in_hour'])
+    almanac = Almanac(calendar)
 
     game = Game(encounters_dir=encounters, monsters_dir=monsters,
-            party_file=party, log_file=log, calendar=calendar, clock=clock)
+            party_file=party, log_file=log, calendar=calendar, clock=clock,
+            almanac=almanac, latitude=45)
 
     session = PromptSession()
 
     load_commands(game, session)
 
     def bottom_toolbar():
+        dawn, _ = game.almanac.dawn(game.calendar.date, game.latitude)
+        sunrise, _ = game.almanac.sunrise(game.calendar.date, game.latitude)
+        sunset, _ = game.almanac.sunset(game.calendar.date, game.latitude)
+        dusk, _ = game.almanac.dusk(game.calendar.date, game.latitude)
+        day_night = "✨"
+        if dawn <= (game.clock.hour, game.clock.minute) < sunrise:
+            day_night = "🌅"
+        elif sunrise <= (game.clock.hour, game.clock.minute) < sunset:
+            day_night = "☀️"
+        elif sunset <= (game.clock.hour, game.clock.minute) < dusk:
+            day_night = "🌅"
         return [('class:bottom-toolbar',
             ' dndme 0.0.2 - help for help, exit to exit'
-            f' - 📆 {game.calendar} ⏰ {game.clock}')]
+            f' - 📆 {game.calendar} ⏰ {game.clock} {day_night}')]
 
     style = Style.from_dict({
         'bottom-toolbar': '#333333 bg:#ffcc00',

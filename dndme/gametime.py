@@ -154,22 +154,18 @@ class Calendar:
         return days_since
 
     def day_of_year(self, date):
-        day = date.day or self.day
-        month = date.month or self.month
-        year = date.year or self.year
-
-        if not self._date_is_valid(day, month, year):
+        if not self._date_is_valid(date):
             return "lol nope" # TODO: raise an exception here
 
         day_of_year = 0
-        month = month.lower()
+        month = date.month.lower()
 
         for month_key in self.cal_data['months']:
             if month_key == month:
-                day_of_year += day
+                day_of_year += date.day
                 break
             else:
-                day_of_year += self.days_in_month(month_key, year)
+                day_of_year += self.days_in_month(month_key, date.year)
 
         return day_of_year
 
