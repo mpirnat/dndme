@@ -69,6 +69,7 @@ month = "June"
 day = 21
 
 [seasons.autumn_equinox]
+name = "Autumn Equinox"
 month = "September"
 day = 22
 

@@ -106,6 +106,7 @@ month = "Midsummer"
 day = 1
 
 [seasons.autumn_equinox]
+name = "Autumn Equinox"
 month = "Marpenoth"
 day = 30
 

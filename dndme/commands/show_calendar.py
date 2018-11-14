@@ -36,9 +36,17 @@ Examples:
         print("-" * 20)
         for key, month in calendar.cal_data['months'].items():
             days_in_month = calendar.days_in_month(key, year)
+            sdates = calendar.seasonal_dates_in_month(key)
+            if sdates:
+                if days_in_month > 1:
+                    sdates = ', '.join([f"{x['name']}: {x['day']}" for x in sdates])
+                else:
+                    sdates = ', '.join([f"{x['name']}" for x in sdates])
+            sdates = f" - {sdates}" if sdates else ""
+            
             if days_in_month == 0:
                 continue
             elif days_in_month == 1:
-                self.print(f"     <x>{month['name']}</x>")
+                self.print(f"     <x>{month['name']}</x>{sdates}")
             else:
-                print(f"1-{days_in_month} {month['name']}")
+                print(f"1-{days_in_month} {month['name']}{sdates}")

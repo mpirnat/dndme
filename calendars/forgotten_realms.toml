@@ -106,6 +106,7 @@ month = "Kythorn"
 day = 20
 
 [seasons.autumn_equinox]
+name = "Autumn Equinox"
 month = "Eleint"
 day = 21
 

@@ -168,6 +168,10 @@ class Calendar:
                 day_of_year += self.days_in_month(month_key, date.year)
 
         return day_of_year
+    
+    def seasonal_dates_in_month(self, month):
+        return [x for x in self.cal_data['seasons'].values()
+                if x['month'].lower() == month.lower()]
 
 
 # This class is based largely on the awesome Astral library:
