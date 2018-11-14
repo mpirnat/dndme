@@ -3,7 +3,7 @@ from dndme.commands import Command
 from dndme.gametime import Date
 
 
-class Date(Command):
+class AdjustDate(Command):
 
     keywords = ['date']
     help_text = """{keyword}
@@ -51,7 +51,7 @@ Examples:
         if m_set:
             day, month, year = m_set.groups()
             day = int(day)
-            year = int(year) if year else calendar.year
+            year = int(year) if year else calendar.date.year
 
             calendar.set_date(Date(day, month, year))
             print(f"The date is now {calendar}")

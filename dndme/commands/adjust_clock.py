@@ -2,7 +2,7 @@ import re
 from dndme.commands import Command
 
 
-class Clock(Command):
+class AdjustClock(Command):
 
     keywords = ['clock', 'time']
     help_text = """{keyword}
