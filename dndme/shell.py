@@ -150,9 +150,12 @@ def main_loop(encounters, monsters, party, calendar, log):
             day_night = "☀️"
         elif sunset <= (game.clock.hour, game.clock.minute) < dusk:
             day_night = "🌅"
+        
+        n_s = "N" if game.latitude >= 0 else "S"
+        pos = f"🌎 {abs(game.latitude)}°{n_s}"
         return [('class:bottom-toolbar',
             ' dndme 0.0.2 - help for help, exit to exit'
-            f' - 📆 {game.calendar} ⏰ {game.clock} {day_night}')]
+            f' - 📆 {game.calendar} ⏰ {game.clock} {pos} {day_night}')]
 
     style = Style.from_dict({
         'bottom-toolbar': '#333333 bg:#ffcc00',
