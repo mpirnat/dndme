@@ -5,7 +5,7 @@ from dndme.commands import Command
 class ShowCalendar(Command):
 
     keywords = ['calendar', 'cal']
-    help_txt = """{keyword}
+    help_text = """{keyword}
 {divider}
 Summary: Show an overview of the calendar for the current year,
 or a given year.
