@@ -118,3 +118,4 @@ day = 1
 [moons.selune]
 name = "Selûne"
 period = 30.4375
+full_on = "1 Hammer 1488"

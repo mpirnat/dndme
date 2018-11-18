@@ -78,6 +78,7 @@ name = "Winter Solstice"
 month = "December"
 day = 21
 
-[moons.Luna]
+[moons.luna]
 name = "Luna"
 period = "29.53"
+full_on = "1 January 2018"

@@ -139,10 +139,13 @@ def main_loop(encounters, monsters, party, calendar, log):
     load_commands(game, session)
 
     def bottom_toolbar():
-        dawn, _ = game.almanac.dawn(game.calendar.date, game.latitude)
-        sunrise, _ = game.almanac.sunrise(game.calendar.date, game.latitude)
-        sunset, _ = game.almanac.sunset(game.calendar.date, game.latitude)
-        dusk, _ = game.almanac.dusk(game.calendar.date, game.latitude)
+        date = game.calendar.date
+        latitude = game.latitude
+
+        dawn, _ = game.almanac.dawn(date, latitude)
+        sunrise, _ = game.almanac.sunrise(date, latitude)
+        sunset, _ = game.almanac.sunset(date, latitude)
+        dusk, _ = game.almanac.dusk(date, latitude)
         day_night = "✨"
         if dawn <= (game.clock.hour, game.clock.minute) < sunrise:
             day_night = "🌅"
@@ -151,11 +154,28 @@ def main_loop(encounters, monsters, party, calendar, log):
         elif sunset <= (game.clock.hour, game.clock.minute) < dusk:
             day_night = "🌅"
         
+        moon_icons = []
+        for moon_key in game.calendar.cal_data['moons']:
+            phase, _ = game.almanac.moon_phase(moon_key, date)
+            icons = {
+                "full": "🌕",
+                "waning gibbous": "🌖",
+                "third quarter": "🌗",
+                "waning crescent": "🌘",
+                "new": "🌑",
+                "waxing crescent": "🌒",
+                "first quarter": "🌓",
+                "waxing gibbous": "🌔",
+            }
+            moon_icons.append(icons[phase])
+        
         n_s = "N" if game.latitude >= 0 else "S"
         pos = f"🌎 {abs(game.latitude)}°{n_s}"
-        return [('class:bottom-toolbar',
-            ' dndme 0.0.2 - help for help, exit to exit'
-            f' - 📆 {game.calendar} ⏰ {game.clock} {pos} {day_night}')]
+        return [("class:bottom-toolbar",
+                " dndme 0.0.2 - help for help, exit to exit"
+                f" - 📆 {game.calendar}"
+                f" ⏰ {game.clock} {pos} {day_night} "
+                f"{''.join(moon_icons)}")]
 
     style = Style.from_dict({
         'bottom-toolbar': '#333333 bg:#ffcc00',
