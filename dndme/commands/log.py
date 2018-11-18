@@ -1,3 +1,4 @@
+import atexit
 import datetime
 import os
 import sys
@@ -29,6 +30,17 @@ Examples:
         self.log_file = game.log_file
         self.log_message(f"Session started {now:%Y-%m-%d %H:%M:%S}",
                 with_leading_newline=os.path.exists(self.log_file or ''))
+        
+        def sign_off():
+            self.do_command(
+                    "Session ended on",
+                    str(self.game.calendar),
+                    "at",
+                    str(self.game.clock),
+                    "at",
+                    f"{self.game.latitude}°")
+
+        atexit.register(sign_off)
 
     def do_command(self, *args):
         if args:
