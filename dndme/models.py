@@ -171,7 +171,6 @@ class Combat:
 @attrs
 class Game:
     encounters_dir = attrib()
-    monsters_dir = attrib()
     party_file = attrib()
     log_file = attrib()
     calendar = attrib()

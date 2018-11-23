@@ -27,7 +27,7 @@ Usage:
         if len(words) == 2:
             return ['encounter', 'monster', 'party']
         if len(words) == 3 and words[1] == 'monster':
-            monster_loader = MonsterLoader(self.game.monsters_dir)
+            monster_loader = MonsterLoader()
             return monster_loader.get_available_monster_keys()
 
     def do_command(self, *args):
@@ -68,7 +68,7 @@ Usage:
             print(f"Adding to turn order at: {roll}")
             return roll
 
-        monster_loader = MonsterLoader(self.game.monsters_dir)
+        monster_loader = MonsterLoader()
         encounter_loader = EncounterLoader(
                 self.game.encounters_dir,
                 monster_loader,
@@ -114,7 +114,7 @@ Usage:
             print(f"Adding to turn order at: {roll}")
             return roll
 
-        monster_loader = MonsterLoader(self.game.monsters_dir)
+        monster_loader = MonsterLoader()
         count = self.safe_input(
                 "Number of monsters",
                 converter=convert_to_int_or_dice_expr)

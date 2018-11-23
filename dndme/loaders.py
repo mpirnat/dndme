@@ -178,8 +178,8 @@ class EncounterLoader:
 
 class MonsterLoader:
 
-    def __init__(self, base_dir):
-        self.base_dir = base_dir
+    def __init__(self):
+        pass
 
     def load(self, monster_name, count=1):
         # TODO: hey maybe make this more efficient, yeah?
@@ -200,7 +200,7 @@ class MonsterLoader:
         return monsters
 
     def get_available_monster_files(self):
-        monster_files = glob.glob(self.base_dir+'/*.toml')
+        monster_files = glob.glob('content/*/monsters/*.toml')
         return monster_files
 
     def get_available_monster_keys(self):

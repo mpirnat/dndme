@@ -16,9 +16,8 @@ from dndme.gametime import Calendar, Clock, Almanac
 from dndme.models import Game
 
 
-default_encounters_dir = './encounters'
-default_monsters_dir = './monsters'
-default_party_file = './parties/party.toml'
+default_encounters_dir = './content/example/encounters'
+default_party_file = './campaigns/example/party.toml'
 default_calendar_file = './calendars/forgotten_realms.toml'
 
 
@@ -111,9 +110,6 @@ def load_commands(game, session):
 @click.option('--encounters', default=default_encounters_dir,
         help="Directory containing encounters TOML files; "
             f"default: {default_encounters_dir}")
-@click.option('--monsters', default=default_monsters_dir,
-        help="Directory containing monsters TOML files; "
-            f"default: {default_monsters_dir}")
 @click.option('--party', default=default_party_file,
         help="Player character party TOML file to use; "
             f"default: {default_party_file}")
@@ -123,14 +119,14 @@ def load_commands(game, session):
 @click.option('--log', default=None,
         help="Campaign log filename; will just log in memory"
             "if omitted")
-def main_loop(encounters, monsters, party, calendar, log):
+def main_loop(encounters, party, calendar, log):
 
     cal_data = toml.load(open(calendar, 'r'))
     calendar = Calendar(cal_data)
     clock = Clock(cal_data['hours_in_day'], cal_data['minutes_in_hour'])
     almanac = Almanac(calendar)
 
-    game = Game(encounters_dir=encounters, monsters_dir=monsters,
+    game = Game(encounters_dir=encounters,
             party_file=party, log_file=log, calendar=calendar, clock=clock,
             almanac=almanac, latitude=45)
 
