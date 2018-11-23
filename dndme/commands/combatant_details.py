@@ -76,15 +76,15 @@ Examples:
             if t.skills:
                 self.print("<x>Skills:</x> " + \
                         ', '.join([f"{x}: {mf(y)}"
-                                for x, y in t.skills.items()]))
-            if t.immune:
-                self.print(f"<x>Immune:</x> {', '.join(t.immune)}")
-            if t.resist:
-                self.print(f"<x>Resist:</x> {', '.join(t.resist)}")
+                               for x, y in t.skills.items()]))
             if t.vulnerable:
-                self.print(f"<x>Vulnerable:</x> {', '.join(t.vulnerable)}")
+                self.print(f"<x>Vulnerable:</x> {t.vulnerable}")
+            if t.immune:
+                self.print(f"<x>Immune:</x> {t.immune}")
+            if t.resist:
+                self.print(f"<x>Resist:</x> {t.resist}")
             if t.languages:
-                self.print(f"<x>Languages:</x> {', '.join(t.languages)}")
+                self.print(f"<x>Languages:</x> {t.languages}")
 
             if t.conditions:
                 conds = ', '.join([f"{x}:{y}"

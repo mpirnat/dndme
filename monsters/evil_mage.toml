@@ -1,23 +1,24 @@
 name = "evil_mage"
-race = "human"
-cr = 1
-xp = 200
-mtype = "humanoid:human"
 size = "medium"
+mtype = "humanoid:human"
+race = "human"
 alignment = "lawful evil"
+ac = 12
+armor = ""
+max_hp = "5d8"
+xp = 200
 str = 9
 dex = 14
 con = 11
 int = 17
 wis = 12
 cha = 11
-max_hp = "5d8"
-ac = 12
-armor = []
+vulnerable = ""
+resist = ""
+immune = ""
+languages = "Common, Draconic, Dwarvish, Elvish"
+cr = 1
 speed = 30
-resist = []
-immune = []
-languages = ["Common", "Draconic", "Dwarvish", "Elvish"]
 notes = """
 Evil mages hunger for arcane power and dwell in isolated places, where
 they can perform terrible magical experiments without interference.

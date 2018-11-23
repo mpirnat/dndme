@@ -1,23 +1,24 @@
 name = "young_green_dragon"
-race = "dragon"
-cr = 8
-xp = 3900
-mtype = "dragon"
 size = "large"
+mtype = "dragon"
+race = "dragon"
 alignment = "lawful evil"
+ac = 18
+armor = "natural armor"
+max_hp = "16d10+48"
+speed = "land: 40, fly: 60, swim: 40"
 str = 19
 dex = 12
 con = 17
 int = 16
 wis = 13
 cha = 15
-max_hp = "16d10+48"
-ac = 18
-armor = ["natural armor"]
-speed = ["land: 40", "fly: 60", "swim: 40"]
-resist = []
-immune = ["poison", "poisoned"]
-languages = ["Common", "Draconic"]
+vulnerable = ""
+resist = ""
+immune = "poison, poisoned"
+languages = "Common, Draconic"
+cr = 8
+xp = 3900
 notes = """
 Thoroughly evil, green dragons delight in subverting and corrupting the
 good-hearted. They prefer to dwell in ancient forests.

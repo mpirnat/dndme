@@ -1,23 +1,24 @@
 name = "goblin"
-race = "goblin"
-cr = 0.25
-xp = 50
-mtype = "humanoid:goblinoid"
 size = "small"
+mtype = "humanoid:goblinoid"
+race = "goblin"
 alignment = "neutral evil"
+ac = 15
+armor = "leather armor, shield"
+max_hp = "2d6"
+speed = 30
 str = 8
 dex = 14
 con = 10
 int = 10
 wis = 8
 cha = 8
-max_hp = "2d6"
-ac = 15
-armor = ["leather armor", "shield"]
-speed = 30
-resist = []
-immune = []
-languages = ["Common", "Goblin"]
+vulnerable = ""
+resist = ""
+immune = ""
+languages = "Common, Goblin"
+cr = 0.25
+xp = 50
 notes = """
 Goblins are black-hearted, gather in overwhelming numbers, and crave power,
 which they abuse.
