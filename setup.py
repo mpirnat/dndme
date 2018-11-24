@@ -6,7 +6,7 @@ import setuptools
 
 setup(
     name='dndme',
-    version='0.0.2',
+    version='0.0.3',
     description='Tools for helping the DM run Dungeons & Dragons sessions.',
     author='Mike Pirnat',
     packages=setuptools.find_packages(),
@@ -37,6 +37,7 @@ setup(
         'console_scripts': [
             'dndme = dndme.shell:main_loop',
             'dndme-new-campaign = dndme.new_campaign:main',
+            'dndme-new-content = dndme.new_content:main:',
         ],
     }
 )
