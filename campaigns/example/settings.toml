@@ -1,4 +1,4 @@
 calendar_file = "calendars/forgotten_realms.toml"
-log_file = "campaigns/example/log.md"
+#log_file = "campaigns/example/log.md"
 party_file = "campaigns/example/party.toml"
 encounters = "content/example/encounters"
