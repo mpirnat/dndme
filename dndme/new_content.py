@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 
 import click
@@ -26,20 +27,20 @@ def create_content_dir(name):
 
 def create_encounters_dir(content_dir):
     encounters_dir = f"{content_dir}/encounters"
-    if os.path.exists(encounters_dir):
-        print(f"Encounters directory {encounters_dir} already exists")
-        sys.exit(1)
-    
     os.mkdir(encounters_dir)
+
+    template_file = f"{base_dir}/templates/encounter.toml"
+    destination_file = f"{encounters_dir}/TEMPLATE"
+    shutil.copyfile(template_file, destination_file)
 
 
 def create_monsters_dir(content_dir):
     monsters_dir = f"{content_dir}/monsters"
-    if os.path.exists(monsters_dir):
-        print(f"Monsters directory {monsters_dir} already exists")
-        sys.exit(1)
-    
     os.mkdir(monsters_dir)
+
+    template_file = f"{base_dir}/templates/monster.toml"
+    destination_file = f"{monsters_dir}/TEMPLATE"
+    shutil.copyfile(template_file, destination_file)
 
 
 if __name__ == '__main__':

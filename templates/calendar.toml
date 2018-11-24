@@ -1,0 +1,40 @@
+name = "Calendar"
+hours_in_day = 24
+minutes_in_hour = 60
+leap_year_rule = "year % 4 == 0"
+axial_tilt = 20
+solar_days_in_year = 60.25
+
+default_day = 1
+default_month = "Month1"
+default_year = 1000
+
+[months.month1]
+name = "Month1"
+days = 60
+leap_year_days = 61
+
+[seasons.spring_equinox]
+name = "Spring Equinox"
+month = "Month1"
+day = 15
+
+[seasons.summer_solstice]
+name = "Summer Solstice"
+month = "Month1"
+day = 30
+
+[seasons.autumn_equinox]
+name = "Autumn Equinox"
+month = "Month1"
+day = 45
+
+[seasons.winter_solstice]
+name = "Winter Solstice"
+month = "Month1"
+day = 60
+
+[moons.moon1]
+name = "Moon1"
+period = "30"
+full_on = "1 Month1 1000"

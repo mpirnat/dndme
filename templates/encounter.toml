@@ -1,0 +1,10 @@
+name = ""
+location = ""
+
+notes = """
+"""
+
+[groups.group1]
+monster = ""
+count = 1
+max_hp = [1]

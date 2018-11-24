@@ -1,0 +1,61 @@
+name = ""
+size = ""
+mtype = ""
+race = ""
+alignment = ""
+ac = 10
+armor = ""
+max_hp = "1d8"
+speed = 30
+str = 10
+dex = 10
+con = 10
+int = 10
+wis = 10
+cha = 10
+vulnerable = ""
+resist = ""
+immune = ""
+languages = ""
+cr = 1
+xp = 1
+notes = """
+"""
+
+[skills]
+skill = 1
+
+[senses]
+perception = 10
+
+[features.feature]
+name = ""
+description = """
+"""
+
+[features.spellcasting]
+name = "Spellcasting"
+description = """
+"""
+cantrips = []
+spells = [
+    [],
+    []
+]
+slots = [0, 0]
+slots_used = [0, 0]
+
+[actions.action]
+name = ""
+description = """
+"""
+
+[legendary_actions.action]
+name = ""
+description = """
+"""
+
+[reactions.reaction]
+name = ""
+description = """
+"""

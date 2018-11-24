@@ -1,0 +1,13 @@
+[Character]
+name = "name"
+race = "race"
+cclass = "class"
+level = 1
+max_hp = 10
+cur_hp = 10
+ac = 10
+initiative_mod = 0
+
+[Character.senses]
+darkvision = 0
+perception = 10

@@ -1,0 +1,4 @@
+calendar_file = "calendars/forgotten_realms.toml"
+log_file = "campaigns/CAMPAIGN/log.md"
+party_file = "campaigns/CAMPAIGN/party.toml"
+encounters = "content/example/encounters"
