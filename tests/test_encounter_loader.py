@@ -8,7 +8,7 @@ from dndme.loaders import EncounterLoader
 def encounter_loader():
     """Create a testing encounter loader"""
     return EncounterLoader(
-        base_dir='encounters',
+        base_dir='content/example/encounters',
         monster_loader=None
     )
 

@@ -37,7 +37,7 @@ setup(
         'console_scripts': [
             'dndme = dndme.shell:main_loop',
             'dndme-new-campaign = dndme.new_campaign:main',
-            'dndme-new-content = dndme.new_content:main:',
+            'dndme-new-content = dndme.new_content:main',
         ],
     }
 )
