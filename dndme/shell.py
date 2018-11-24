@@ -15,10 +15,13 @@ from prompt_toolkit.styles import Style
 from dndme.gametime import Calendar, Clock, Almanac
 from dndme.models import Game
 
+base_dir = os.path.normpath(os.path.join( os.path.dirname(__file__), '..'))
 
-default_encounters_dir = './content/example/encounters'
-default_party_file = './campaigns/example/party.toml'
-default_calendar_file = './calendars/forgotten_realms.toml'
+default_campaign = 'example'
+default_encounters_dir = f'{base_dir}/content/example/encounters'
+default_party_file = f'{base_dir}/campaigns/example/party.toml'
+default_calendar_file = f'{base_dir}/calendars/forgotten_realms.toml'
+default_latitude = 41
 
 
 class DnDCompleter(Completer):
@@ -107,28 +110,46 @@ def load_commands(game, session):
 
 
 @click.command()
-@click.option('--encounters', default=default_encounters_dir,
-        help="Directory containing encounters TOML files; "
-            f"default: {default_encounters_dir}")
-@click.option('--party', default=default_party_file,
-        help="Player character party TOML file to use; "
-            f"default: {default_party_file}")
-@click.option('--calendar', default=default_calendar_file,
-        help="Calendar definition TOML file to use;"
-            f"default: {default_calendar_file}")
-@click.option('--log', default=None,
-        help="Campaign log filename; will just log in memory"
-            "if omitted")
-def main_loop(encounters, party, calendar, log):
+@click.option('--campaign', default=default_campaign,
+        help="Campaign settings to load; "
+        f"default: {default_campaign}")
+def main_loop(campaign):
+    # Load the campaign
+    campaign_file = f'{base_dir}/campaigns/{campaign}/settings.toml'
+    campaign_data = toml.load(open(campaign_file, 'r'))
 
-    cal_data = toml.load(open(calendar, 'r'))
+    # Load the calendar
+    calendar_file = default_calendar_file
+    if 'calendar_file' in campaign_data:
+        calendar_file = f"{base_dir}/{campaign_data['calendar_file']}"
+    cal_data = toml.load(open(calendar_file, 'r'))
     calendar = Calendar(cal_data)
+
+    # Load the clock
     clock = Clock(cal_data['hours_in_day'], cal_data['minutes_in_hour'])
+
+    # Load the almanac (sunrise/sunset times, moon phases)
     almanac = Almanac(calendar)
 
-    game = Game(encounters_dir=encounters,
-            party_file=party, log_file=log, calendar=calendar, clock=clock,
-            almanac=almanac, latitude=45)
+    # Load other things from the campaign settings data...
+    encounters_dir = default_encounters_dir
+    if 'encounters' in campaign_data:
+        encounters_dir = f"{base_dir}/{campaign_data['encounters']}"
+
+    party_file = default_party_file
+    if 'party_file' in campaign_data:
+        party_file = f"{base_dir}/{campaign_data['party_file']}"
+
+    log_file = None
+    if 'log_file' in campaign_data:
+        log_file = f"{base_dir}/{campaign_data['log_file']}"
+
+    game = Game(
+            encounters_dir=encounters_dir,
+            party_file=party_file, log_file=log_file,
+            calendar=calendar, clock=clock,
+            almanac=almanac,
+            latitude=default_latitude)
 
     session = PromptSession()
 
