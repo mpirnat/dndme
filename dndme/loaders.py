@@ -45,6 +45,8 @@ class EncounterLoader:
         self._set_armor(group, monsters)
         self._set_alignment(group, monsters)
         self._set_race(group, monsters)
+        self._set_languages(group, monsters)
+        self._set_xp(group, monsters)
         self._add_attributes(group, monsters)
         self._remove_attributes(group, monsters)
         return monsters
@@ -124,6 +126,16 @@ class EncounterLoader:
         if 'race' in group:
             for monster in monsters:
                 monster.race = group['race']
+
+    def _set_languages(self, group, monsters):
+        if 'languages' in group:
+            for monster in monsters:
+                monster.languages = group['languages']
+
+    def _set_xp(self, group, monsters):
+        if 'xp' in group:
+            for monster in monsters:
+                monster.xp = group['xp']
 
     def _add_attributes(self, group, monsters):
         for monster in monsters:
