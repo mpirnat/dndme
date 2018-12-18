@@ -115,6 +115,7 @@ class Monster(Combatant):
     languages = attrib(default=attr_factory(list))
     features = attrib(default=attr_factory(dict))
     actions = attrib(default=attr_factory(dict))
+    lair_actions = attrib(default=attr_factory(dict))
     legendary_actions = attrib(default=attr_factory(dict))
     reactions = attrib(default=attr_factory(dict))
     notes = attrib(default="")
@@ -160,7 +161,7 @@ class Combat:
     def get_target(self, name):
         return self.characters.get(name) or \
                 self.monsters.get(name)
-    
+
     @property
     def current_combatant(self):
         if self.tm and self.tm.cur_turn:

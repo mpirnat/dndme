@@ -126,6 +126,14 @@ Examples:
                     self.print(a['description'].strip())
                     print()
 
+            if t.lair_actions:
+                self.print("<x1>Lair Actions</x1>")
+                self.print("-----------------")
+                for a in t.lair_actions.values():
+                    self.print(f"<x>{a['name']}</x>")
+                    self.print(a['description'].strip())
+                    print()
+
             if t.reactions:
                 self.print("<x1>Reactions</x1>")
                 self.print("---------")

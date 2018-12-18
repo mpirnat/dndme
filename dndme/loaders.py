@@ -160,8 +160,9 @@ class EncounterLoader:
             except KeyError:
                 pass
             except ValueError:
-                if hasattr(monster, attr):
-                    delattr(monster, attr)
+                for monster in monsters:
+                    if hasattr(monster, attr):
+                        delattr(monster, attr)
 
     def _set_origin(self, encounter, monsters):
         for monster in monsters:
