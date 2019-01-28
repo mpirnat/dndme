@@ -52,3 +52,4 @@ Examples:
             target.cur_hp += amount
             print(f"Okay; healed {target_name}. "
                     f"Now: {target.cur_hp}/{target.max_hp}")
+            self.game.changed = True

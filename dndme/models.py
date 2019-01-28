@@ -72,6 +72,20 @@ class Combatant:
 
         return conditions_removed
 
+    @property
+    def status(self):
+        hp_percent = self.cur_hp / self.max_hp
+        if hp_percent >= 0.9:
+            return "healthy"
+        elif hp_percent > 0.5:
+            return "injured"
+        elif hp_percent > 0.1:
+            return "bloodied"
+        elif hp_percent > 0:
+            return "critical"
+        else:
+            return "down"
+
 
 @attrs
 class Character(Combatant):

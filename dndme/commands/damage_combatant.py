@@ -46,6 +46,7 @@ Examples:
             target.cur_hp -= amount
             print(f"Okay; damaged {target_name}. "
                     f"Now: {target.cur_hp}/{target.max_hp}")
+            self.game.changed = True
 
             if target_name in combat.monsters and target.cur_hp == 0:
                 if (self.session.prompt(
