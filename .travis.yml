@@ -8,7 +8,6 @@ before_install:
   - pip install poetry
   - poetry install -v
 install:
-  - poetry add tox-travis
   - poetry install
 script: poetry run tox
 notifications:
