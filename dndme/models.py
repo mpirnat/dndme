@@ -9,6 +9,7 @@ from dndme import dice
 @attrs
 class Combatant:
     name = attrib(default="")
+    alias = attrib(default="")
     race = attrib(default="")
     ac = attrib(default=0)
 

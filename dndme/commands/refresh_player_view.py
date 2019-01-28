@@ -24,7 +24,7 @@ Usage: {keyword}
             for combatant in combatants:
                 data['combatants'].append({
                     'roll': roll,
-                    'name': combatant.name,
+                    'name': combatant.alias or combatant.name,
                     'conditions': [f"{x}:{y}" if y != inf else x
                             for x, y in combatant.conditions.items()],
                 })
