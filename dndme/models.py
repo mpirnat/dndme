@@ -174,6 +174,8 @@ class Game:
     encounters_dir = attrib()
     party_file = attrib()
     log_file = attrib()
+    game_state_file = attrib()
+
     calendar = attrib()
     clock = attrib()
     almanac = attrib()
@@ -184,6 +186,8 @@ class Game:
     combat = attrib()
 
     commands = attrib(default={})
+
+    changed = attrib(default=True)
 
     @combat.default
     def _combat(self):

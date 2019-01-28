@@ -1,4 +1,5 @@
 from importlib import import_module
+import json
 import os
 import pkgutil
 import sys
@@ -109,6 +110,39 @@ def load_commands(game, session):
             instance = loaded_class(game, session)
 
 
+def emit_state(game):
+    data = {}
+
+    data['combatants'] = []
+    turn_order = game.combat.tm.turn_order if game.combat.tm else []
+    for roll, combatants in turn_order:
+        for combatant in combatants:
+            data['combatants'].append({
+                'roll': roll,
+                'name': combatant.name,
+                'conditions': [f"{x}:{y}" if y != inf else x
+                        for x, y in combatant.conditions.items()],
+            })
+
+    if game.combat.tm and game.combat.tm.cur_turn:
+        turn = game.combat.tm.cur_turn
+        data['round'] = turn[0]
+        data['initiative'] = turn[1]
+        data['cur_combatant'] = turn[2].name
+    else:
+        data['round'] = None
+        data['initiative'] = None
+        data['cur_combatant'] = None
+
+    data['date'] = str(game.calendar)
+    data['time'] = str(game.clock)
+
+    print(json.dumps(data, indent=4))
+
+    #with open(game.game_state_file, 'w') as f:
+    #    json.dump(data, f, indent=1)
+
+
 @click.command()
 @click.option('--campaign', default=default_campaign,
         help="Campaign settings to load; "
@@ -144,9 +178,14 @@ def main_loop(campaign):
     if 'log_file' in campaign_data:
         log_file = f"{base_dir}/{campaign_data['log_file']}"
 
+    game_state_file = None
+    if 'game_state_file' in campaign_data:
+        game_state_file = f"{base_dir}/{campaign_data['game_state_file']}"
+
     game = Game(
             encounters_dir=encounters_dir,
             party_file=party_file, log_file=log_file,
+            game_state_file=game_state_file,
             calendar=calendar, clock=clock,
             almanac=almanac,
             latitude=default_latitude)
@@ -170,7 +209,7 @@ def main_loop(campaign):
             day_night = "☀️"
         elif sunset <= (game.clock.hour, game.clock.minute) < dusk:
             day_night = "🌅"
-        
+
         moon_icons = []
         for moon_key in game.calendar.cal_data['moons']:
             phase, _ = game.almanac.moon_phase(moon_key, date)
@@ -185,7 +224,7 @@ def main_loop(campaign):
                 "waxing gibbous": "🌔",
             }
             moon_icons.append(icons[phase])
-        
+
         n_s = "N" if game.latitude >= 0 else "S"
         pos = f"🌎 {abs(game.latitude)}°{n_s}"
         return [("class:bottom-toolbar",
@@ -220,6 +259,10 @@ def main_loop(campaign):
                 continue
 
             command.do_command(*user_input[1:])
+            if game.changed:
+                emit_state(game)
+                game.changed = False
+
             print()
         except (EOFError, KeyboardInterrupt):
             pass
