@@ -4,8 +4,14 @@ language: python
 python:
 - '3.6'
 - '3.7'
-install: pip install tox-travis
-script: tox
+before_install:
+  - pip install pip -U
+  - pip install poetry
+  - poetry install -v
+install:
+  - poetry add tox-travis
+  - poetry install
+script: poetry run tox
 notifications:
   slack:
     rooms:

@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "dndme"
+version = "0.1.0"
+description = "Tools for DMing Dungeons & Dragons"
+authors = ["Mike Pirnat"]
+license = "MIT"
+readme = 'README.md'
+repository = 'https://github.com/mpirnat/dndme'
+keywords = ['dndme', 'dnd', 'd&d']
+
+include = ["calendars/*", "campaigns/*", "content/*", "templates/*", "tests/*"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+click = "=6.7"
+prompt-toolkit = "=2.0.6"
+pytoml = "=0.1.14"
+wcwidth = "=0.1.7"
+attrs = "^18.2"
+tox-travis = "^0.11.0"
+
+[tool.poetry.dev-dependencies]
+pip-tools = "^3.3"
+tox = "^3.7"
+pytest-cov = "^2.6"
+pylint = "^2.2"
+pytest-runner = "^4.2"
+pytest = "^4.1"
+coverage = "^4.5"
+
+[tool.poetry.scripts]
+dndme = 'dndme.shell:main_loop'
+dndme-new-campaign = 'dndme.new_campaign:main'
+dndme-new-content = 'dndme.new_content:main'
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
