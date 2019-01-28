@@ -17,7 +17,6 @@ prompt-toolkit = "=2.0.6"
 pytoml = "=0.1.14"
 wcwidth = "=0.1.7"
 attrs = "^18.2"
-tox-travis = "^0.11.0"
 
 [tool.poetry.dev-dependencies]
 pip-tools = "^3.3"
@@ -27,6 +26,7 @@ pylint = "^2.2"
 pytest-runner = "^4.2"
 pytest = "^4.1"
 coverage = "^4.5"
+tox-travis = "^0.11.0"
 
 [tool.poetry.scripts]
 dndme = 'dndme.shell:main_loop'
