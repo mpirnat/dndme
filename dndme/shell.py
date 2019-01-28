@@ -1,5 +1,4 @@
 from importlib import import_module
-import json
 import os
 import pkgutil
 import sys
@@ -108,39 +107,6 @@ def load_commands(game, session):
 
             # Create an instance of the class
             instance = loaded_class(game, session)
-
-
-def emit_state(game):
-    data = {}
-
-    data['combatants'] = []
-    turn_order = game.combat.tm.turn_order if game.combat.tm else []
-    for roll, combatants in turn_order:
-        for combatant in combatants:
-            data['combatants'].append({
-                'roll': roll,
-                'name': combatant.name,
-                'conditions': [f"{x}:{y}" if y != inf else x
-                        for x, y in combatant.conditions.items()],
-            })
-
-    if game.combat.tm and game.combat.tm.cur_turn:
-        turn = game.combat.tm.cur_turn
-        data['round'] = turn[0]
-        data['initiative'] = turn[1]
-        data['cur_combatant'] = turn[2].name
-    else:
-        data['round'] = None
-        data['initiative'] = None
-        data['cur_combatant'] = None
-
-    data['date'] = str(game.calendar)
-    data['time'] = str(game.clock)
-
-    print(json.dumps(data, indent=4))
-
-    #with open(game.game_state_file, 'w') as f:
-    #    json.dump(data, f, indent=1)
 
 
 @click.command()
@@ -259,9 +225,9 @@ def main_loop(campaign):
                 continue
 
             command.do_command(*user_input[1:])
-            if game.changed:
-                emit_state(game)
-                game.changed = False
+
+            if game.changed and 'refresh' in game.commands:
+                game.commands['refresh'].do_command()
 
             print()
         except (EOFError, KeyboardInterrupt):
