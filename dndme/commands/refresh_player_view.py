@@ -45,9 +45,10 @@ Usage: {keyword}
         data['date'] = str(self.game.calendar)
         data['time'] = str(self.game.clock)
 
-        print(json.dumps(data, indent=4))
+        #print(json.dumps(data, indent=4))
 
-        #with open(game.game_state_file, 'w') as f:
-        #    json.dump(data, f, indent=1)
+        json_filename = f"{self.game.base_dir}/player_view.json"
+        with open(json_filename, 'w') as f:
+            json.dump(data, f, indent=4)
 
         self.game.changed = False

@@ -15,7 +15,7 @@ from prompt_toolkit.styles import Style
 from dndme.gametime import Calendar, Clock, Almanac
 from dndme.models import Game
 
-base_dir = os.path.normpath(os.path.join( os.path.dirname(__file__), '..'))
+base_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
 
 default_campaign = 'example'
 default_encounters_dir = f'{base_dir}/content/example/encounters'
@@ -144,14 +144,10 @@ def main_loop(campaign):
     if 'log_file' in campaign_data:
         log_file = f"{base_dir}/{campaign_data['log_file']}"
 
-    game_state_file = None
-    if 'game_state_file' in campaign_data:
-        game_state_file = f"{base_dir}/{campaign_data['game_state_file']}"
-
     game = Game(
+            base_dir=base_dir,
             encounters_dir=encounters_dir,
             party_file=party_file, log_file=log_file,
-            game_state_file=game_state_file,
             calendar=calendar, clock=clock,
             almanac=almanac,
             latitude=default_latitude)

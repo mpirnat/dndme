@@ -177,10 +177,10 @@ class Combat:
 
 @attrs
 class Game:
+    base_dir = attrib()
     encounters_dir = attrib()
     party_file = attrib()
     log_file = attrib()
-    game_state_file = attrib()
 
     calendar = attrib()
     clock = attrib()
