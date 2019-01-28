@@ -6,9 +6,8 @@ python:
 before_install:
   - pip install pip -U
   - pip install poetry
-  - poetry install -v
 install:
-  - poetry install
+  - poetry install -v
 script: poetry run tox
 notifications:
   slack:
