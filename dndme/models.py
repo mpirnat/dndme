@@ -79,6 +79,9 @@ class Character(Combatant):
     level = attrib(default=1)
     initiative_mod = attrib(default=0)
 
+    visible_in_player_view = attrib(default=True)
+
+
 @attrs
 class Monster(Combatant):
     cr = attrib(default=0)
@@ -120,7 +123,9 @@ class Monster(Combatant):
     legendary_actions = attrib(default=attr_factory(dict))
     reactions = attrib(default=attr_factory(dict))
     notes = attrib(default="")
+
     origin = attrib(default="origin unknown")
+    visible_in_player_view = attrib(default=False)
 
 
 @attrs

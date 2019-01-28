@@ -22,6 +22,9 @@ Usage: {keyword}
         turn_order = combat.tm.turn_order if combat.tm else []
         for roll, combatants in turn_order:
             for combatant in combatants:
+                if not combatant.visible_in_player_view:
+                    continue
+
                 data['combatants'].append({
                     'roll': roll,
                     'name': combatant.alias or combatant.name,
