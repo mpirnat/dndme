@@ -414,15 +414,16 @@ For example:
     git clone [repository url] ~/dndme
     cd ~/dndme
 
-    # create the virtualenv
-    python3.6 -m virtualenv .venv
-    . .venv/bin/activate
+    pip install poetry
 
     # install dndme
-    pip install -e .[dev,test]
+    poetry install [--no-dev]
+
+    # run dndme
+    poetry run dndme
 
     # run the tests
-    tox
+    poetry run tox
 ```
 
 The above is only meant as a rough guide. Feel free to use whichever tools
@@ -437,12 +438,18 @@ Tests are runnable with either `pytest` or `tox`:
 
 Testing command examples can be found in tox.ini under the "commands" heading.
 
+Tox tests can be run with:
+
+```
+poetry run tox
+```
+
 ### Packaging
 
-Package requirements are specified in setup.py and their pinned versions can be built
-by running `pip-compile -r` from the same location as the setup.py file.
+Package requirements are specified in pyproject.toml
 
 Source and wheel artifacts can be built for distribution by running:
 
-* `python setup.py sdist`
-* `python setup.py bdist_wheel`
+```
+poetry build
+```
