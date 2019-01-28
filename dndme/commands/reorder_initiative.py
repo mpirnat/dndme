@@ -59,3 +59,4 @@ Example: {keyword} 17 Frodo Sam Gandalf
         combat.tm.initiative[i] = new_initiative
         print(f"Okay; updated {i}: "
                 f"{', '.join([x.name for x in combat.tm.initiative[i]])}")
+        self.game.changed = True

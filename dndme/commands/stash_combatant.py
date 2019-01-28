@@ -44,3 +44,4 @@ Examples:
 
             self.game.stash[target_name] = target
             print(f"Stashed {target_name}")
+            self.game.changed = True

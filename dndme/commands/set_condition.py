@@ -87,3 +87,4 @@ Examples:
 
         target.set_condition(condition, duration=duration)
         print(f"Okay; set condition '{condition}' on {target_name}.")
+        self.game.changed = True

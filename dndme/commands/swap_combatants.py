@@ -41,3 +41,4 @@ Example: {keyword} Sam Frodo
 
         combat.tm.swap(combatant1, combatant2)
         print(f"Okay; swapped {name1} and {name2}.")
+        self.game.changed = True

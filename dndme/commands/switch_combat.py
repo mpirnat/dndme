@@ -37,3 +37,4 @@ Examples:
 
         print(f"Okay; switched to combat {switch_to + 1}")
         Show.show_party(self)
+        self.game.changed = True

@@ -35,10 +35,12 @@ Examples:
                     combat.tm.remove_combatant(target)
                 combat.monsters.pop(target_name)
                 print(f"Removed {target_name}")
+                self.game.changed = True
             elif target_name in self.game.stash and \
                     hasattr(self.game.stash[target_name], 'mtype'):
                 self.game.stash.pop(target_name)
                 print(f"Removed {target_name} from stash")
+                self.game.changed = True
             else:
                 print(f"Invalid target: {target_name}")
                 continue

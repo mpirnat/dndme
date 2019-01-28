@@ -74,6 +74,8 @@ Example: {keyword} Frodo Sam
         print("Okay; created new combat with "
                 f"{', '.join(dest_combat.combatant_names)}")
 
+        self.game.changed = True
+
         # If we split the current turnholder to a separate combat group,
         # we should automatically advance the turn to the next remaining
         # combatant.

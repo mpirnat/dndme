@@ -99,3 +99,5 @@ Example: {keyword} Aragorn Gimli Legolas 1
 
         if source_combat.tm:
             source_combat.tm.remove_empty_initiatives()
+
+        self.game.changed = True

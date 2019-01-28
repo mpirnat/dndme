@@ -41,3 +41,4 @@ Example: {keyword} Frodo prone
 
         target.unset_condition(condition)
         print(f"Okay; removed condition '{condition}' from {target_name}.")
+        self.game.changed = True

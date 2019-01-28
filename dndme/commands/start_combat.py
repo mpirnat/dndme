@@ -45,3 +45,4 @@ Usage: {keyword}
             print(f"{roll}: {', '.join([x.name for x in combatants])}")
 
         combat.tm.turns = combat.tm.generate_turns()
+        self.game.changed = True

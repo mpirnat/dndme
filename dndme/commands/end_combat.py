@@ -42,3 +42,5 @@ Usage: {keyword}
 
         self.game.clock.adjust_time(minutes=math.ceil(duration_sec / 60))
         print(f"Game time is now {self.game.clock}")
+
+        self.game.changed = True

@@ -38,6 +38,7 @@ Examples:
                 combat.characters[target_name] = target
 
             print(f"Unstashed {target_name}")
+            self.game.changed = True
 
             if combat.tm:
                 roll_advice = f"1d20{target.initiative_mod:+}" \

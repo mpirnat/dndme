@@ -40,3 +40,4 @@ Example: {keyword} Frodo 12
 
         combat.tm.move(target, new_initiative)
         print(f"Okay; moved {name} to {new_initiative}.")
+        self.game.changed = True

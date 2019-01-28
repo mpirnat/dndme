@@ -36,3 +36,4 @@ Examples:
             combat.monsters.pop(target_name)
             combat.defeated.append(target)
             print(f"Defeated {target_name}")
+            self.game.changed = True

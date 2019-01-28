@@ -32,3 +32,4 @@ Usage: {keyword}
             turn = next(combat.tm.turns)
             combat.tm.cur_turn = turn
             Show.show_turn(self)
+            self.game.changed = True

@@ -45,8 +45,9 @@ Examples:
             days = int(m_adjustment.groups()[0])
             calendar.adjust_date(days)
             print(f"The date is now {calendar}")
+            self.game.changed = True
             return
-        
+
         m_set = re.match('(\d+) (\w+) *(\d*)', data)
         if m_set:
             day, month, year = m_set.groups()
@@ -55,6 +56,7 @@ Examples:
 
             calendar.set_date(Date(day, month, year))
             print(f"The date is now {calendar}")
+            self.game.changed = True
             return
 
         print(f"Invalid date: {data}")
