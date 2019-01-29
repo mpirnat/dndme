@@ -1,6 +1,7 @@
 from importlib import import_module
 import os
 import pkgutil
+import subprocess
 import sys
 
 import click
@@ -113,7 +114,8 @@ def load_commands(game, session):
 @click.option('--campaign', default=default_campaign,
         help="Campaign settings to load; "
         f"default: {default_campaign}")
-def main_loop(campaign):
+@click.option('--player-view/--no-player-view', default=False)
+def main_loop(campaign, player_view):
     # Load the campaign
     campaign_file = f'{base_dir}/campaigns/{campaign}/settings.toml'
     campaign_data = toml.load(open(campaign_file, 'r'))
@@ -190,7 +192,7 @@ def main_loop(campaign):
         n_s = "N" if game.latitude >= 0 else "S"
         pos = f"🌎 {abs(game.latitude)}°{n_s}"
         return [("class:bottom-toolbar",
-                " dndme 0.0.2 - help for help, exit to exit"
+                " dndme 0.0.4 - help for help, exit to exit"
                 f" - 📆 {game.calendar}"
                 f" ⏰ {game.clock} {pos} {day_night} "
                 f"{''.join(moon_icons)}")]
@@ -200,6 +202,19 @@ def main_loop(campaign):
     })
 
     kb = KeyBindings()
+
+    if player_view:
+        print("Starting player view on port 5000...")
+        server_env = os.environ.copy()
+        server_env['FLASK_APP'] = f"{base_dir}/dndme/http_api.py"
+        server_env['FLASK_SUPPRESS_LOGGING'] = "The adults are talking"
+        server_process = subprocess.Popen(
+                ['flask', 'run'],
+                env=server_env,
+                stdout=subprocess.DEVNULL
+        )
+        game.server_process = server_process
+        print("Started! Browse to http://localhost:5000/player-view")
 
     while True:
         try:
