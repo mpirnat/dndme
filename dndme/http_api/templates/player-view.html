@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<title>dndme: player view</title>
+</head>
+<body>
+
+    <div id="combatants"></div>
+
+    <div id="misc-info"></div>
+
+    <div id="message"></div>
+
+    <script>
+    function getData() {
+        fetch('/api/player-view')
+            .then(function(response) {
+                if(response.ok) {
+                    response.json().then(function(data) {
+                        showUI(data);
+                    });
+                }
+                else {
+                    response.json().then(function(data) {
+                        showError(data);
+                    });
+                }
+            });
+    }
+
+    function showUI(data) {
+        console.log('showUI');
+        document.getElementById('message').innerHTML = '';
+        document.getElementById('combatants').innerHTML = JSON.stringify(data);
+        timerId = setTimeout(getData, 2000);
+    }
+
+    function showError(data) {
+        console.log('showError');
+        document.getElementById('combatants').innerHTML = '';
+        document.getElementById('misc-info').innerHTML = '';
+        document.getElementById('message').innerHTML = data.error;
+        timerId = setTimeout(getData, 5000);
+    }
+
+    var timerId = setTimeout(getData, 2000);
+    </script>
+</body>
+</html>
