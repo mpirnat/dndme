@@ -1,4 +1,5 @@
 import json
+from math import inf
 from dndme.commands import Command
 
 
@@ -27,21 +28,22 @@ Usage: {keyword}
 
                 data['combatants'].append({
                     'roll': roll,
-                    'name': combatant.alias or combatant.name,
+                    'name': combatant.name,
+                    'alias': combatant.alias,
                     'status': combatant.status,
                     'conditions': [f"{x}:{y}" if y != inf else x
-                            for x, y in combatant.conditions.items()],
+                            for x, y in sorted(combatant.conditions.items())],
                 })
 
         if combat.tm and combat.tm.cur_turn:
             turn = combat.tm.cur_turn
             data['round'] = turn[0]
             data['initiative'] = turn[1]
-            data['cur_combatant'] = turn[2].name
+            data['currentCombatant'] = turn[2].name
         else:
             data['round'] = None
             data['initiative'] = None
-            data['cur_combatant'] = None
+            data['currentCombatant'] = None
 
         data['date'] = str(self.game.calendar)
         data['time'] = str(self.game.clock)

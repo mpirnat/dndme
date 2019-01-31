@@ -206,7 +206,8 @@ def main_loop(campaign, player_view):
     if player_view:
         print("Starting player view on port 5000...")
         server_env = os.environ.copy()
-        server_env['FLASK_APP'] = f"{base_dir}/dndme/http_api.py"
+        server_env['FLASK_APP'] = f"{base_dir}/dndme/http_api"
+        server_env['FLASK_ENV'] = "development"
         server_env['FLASK_SUPPRESS_LOGGING'] = "The adults are talking"
         server_process = subprocess.Popen(
                 ['flask', 'run'],

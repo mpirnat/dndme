@@ -4,6 +4,47 @@
 <title>dndme: player view</title>
 </head>
 <body>
+<style>
+body {
+    font-family: sans-serif;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+td, th {
+    padding: 0.4em;
+}
+th {
+    text-align: left;
+}
+
+.col1 {
+    width: 2%;
+}
+.col2 {
+    width: 3%;
+}
+.col3 {
+    width: 30%;
+}
+.col4 {
+    width: 20%;
+}
+.col5 {
+    width: 40%;
+}
+
+.odd {
+    background: #eee;
+}
+.even {
+    background: #ddf;
+}
+.current-combatant {
+    background: #ffa;
+}
+</style>
 
     <div id="combatants"></div>
 
@@ -31,7 +72,45 @@
     function showUI(data) {
         console.log('showUI');
         document.getElementById('message').innerHTML = '';
-        document.getElementById('combatants').innerHTML = JSON.stringify(data);
+
+        if(data.combatants && data.combatants.length) {
+            var combatantTable = `<table>
+                <tr>
+                    <th class="col1"></th>
+                    <th class="col2">🎲</th>
+                    <th class="col3">Combatant</th>
+                    <th class="col4">Status</th>
+                    <th class="col5">Conditions</th>
+                </tr>`;
+            for (let [index, combatant] of data.combatants.entries()) {
+                var marker = '';
+                var rowClass = index % 2 == 0 ? 'even' : 'odd';
+                if(combatant.name == data.currentCombatant) {
+                    marker = '→';
+                    rowClass = 'current-combatant';
+                }
+                combatantTable += `<tr class="${rowClass}">
+                    <td>${marker}</td>
+                    <td>${combatant.roll}</td>
+                    <td>${combatant.alias}</td>
+                    <td>${combatant.status}</td>
+                    <td>${combatant.conditions.join(', ')}</td>
+                </tr>`;
+            }
+            combatantTable += '</table>';
+
+            if(data.round) {
+                combatantTable += `<p>Round: ${data.round}</p>`;
+            }
+
+            document.getElementById('combatants').innerHTML = combatantTable;
+        } else {
+            document.getElementById('combatants').innerHTML = '';
+        }
+
+        var miscInfo = `<p>${data.date} - ${data.time}</p>`;
+        document.getElementById('misc-info').innerHTML = miscInfo;
+
         timerId = setTimeout(getData, 2000);
     }
 
