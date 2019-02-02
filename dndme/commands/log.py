@@ -22,15 +22,15 @@ Examples:
     {keyword}
 """
 
-    def __init__(self, game, session):
-        super().__init__(game, session)
+    def __init__(self, *args):
+        super().__init__(*args)
 
         now = datetime.datetime.now()
         self.log_buf = []
-        self.log_file = game.log_file
+        self.log_file = self.game.log_file
         self.log_message(f"Session started {now:%Y-%m-%d %H:%M:%S}",
                 with_leading_newline=os.path.exists(self.log_file or ''))
-        
+
         def sign_off():
             self.do_command(
                     "Session ended on",
@@ -47,13 +47,13 @@ Examples:
             self.log_message(" ".join(args), with_bullet=True)
         else:
             print("\n".join(self.log_buf))
-    
+
     def log_message(self, message, with_leading_newline=False, with_bullet=False):
         if with_bullet:
             message = "* " + message
-        
+
         self.log_buf.append(message)
-        
+
         if with_leading_newline:
             message = "\n" + message
 
