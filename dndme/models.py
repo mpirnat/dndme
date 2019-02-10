@@ -103,6 +103,7 @@ class Character(Combatant):
     initiative_mod = attrib(default=0)
 
     visible_in_player_view = attrib(default=True)
+    disposition = attrib(default="friendly")
 
 
 @attrs
@@ -149,6 +150,7 @@ class Monster(Combatant):
 
     origin = attrib(default="origin unknown")
     visible_in_player_view = attrib(default=False)
+    disposition = attrib(default="hostile")
 
 
 @attrs

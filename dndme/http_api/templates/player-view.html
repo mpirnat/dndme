@@ -7,6 +7,8 @@
 <style>
 body {
     font-family: sans-serif;
+    padding: 0px;
+    margin: 0px;
 }
 table {
     border-collapse: collapse;
@@ -18,29 +20,52 @@ td, th {
 th {
     text-align: left;
 }
+tr {
+    border-bottom: 1px solid #aa9;
+}
 
 .col1 {
     width: 2%;
 }
 .col2 {
-    width: 3%;
+    width: 2%;
 }
 .col3 {
     width: 30%;
 }
 .col4 {
-    width: 20%;
+    width: 10%;
 }
 .col5 {
-    width: 40%;
+    width: 54%;
 }
 
+.roll {
+    text-align: center;
+}
+.disposition {
+    text-align: center;
+}
+/*
+.friendly {
+    background: #3c3;
+}
+.neutral {
+    background: #33c;
+}
+.hostile {
+    background: #c33;
+}
+*/
+
+/*
 .odd {
-    background: #eee;
+    background: #fff;
 }
 .even {
-    background: #ddf;
+    background: #eed;
 }
+*/
 .current-combatant {
     background: #ffa;
 }
@@ -78,6 +103,7 @@ th {
                 <tr>
                     <th class="col1"></th>
                     <th class="col2">🎲</th>
+                    <th class="col2">🎭</th>
                     <th class="col3">Combatant</th>
                     <th class="col4">Status</th>
                     <th class="col5">Conditions</th>
@@ -85,13 +111,21 @@ th {
             for (let [index, combatant] of data.combatants.entries()) {
                 var marker = '';
                 var rowClass = index % 2 == 0 ? 'even' : 'odd';
+                //rowClass += (' ' + combatant.disposition);
                 if(combatant.name == data.currentCombatant) {
                     marker = '→';
                     rowClass = 'current-combatant';
                 }
+                var dispositionIcon = "😐";
+                if(combatant.disposition == 'friendly') {
+                    dispositionIcon = "😀";
+                } else if(combatant.disposition == 'hostile') {
+                    dispositionIcon = "😡";
+                }
                 combatantTable += `<tr class="${rowClass}">
                     <td>${marker}</td>
-                    <td>${combatant.roll}</td>
+                    <td class="roll ${combatant.disposition}">${combatant.roll}</td>
+                    <td class="disposition">${dispositionIcon}</td>
                     <td>${combatant.alias}</td>
                     <td>${combatant.status}</td>
                     <td>${combatant.conditions.join(', ')}</td>
