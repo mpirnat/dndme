@@ -219,6 +219,7 @@ class Game:
     commands = attrib(default={})
 
     changed = attrib(default=True)
+    player_message = attrib(default="")
 
     @combat.default
     def _combat(self):

@@ -67,6 +67,7 @@ class PlayerViewManager():
 
         data['date'] = str(self.game.calendar)
         data['time'] = str(self.game.clock)
+        data['message'] = self.game.player_message
 
         #print(json.dumps(data, indent=4))
 

@@ -69,13 +69,23 @@ tr {
 .current-combatant {
     background: #ffa;
 }
+
+#message {
+    font-weight: bold;
+    font-size: 120%;
+    border-left: 5px solid #aa9;
+    background: #eed;
+    padding: 1em;
+    margin: 1em;
+}
+
 </style>
 
     <div id="combatants"></div>
 
     <div id="misc-info"></div>
 
-    <div id="message"></div>
+    <div id="message">Contacting server...</div>
 
     <script>
     function getData() {
@@ -96,7 +106,6 @@ tr {
 
     function showUI(data) {
         console.log('showUI');
-        document.getElementById('message').innerHTML = '';
 
         if(data.combatants && data.combatants.length) {
             var combatantTable = `<table>
@@ -144,6 +153,13 @@ tr {
 
         var miscInfo = `<p>${data.date} - ${data.time}</p>`;
         document.getElementById('misc-info').innerHTML = miscInfo;
+
+        if(data.message) {
+            document.getElementById('message').style.visibility = 'visible';
+        } else {
+            document.getElementById('message').style.visibility = 'hidden';
+        }
+        document.getElementById('message').innerHTML = data.message;
 
         timerId = setTimeout(getData, 2000);
     }
