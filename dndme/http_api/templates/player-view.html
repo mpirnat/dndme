@@ -70,6 +70,29 @@ tr {
     background: #ffa;
 }
 
+#combatants p {
+    margin: 0px;
+    padding: 0.5em;
+    background: black;
+    color: white;
+}
+
+#misc-info {
+    margin: 0px;
+    background: black;
+    color: white;
+    padding: 0.5em;
+}
+
+#misc-info label {
+    margin-left: 3em;
+}
+
+.right {
+    float: right;
+    text-align: right;
+}
+
 #message {
     font-weight: bold;
     font-size: 120%;
@@ -81,9 +104,9 @@ tr {
 
 </style>
 
-    <div id="combatants"></div>
-
     <div id="misc-info"></div>
+
+    <div id="combatants"></div>
 
     <div id="message">Contacting server...</div>
 
@@ -151,7 +174,7 @@ tr {
             document.getElementById('combatants').innerHTML = '';
         }
 
-        var miscInfo = `<p>${data.date} - ${data.time}</p>`;
+        var miscInfo = `<span>dndme</span><span class="right"><label>Date:</label> ${data.date} <label>Time:</label> ${data.time}</span>`;
         document.getElementById('misc-info').innerHTML = miscInfo;
 
         if(data.message) {
