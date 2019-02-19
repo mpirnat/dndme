@@ -47,6 +47,7 @@ class EncounterLoader:
         self._set_race(group, monsters)
         self._set_languages(group, monsters)
         self._set_xp(group, monsters)
+        self._set_disposition(group, monsters)
         self._add_attributes(group, monsters)
         self._remove_attributes(group, monsters)
         return monsters
@@ -136,6 +137,11 @@ class EncounterLoader:
         if 'xp' in group:
             for monster in monsters:
                 monster.xp = group['xp']
+
+    def _set_disposition(self, group, monsters):
+        if 'disposition' in group:
+            for monster in monsters:
+                monster.disposition = group['disposition']
 
     def _add_attributes(self, group, monsters):
         for monster in monsters:

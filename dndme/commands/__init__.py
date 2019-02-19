@@ -12,9 +12,10 @@ class Command:
         'x': '#ffcc00',
     })
 
-    def __init__(self, game, session):
+    def __init__(self, game, session, player_view):
         self.game = game
         self.session = session
+        self.player_view = player_view
 
         for kw in self.keywords:
             game.commands[kw] = self

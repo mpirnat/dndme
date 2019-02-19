@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+<head>
+<title>dndme: player view</title>
+</head>
+<body>
+<style>
+body {
+    font-family: sans-serif;
+    padding: 0px;
+    margin: 0px;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+td, th {
+    padding: 0.4em;
+}
+th {
+    text-align: left;
+}
+tr {
+    border-bottom: 1px solid #aa9;
+}
+
+.col1 {
+    width: 2%;
+}
+.col2 {
+    width: 2%;
+}
+.col3 {
+    width: 30%;
+}
+.col4 {
+    width: 10%;
+}
+.col5 {
+    width: 54%;
+}
+
+.roll {
+    text-align: center;
+}
+.disposition {
+    text-align: center;
+}
+/*
+.friendly {
+    background: #3c3;
+}
+.neutral {
+    background: #33c;
+}
+.hostile {
+    background: #c33;
+}
+*/
+
+/*
+.odd {
+    background: #fff;
+}
+.even {
+    background: #eed;
+}
+*/
+.current-combatant {
+    background: #ffa;
+}
+
+#combatants p {
+    margin: 0px;
+    padding: 0.5em;
+    background: black;
+    color: white;
+}
+
+#misc-info {
+    margin: 0px;
+    background: black;
+    color: white;
+    padding: 0.5em;
+}
+
+#misc-info label {
+    margin-left: 3em;
+}
+
+.right {
+    float: right;
+    text-align: right;
+}
+
+#message {
+    font-weight: bold;
+    font-size: 120%;
+    border-left: 5px solid #aa9;
+    background: #eed;
+    padding: 1em;
+    margin: 1em;
+}
+
+</style>
+
+<div id="misc-info"><span>dndme</span><span class="right">no connection</span></div>
+
+    <div id="combatants"></div>
+
+    <div id="message">Contacting server...</div>
+
+    <script>
+
+    function handleErrors(response) {
+        if(!response.ok) {
+            throw Error(response.statusText);
+        }
+        return response;
+    }
+
+    function getData() {
+        fetch('/api/player-view')
+            .then(handleErrors)
+            .then(function(response) {
+                response.json().then(function(data) {
+                    showUI(data);
+                });
+            }).catch(function(error) {
+                showError(error);
+            });
+    }
+
+    function showUI(data) {
+        console.log('showUI');
+
+        if(data.combatants && data.combatants.length) {
+            var combatantTable = `<table>
+                <tr>
+                    <th class="col1"></th>
+                    <th class="col2">🎲</th>
+                    <th class="col2">🎭</th>
+                    <th class="col3">Combatant</th>
+                    <th class="col4">Status</th>
+                    <th class="col5">Conditions</th>
+                </tr>`;
+            for (let [index, combatant] of data.combatants.entries()) {
+                var marker = '';
+                var rowClass = index % 2 == 0 ? 'even' : 'odd';
+                //rowClass += (' ' + combatant.disposition);
+                if(combatant.name == data.currentCombatant) {
+                    marker = '→';
+                    rowClass = 'current-combatant';
+                }
+                var dispositionIcon = "😐";
+                if(combatant.disposition == 'friendly') {
+                    dispositionIcon = "😀";
+                } else if(combatant.disposition == 'hostile') {
+                    dispositionIcon = "😡";
+                }
+                combatantTable += `<tr class="${rowClass}">
+                    <td>${marker}</td>
+                    <td class="roll ${combatant.disposition}">${combatant.roll}</td>
+                    <td class="disposition">${dispositionIcon}</td>
+                    <td>${combatant.alias}</td>
+                    <td>${combatant.status}</td>
+                    <td>${combatant.conditions.join(', ')}</td>
+                </tr>`;
+            }
+            combatantTable += '</table>';
+
+            if(data.round) {
+                combatantTable += `<p>Round: ${data.round}</p>`;
+            }
+
+            document.getElementById('combatants').innerHTML = combatantTable;
+        } else {
+            document.getElementById('combatants').innerHTML = '';
+        }
+
+        var miscInfo = `<span>dndme</span><span class="right"><label>Date:</label> ${data.date} <label>Time:</label> ${data.time}</span>`;
+        document.getElementById('misc-info').innerHTML = miscInfo;
+
+        if(data.message) {
+            document.getElementById('message').style.visibility = 'visible';
+        } else {
+            document.getElementById('message').style.visibility = 'hidden';
+        }
+        document.getElementById('message').innerHTML = data.message;
+
+        timerId = setTimeout(getData, 2000);
+    }
+
+    function showError(error) {
+        console.log('showError');
+        document.getElementById('combatants').innerHTML = '';
+        document.getElementById('misc-info').innerHTML = '<span>dndme</span><span class="right">no connection</span>';
+        document.getElementById('message').innerHTML = error;
+        document.getElementById('message').style.visibility = 'visible';
+        timerId = setTimeout(getData, 5000);
+    }
+
+    var timerId = setTimeout(getData, 2000);
+    </script>
+</body>
+</html>

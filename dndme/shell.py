@@ -1,7 +1,6 @@
 from importlib import import_module
 import os
 import pkgutil
-import subprocess
 import sys
 
 import click
@@ -14,6 +13,7 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
 
 from dndme.gametime import Calendar, Clock, Almanac
+from dndme.player_view import PlayerViewManager
 from dndme.models import Game
 
 base_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
@@ -90,7 +90,7 @@ class DnDCompleter(Completer):
 
 
 
-def load_commands(game, session):
+def load_commands(game, session, player_view):
     path = os.path.join(os.path.dirname(__file__), "commands")
     modules = pkgutil.iter_modules(path=[path])
 
@@ -107,7 +107,7 @@ def load_commands(game, session):
                 continue
 
             # Create an instance of the class
-            instance = loaded_class(game, session)
+            instance = loaded_class(game, session, player_view)
 
 
 @click.command()
@@ -156,7 +156,9 @@ def main_loop(campaign, player_view):
 
     session = PromptSession()
 
-    load_commands(game, session)
+    player_view_manager = PlayerViewManager(base_dir, game)
+
+    load_commands(game, session, player_view_manager)
 
     def bottom_toolbar():
         date = game.calendar.date
@@ -205,15 +207,8 @@ def main_loop(campaign, player_view):
 
     if player_view:
         print("Starting player view on port 5000...")
-        server_env = os.environ.copy()
-        server_env['FLASK_APP'] = f"{base_dir}/dndme/http_api.py"
-        server_env['FLASK_SUPPRESS_LOGGING'] = "The adults are talking"
-        server_process = subprocess.Popen(
-                ['flask', 'run'],
-                env=server_env,
-                stdout=subprocess.DEVNULL
-        )
-        game.server_process = server_process
+        player_view_manager.start()
+        player_view_manager.update()
         print("Started! Browse to http://localhost:5000/player-view")
 
     while True:
@@ -237,8 +232,8 @@ def main_loop(campaign, player_view):
 
             command.do_command(*user_input[1:])
 
-            if game.changed and 'refresh' in game.commands:
-                game.commands['refresh'].do_command()
+            if game.changed:
+                player_view_manager.update()
 
             print()
         except (EOFError, KeyboardInterrupt):

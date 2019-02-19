@@ -3,9 +3,10 @@ import logging
 import os
 
 from flask import Flask
+from flask import render_template
 app = Flask(__name__)
 
-base_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
+base_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '../..'))
 
 # Don't clog the dndme shell with logging
 if 'FLASK_SUPPRESS_LOGGING' in os.environ:
@@ -29,4 +30,4 @@ def player_view_api():
 
 @app.route("/player-view")
 def player_view():
-    return "Coming soon!"
+    return render_template("player-view.html")

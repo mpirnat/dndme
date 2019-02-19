@@ -9,7 +9,16 @@ from dndme import dice
 @attrs
 class Combatant:
     name = attrib(default="")
-    alias = attrib(default="")
+    _alias = attrib(default="")
+
+    @property
+    def alias(self):
+        return self._alias or self.name
+
+    @alias.setter
+    def alias(self, value):
+        self._alias = value
+
     race = attrib(default="")
     ac = attrib(default=0)
 
@@ -94,6 +103,7 @@ class Character(Combatant):
     initiative_mod = attrib(default=0)
 
     visible_in_player_view = attrib(default=True)
+    disposition = attrib(default="friendly")
 
 
 @attrs
@@ -140,6 +150,7 @@ class Monster(Combatant):
 
     origin = attrib(default="origin unknown")
     visible_in_player_view = attrib(default=False)
+    disposition = attrib(default="hostile")
 
 
 @attrs
@@ -208,6 +219,7 @@ class Game:
     commands = attrib(default={})
 
     changed = attrib(default=True)
+    player_message = attrib(default="")
 
     @combat.default
     def _combat(self):

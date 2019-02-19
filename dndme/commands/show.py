@@ -74,6 +74,7 @@ Usage: {keyword} <what>
                     f"\tHP: {monster.cur_hp:0>2}/{monster.max_hp:0>2}"
                     f"\tAC: {monster.ac:0>2}"
                     f"\tPer: {monster.senses['perception']:0>2}"
+                    f"\t{monster.disposition}"
             )
             if monster.conditions:
                 conds = ', '.join([f"{x}:{y}"
