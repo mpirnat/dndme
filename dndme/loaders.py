@@ -113,13 +113,28 @@ class EncounterLoader:
                 monster.cha = group['cha']
 
     def _set_hp(self, group, monsters):
-        for i in range(len(monsters)):
-            if 'max_hp' in group and len(group['max_hp']) == len(monsters):
-                monsters[i].max_hp = group['max_hp'][i]
-                monsters[i].cur_hp = group['max_hp'][i]
-            else:
-                monsters[i].max_hp = monsters[i]._max_hp
-                monsters[i].cur_hp = monsters[i].max_hp
+        # Are we overriding max hp?
+        if 'max_hp' in group:
+
+            # Have we got a list of max hp?
+            if hasattr(group['max_hp'], 'append') and \
+                    len(group['max_hp']) == len(monsters):
+                for i, monster in enumerate(monsters):
+                    monster.max_hp = group['max_hp'][i]
+                    monster.cur_hp = monster.max_hp
+
+            # Have we got a single int or dice expression?
+            elif hasattr(group['max_hp'], 'real') or \
+                    hasattr(group['max_hp'], 'join'):
+                for monster in monsters:
+                    monster.max_hp = group['max_hp']
+                    monster.cur_hp = monster.max_hp
+
+        # Not overriding max hp at all
+        else:
+            for monster in monsters:
+                monster.max_hp = monster._max_hp
+                monster.cur_hp = monster.max_hp
 
     def _set_armor(self, group, monsters):
         if 'armor' in group:

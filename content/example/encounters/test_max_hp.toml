@@ -1,0 +1,21 @@
+name = "Test Max HP Overrides"
+location = "PyCon Sprints Hallway"
+
+notes = """
+This encounter tests overriding max hp of monster groups
+"""
+
+[groups.goblins]
+monster = "goblin"
+count = "1d4+2"
+max_hp = "2d6+3"
+
+[groups.evil_mage]
+monster = "evil_mage"
+count = 2
+max_hp = [10, 11]
+
+[groups.dragon]
+monster = "young_green_dragon"
+count = 1
+max_hp = 150
