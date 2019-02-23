@@ -83,7 +83,10 @@ class EncounterLoader:
 
         for i, monster in enumerate(monsters, 1):
             if monster.name.islower():
+                monster.alias = f"{monster.name.replace('_', ' ').title()} {i}"
                 monster.name += f"-{i:0>2}/{str(uuid.uuid4())[:4]}"
+            else:
+                monster.alias = monster.name.replace('_', ' ').title()
 
     def _set_stats(self, group, monsters):
         for monster in monsters:
