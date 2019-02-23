@@ -17,7 +17,7 @@ def test_get_available_encounters(encounter_loader):
     available_encounters = encounter_loader.get_available_encounters()
 
     print(available_encounters)
-    assert len(available_encounters) == 4
+    assert len(available_encounters) == 5
     assert available_encounters[0].name == 'LMoP 1.1.1: Goblin Ambush'
     assert 'goblins' in available_encounters[0].groups
     assert available_encounters[0].groups['goblins']['count'] == 4
