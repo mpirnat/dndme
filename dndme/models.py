@@ -95,6 +95,21 @@ class Combatant:
         else:
             return "down"
 
+    @property
+    def can_cast_spells(self):
+        return hasattr(self, 'features') and \
+                'spellcasting' in self.features
+
+    @property
+    def available_spell_slots(self):
+        if not self.can_cast_spells:
+            return []
+
+        slots = self.features['spellcasting']['slots']
+        slots_used = self.features['spellcasting']['slots_used']
+        return [str(i+1) for i in range(len(slots))
+                if slots_used[i] < slots[i]]
+
 
 @attrs
 class Character(Combatant):

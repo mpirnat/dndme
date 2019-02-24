@@ -21,52 +21,46 @@ Examples:
     def get_suggestions(self, words):
         combat = self.game.combat
 
-        if len(words) < 2:
-            return []
+        suggestions = []
 
-        if len(words) >= 2:
-            caster = self._get_caster(words[1])
+        if len(words) == 2:
+            # Return a list of available spell slots for the current combatant,
+            # plus all combatants with the spellcasting feature
+            current_combatant = combat.current_combatant
+            if current_combatant and current_combatant.can_cast_spells:
+                suggestions.extend(current_combatant.available_spell_slots)
 
-            if not caster:
-                return sorted(set(combat.combatant_names))
+            suggestions.extend(sorted(
+                    [x.name for x in combat.monsters.values()
+                            if x.can_cast_spells]))
 
-            elif not (caster.features.get('spellcasting')):
-                return []
+        elif len(words) == 3:
+            # Return a list of available spell slots for the specified caster
+            caster = combat.get_target(words[1])
+            suggestions.extend(caster.available_spell_slots)
 
-            else:
-                slots = caster.features['spellcasting']['slots']
-                slots_used = caster.features['spellcasting']['slots_used']
-                return [str(i+1) for i in range(len(slots))
-                        if slots_used[i] < slots[i]]
-
-    def _get_caster(self, name):
-        combat = self.game.combat
-        caster = None
-
-        if name:
-            caster = combat.get_target(name)
-
-        if not caster:
-            if combat.tm and combat.tm.cur_turn and not name:
-                caster = combat.tm.cur_turn[-1]
-
-        return caster
+        return suggestions
 
     def do_command(self, *args):
+        combat = self.game.combat
+
         if not args:
             print("Need a caster or a spell level.")
             return
 
         # Get the caster...
-        caster_name = args[0] if not args[0].isdigit() else None
-        caster = self._get_caster(caster_name)
+        caster = None
+        if args[0].isdigit():
+            caster = combat.current_combatant
+        else:
+            caster = combat.get_target(args[0])
 
         if not caster:
             print(f"No caster identified.")
             return
 
-        if 'spellcasting' not in caster.features:
-            print("Combatant can't cast spells.")
+        if not caster.can_cast_spells:
+            print("Combatant {caster.name} can't cast spells.")
             return
 
         # Determine the spell level being cast
