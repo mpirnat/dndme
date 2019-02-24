@@ -34,7 +34,11 @@ Examples:
         combat = self.game.combat
 
         if args:
-            target = combat.get_target(args[0])
+            target_name = args[0]
+            target = combat.get_target(target_name)
+            if not target:
+                print(f"Invalid target: {target_name}")
+                return
         else:
             if not combat.tm or not combat.tm.cur_turn:
                 print("No target specified.")
