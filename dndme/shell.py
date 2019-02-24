@@ -2,6 +2,7 @@ from importlib import import_module
 import os
 import pkgutil
 import sys
+import traceback
 
 import click
 import pytoml as toml
@@ -238,6 +239,8 @@ def main_loop(campaign, player_view):
             print()
         except (EOFError, KeyboardInterrupt):
             pass
+        except Exception as e:
+            traceback.print_exc()
 
 
 if __name__ == '__main__':
