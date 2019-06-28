@@ -14,6 +14,7 @@ Example:
 
     {keyword} goblin
     {keyword} goblin1 goblin2 goblin3
+    {keyword} goblin*
 """
 
     def get_suggestions(self, words):
@@ -26,16 +27,12 @@ Example:
             print("Need a combatant.")
             return
 
-        target_names = args
-
         combat = self.game.combat
+        targets = combat.get_targets(args)
+        if not targets:
+            print(f"No targets found from `{args}`")
 
-        for target_name in target_names:
-            target = combat.get_target(target_name)
-            if not target:
-                print(f"Invalid target: {target_name}")
-
+        for target in targets:
             target.visible_in_player_view = True
-            print(f"Okay; {target_name} is visible in the player view.")
-
+            print(f"Okay; {target.name} is visible in the player view.")
             self.game.changed = True

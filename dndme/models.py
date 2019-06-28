@@ -1,3 +1,4 @@
+import fnmatch
 from math import floor, inf
 
 from attr import attrs, attrib
@@ -207,6 +208,14 @@ class Combat:
     def get_target(self, name):
         return self.characters.get(name) or \
                 self.monsters.get(name)
+
+    def get_targets(self, names):
+        names = sorted(set([name for lst in
+                [fnmatch.filter(self.combatant_names, name) for name in names]
+                for name in lst]))
+        # I want a walrus operator here!
+        targets = [self.get_target(name) for name in names]
+        return [target for target in targets if target]
 
     @property
     def current_combatant(self):

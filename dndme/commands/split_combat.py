@@ -17,6 +17,7 @@ combat groups or use 'join' to recombine groups.
 Usage: {keyword} <combatants>
 
 Example: {keyword} Frodo Sam
+         {keyword} orc*
 """
 
     def get_suggestions(self, words):
@@ -33,12 +34,12 @@ Example: {keyword} Frodo Sam
             print("Okay; created new combat")
             return
 
-        for target_name in args:
-            target = source_combat.get_target(target_name)
-            if not target:
-                print(f"Invalid target: {target_name}")
-                continue
+        targets = source_combat.get_targets(args)
+        if not targets:
+            print(f"No targets found from `{args}`")
+            return
 
+        for target in targets:
             if source_combat.tm:
                 source_initiative = source_combat.tm.get_initiative_value(target)
                 source_combat.tm.remove_combatant(target)
@@ -59,11 +60,11 @@ Example: {keyword} Frodo Sam
                 dest_combat.tm.add_combatant(target, roll)
 
             if hasattr(target, 'mtype'):
-                source_combat.monsters.pop(target_name)
-                dest_combat.monsters[target_name] = target
+                source_combat.monsters.pop(target.name)
+                dest_combat.monsters[target.name] = target
             else:
-                source_combat.characters.pop(target_name)
-                dest_combat.characters[target_name] = target
+                source_combat.characters.pop(target.name)
+                dest_combat.characters[target.name] = target
 
         if dest_combat.tm:
             dest_combat.tm.turns = dest_combat.tm.generate_turns()

@@ -15,6 +15,7 @@ Examples:
 
     {keyword} orc
     {keyword} orc_1 orc_2 orc_3
+    {keyword} orc*
 """
 
     def get_suggestions(self, words):
@@ -27,20 +28,20 @@ Examples:
 
     def do_command(self, *args):
         combat = self.game.combat
+        targets = combat.get_targets(args)
+        if not targets:
+            print(f"No targets found from `{args}`")
+            return
 
-        for target_name in args:
-            target = combat.get_target(target_name)
+        for target in targets:
             if target and hasattr(target, 'mtype'):
                 if combat.tm:
                     combat.tm.remove_combatant(target)
-                combat.monsters.pop(target_name)
-                print(f"Removed {target_name}")
+                combat.monsters.pop(target.name)
+                print(f"Removed {target.name}")
                 self.game.changed = True
-            elif target_name in self.game.stash and \
-                    hasattr(self.game.stash[target_name], 'mtype'):
-                self.game.stash.pop(target_name)
-                print(f"Removed {target_name} from stash")
+            elif target.name in self.game.stash and \
+                    hasattr(self.game.stash[target.name], 'mtype'):
+                self.game.stash.pop(target.name)
+                print(f"Removed {target.name} from stash")
                 self.game.changed = True
-            else:
-                print(f"Invalid target: {target_name}")
-                continue

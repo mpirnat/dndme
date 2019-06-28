@@ -15,6 +15,7 @@ Examples:
 
     {keyword} Frodo 10
     {keyword} Frodo Merry Pippin 10
+    {keyword} orc* 5
 """
 
     def get_suggestions(self, words):
@@ -27,7 +28,6 @@ Examples:
             print("Need a target and an amount of HP.")
             return
 
-        target_names = args[0:-1]
         try:
             amount = int(args[-1])
         except ValueError:
@@ -35,23 +35,21 @@ Examples:
             return
 
         combat = self.game.combat
+        targets = combat.get_targets(args[:-1])
+        if not targets:
+            print(f"No targets found from `{args[:-1]}`")
+            return
 
-        for target_name in target_names:
-
-            target = combat.get_target(target_name)
-            if not target:
-                print(f"Invalid target: {target_name}")
-                continue
-
+        for target in targets:
             target.cur_hp -= amount
-            print(f"Okay; damaged {target_name}. "
+            print(f"Okay; damaged {target.name}. "
                     f"Now: {target.cur_hp}/{target.max_hp}")
             self.game.changed = True
 
-            if target_name in combat.monsters and target.cur_hp == 0:
+            if target.name in combat.monsters and target.cur_hp == 0:
                 if (self.session.prompt(
-                        f"{target_name} reduced to 0 HP--"
+                        f"{target.name} reduced to 0 HP--"
                         "mark as defeated? [Y]: ")
                         or 'y').lower() != 'y':
                     continue
-                DefeatMonster.do_command(self, target_name)
+                DefeatMonster.do_command(self, target.name)

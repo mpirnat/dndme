@@ -15,7 +15,8 @@ this is effectively the inverse of splitting the party.
 
 Usage: {keyword} <combatant1> [<combatant2> ...] <number>
 
-Example: {keyword} Aragorn Gimli Legolas 1
+Example: {keyword} 1 Aragorn Gimli Legolas
+         {keyword} 2 orc*
 """
 
     def get_suggestions(self, words):
@@ -55,12 +56,11 @@ Example: {keyword} Aragorn Gimli Legolas 1
             print("Monsters were defeated:\n")
             Show.show_defeated(self)
 
-        for target_name in target_names:
-            target = source_combat.get_target(target_name)
-            if not target:
-                print(f"Invalid target: {target_name}")
-                continue
+        targets = source_combat.get_targets(target_names)
+        if not targets:
+            print(f"No targets found from `{target_names}`")
 
+        for target in targets:
             if source_combat.tm:
                 source_initiative = source_combat.tm.get_initiative_value(target)
                 source_combat.tm.remove_combatant(target)
@@ -68,11 +68,11 @@ Example: {keyword} Aragorn Gimli Legolas 1
                 source_initiative = None
 
             if hasattr(target, 'mtype'):
-                source_combat.monsters.pop(target_name)
-                dest_combat.monsters[target_name] = target
+                source_combat.monsters.pop(target.name)
+                dest_combat.monsters[target.name] = target
             else:
-                source_combat.characters.pop(target_name)
-                dest_combat.characters[target_name] = target
+                source_combat.characters.pop(target.name)
+                dest_combat.characters[target.name] = target
 
             if dest_combat.tm:
                 if source_initiative is not None:

@@ -14,6 +14,7 @@ Examples:
 
     {keyword} Frodo 10
     {keyword} Frodo Sam Gandalf 10
+    {keyword} orc* 10
 """
 
     def get_suggestions(self, words):
@@ -26,7 +27,6 @@ Examples:
             print("Need a target and an amount of HP.")
             return
 
-        target_names = args[0:-1]
         try:
             amount = int(args[-1])
         except ValueError:
@@ -38,18 +38,17 @@ Examples:
             return
 
         combat = self.game.combat
+        targets = combat.get_targets(args[:-1])
+        if not targets:
+            print(f"No targets found from `{args[:-1]}`")
+            return
 
-        for target_name in target_names:
-            target = combat.get_target(target_name)
-            if not target:
-                print(f"Invalid target: {target_name}")
-                continue
-
+        for target in targets:
             if 'dead' in target.conditions:
-                print(f"Cannot heal {target_name} (dead)")
+                print(f"Cannot heal {target.name} (dead)")
                 continue
 
             target.cur_hp += amount
-            print(f"Okay; healed {target_name}. "
+            print(f"Okay; healed {target.name}. "
                     f"Now: {target.cur_hp}/{target.max_hp}")
             self.game.changed = True
