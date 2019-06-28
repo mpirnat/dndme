@@ -195,7 +195,7 @@ def main_loop(campaign, player_view):
         n_s = "N" if game.latitude >= 0 else "S"
         pos = f"🌎 {abs(game.latitude)}°{n_s}"
         return [("class:bottom-toolbar",
-                " dndme 0.0.4 - help for help, exit to exit"
+                " dndme 0.0.5 - help for help, exit to exit"
                 f" - 📆 {game.calendar}"
                 f" ⏰ {game.clock} {pos} {day_night} "
                 f"{''.join(moon_icons)}")]

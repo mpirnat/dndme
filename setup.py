@@ -6,7 +6,7 @@ import setuptools
 
 setup(
     name='dndme',
-    version='0.0.4',
+    version='0.0.5',
     description='Tools for helping the DM run Dungeons & Dragons sessions.',
     author='Mike Pirnat',
     packages=setuptools.find_packages(),
