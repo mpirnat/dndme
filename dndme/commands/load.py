@@ -120,6 +120,10 @@ Usage:
                 converter=convert_to_int_or_dice_expr)
         monsters = monster_loader.load(monster_name, count=count)
 
+        if not monsters:
+            print("No monsters loaded. Might be a data problem?")
+            return
+
         #TODO: this is a cheat and really bad and we should clean it up
         encounter_loader = EncounterLoader(
                 self.game.encounters_dir,
@@ -130,3 +134,5 @@ Usage:
         encounter_loader._add_to_combat(self.game.combat, monsters)
         for monster in monsters:
             monster.origin = "unplanned"
+
+        print(f"Loaded {len(monsters)} monsters.")
