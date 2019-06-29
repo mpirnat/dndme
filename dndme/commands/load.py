@@ -1,3 +1,4 @@
+from fnmatch import fnmatch
 from dndme.commands import Command
 from dndme.commands import convert_to_int, convert_to_int_or_dice_expr
 from dndme.loaders import EncounterLoader, MonsterLoader, PartyLoader
@@ -13,14 +14,22 @@ Summary: Load stuff!
 Load a party of characters to have characters to work with.
 
 Load an encounter to have a predefined set of monsters to contend with.
+Optionally specify a filter to only list a subset of available encounters
+(useful in larger adventures when there might be hundreds of encounters
+to choose from). The filter will consider both the encounter name and
+location, and is not case sensitive.
 
 Load a specific monster as needed to spice things up.
 
 Usage:
 
     {keyword} party
-    {keyword} encounter
+    {keyword} encounter [<filter>]
     {keyword} monster <monster>
+
+Example:
+
+    {keyword} encounter moria
 """
 
     def get_suggestions(self, words):
@@ -37,7 +46,7 @@ Usage:
         if args[0] == 'party':
             self.load_party()
         elif args[0] == 'encounter':
-            self.load_encounter()
+            self.load_encounter(args[1:])
         elif args[0] == 'monster' and len(args) == 2:
             self.load_monster(args[-1])
         else:
@@ -48,7 +57,7 @@ Usage:
         party = party_loader.load(self.game.combat)
         print("OK; loaded {} characters".format(len(party)))
 
-    def load_encounter(self):
+    def load_encounter(self, args):
 
         def prompt_count(count, monster_name="monsters"):
             count = self.safe_input(
@@ -75,7 +84,10 @@ Usage:
                 count_resolver=prompt_count,
                 initiative_resolver=prompt_initiative)
 
-        encounters = encounter_loader.get_available_encounters()
+        filter_string = f"*{args[0].lower()}*" if args else "*"
+        encounters = [e for e in encounter_loader.get_available_encounters()
+                if fnmatch(e.name.lower(), filter_string) or
+                fnmatch(e.location.lower(), filter_string)]
 
         if not encounters:
             print("No available encounters found.")

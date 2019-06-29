@@ -18,8 +18,7 @@ class EncounterLoader:
         self.initiative_resolver = initiative_resolver
 
     def get_available_encounters(self):
-        available_encounter_files = \
-                glob.glob(self.base_dir+'/*.toml')
+        available_encounter_files = glob.glob(f"{self.base_dir}/*.toml")
         encounters = [Encounter(**toml.load(open(filename, 'r')))
                 for filename in sorted(available_encounter_files)]
         return encounters
