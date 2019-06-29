@@ -1,4 +1,5 @@
 import math
+from prompt_toolkit.completion import WordCompleter
 from dndme.commands import Command
 from dndme.commands.remove_combatant import RemoveCombatant
 from dndme.commands.show import Show
@@ -29,10 +30,12 @@ Usage: {keyword}
 
         # Allow some leftover monsters to remain in the combat group;
         # perhaps some are friendly NPCs along for the ride?
+        choices = WordCompleter(['keep', 'remove', 'stash'])
         for monster in list(combat.monsters.values()):
             choice = self.session.prompt(
                 f"What should we do with {monster.name}? "
-                "[R]emove [S]tash [K]eep (default: Keep) "
+                "[R]emove [S]tash [K]eep (default: Keep) ",
+                completer=choices
             ).lower()
             if choice in ('r', 'remove'):
                 RemoveCombatant.do_command(self, monster.name)
