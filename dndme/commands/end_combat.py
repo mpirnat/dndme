@@ -1,6 +1,8 @@
 import math
 from dndme.commands import Command
+from dndme.commands.remove_combatant import RemoveCombatant
 from dndme.commands.show import Show
+from dndme.commands.stash_combatant import StashCombatant
 
 
 class EndCombat(Command):
@@ -24,7 +26,20 @@ Usage: {keyword}
         combat.tm = None
         Show.show_defeated(self)
         combat.defeated = []
-        combat.monsters = {}
+
+        # Allow some leftover monsters to remain in the combat group;
+        # perhaps some are friendly NPCs along for the ride?
+        for monster in list(combat.monsters.values()):
+            choice = self.session.prompt(
+                f"What should we do with {monster.name}? "
+                "[R]emove [S]tash [K]eep (default: Keep) "
+            ).lower()
+            if choice in ('r', 'remove'):
+                RemoveCombatant.do_command(self, monster.name)
+            elif choice in ('s', 'stash'):
+                StashCombatant.do_command(self, monster.name)
+            else:
+                print(f"Okay, keeping {monster.name}")
 
         if cur_turn:
             rounds = cur_turn[0]
