@@ -1,6 +1,8 @@
 from importlib import import_module
 import os
 import pkgutil
+import re
+import subprocess
 import sys
 import traceback
 
@@ -211,6 +213,24 @@ def main_loop(campaign, player_view):
         player_view_manager.start()
         player_view_manager.update()
         print("Started! Browse to http://localhost:5000/player-view")
+
+    # Attempte to init date, time, and latitude state from log file
+    if log_file:
+        grepproc = subprocess.Popen(['grep', 'Session ended', log_file],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        lines, _ = grepproc.communicate()
+        lines = str(lines, 'utf-8').split('\n')
+        for line in reversed(lines):
+            m = re.match('.* (\d+ \w+ \d+) at (.+) at ([0-9\.]+)', line)
+            if not m:
+                continue
+            date, time, lat = m.groups()
+            game.commands['date'].do_command(date)
+            game.commands['time'].do_command(time)
+            game.commands['lat'].do_command(lat)
+            break
+        else:
+            print("Couldn't init date/time/lat from log file")
 
     while True:
         try:
