@@ -252,6 +252,20 @@ class Game:
         return combat
 
     @property
+    def get_stash_names(self):
+        return self.stash.keys()
+
+    def get_stash_target(self, name):
+        return self.stash.get(name)
+
+    def get_stash_targets(self, names):
+        matched_names = sorted(set([name for lst in
+                                    [fnmatch.filter(self.get_stash_names, name) for name in names]
+                                    for name in lst]))
+        targets = [self.get_stash_target(name) for name in matched_names]
+        return [target for target in targets if target]
+
+    @property
     def stashed_monster_names(self):
         return [k for k, v in self.stash.items() if hasattr(v, 'mtype')]
 

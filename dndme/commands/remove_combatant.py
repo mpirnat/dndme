@@ -27,21 +27,22 @@ Examples:
                 set(names_already_chosen))
 
     def do_command(self, *args):
+        game = self.game
         combat = self.game.combat
-        targets = combat.get_targets(args)
+        targets = combat.get_targets(args) + game.get_stash_targets(args)
         if not targets:
             print(f"No targets found from `{args}`")
             return
 
         for target in targets:
-            if target and hasattr(target, 'mtype'):
-                if combat.tm:
-                    combat.tm.remove_combatant(target)
-                combat.monsters.pop(target.name)
-                print(f"Removed {target.name}")
-                self.game.changed = True
-            elif target.name in self.game.stash and \
-                    hasattr(self.game.stash[target.name], 'mtype'):
-                self.game.stash.pop(target.name)
-                print(f"Removed {target.name} from stash")
-                self.game.changed = True
+            if hasattr(target, 'mtype'):
+                if target.name in combat.monsters:
+                    if combat.tm:
+                        combat.tm.remove_combatant(target)
+                    combat.monsters.pop(target.name)
+                    print(f"Removed {target.name}")
+                    self.game.changed = True
+                elif target.name in game.stash:
+                    self.game.stash.pop(target.name)
+                    print(f"Removed {target.name} from stash")
+                    self.game.changed = True
