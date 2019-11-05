@@ -1,3 +1,4 @@
+import atexit
 from dndme.commands import Command
 from dndme.writers import PartyWriter
 
@@ -12,6 +13,13 @@ Summary: Save the party data back to the party toml file.
 
 Usage: {keyword}
 """
+
+    def __init__(self, *args):
+        super().__init__(*args)
+
+        def sign_off():
+            self.do_command()
+        atexit.register(sign_off)
 
     def do_command(self, *args):
         characters = {}
