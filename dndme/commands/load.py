@@ -99,12 +99,8 @@ Example:
         for i, encounter in enumerate(encounters, 1):
             print(f"{i}: {encounter.name} ({encounter.location})")
 
-        pick = input("\nLoad encounter: ")
-        if not pick.isdigit():
-            print("Invalid encounter.")
-            return
-
-        pick = int(pick) - 1
+        pick = self.safe_input("Load encounter", converter=convert_to_int)
+        pick = pick - 1
         if pick < 0 or pick > len(encounters):
             print("Invalid encounter.")
             return
