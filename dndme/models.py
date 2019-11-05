@@ -114,6 +114,7 @@ class Combatant:
 
 @attrs
 class Character(Combatant):
+    ctype = attrib(default="player")
     cclass = attrib(default="Fighter")
     level = attrib(default=1)
     initiative_mod = attrib(default=0)

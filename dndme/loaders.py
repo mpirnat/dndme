@@ -269,7 +269,7 @@ class PartyLoader:
     def load(self, combat):
         with open(self.filename, 'r') as fin:
             party = toml.load(fin)
-        combat.characters = \
-                {x['name']: Character(**x) for x in party.values()}
+        combat.characters.update(
+                {x['name']: Character(**x) for x in party.values()})
         return party
 
