@@ -2,6 +2,7 @@ from attr import attrib
 import pytest
 
 from dndme.loaders import EncounterLoader
+from dndme.models import Combat
 
 
 @pytest.fixture
@@ -9,7 +10,8 @@ def encounter_loader():
     """Create a testing encounter loader"""
     return EncounterLoader(
         base_dir='content/example/encounters',
-        monster_loader=None
+        monster_loader=None,
+        combat=Combat()
     )
 
 

@@ -1,0 +1,45 @@
+name = "skeleton"
+size = "medium"
+mtype = "undead"
+race = "skeleton"
+alignment = "lawful evil"
+ac = 13
+armor = ""
+max_hp = "2d8+4" #13
+speed = 30
+str = 10
+dex = 14
+con = 15
+int = 6
+wis = 8
+cha = 5
+vulnerable = "bludgeoning"
+resist = ""
+immune = "poison, exhauted, poisoned"
+languages = "understands all languages it knew in life but can't speak"
+cr = 0.25
+xp = 50
+notes = """
+Skeletons arise when animated by dark magic. They heed the summons of
+spellcasters who call them from their stony tombs and ancient battlefields, or
+rise of their own accord in places saturated with death and loss, awakened by
+stirrings of nycromantic energy or the presence of corrupting evil.
+"""
+
+[senses]
+darkvision = 60
+perception = 9
+
+[actions.shortsword]
+name = "Shortsword"
+description = """
+Melee Weapon Attack: +4 to hit, reach 5 ft., one target.
+Hit: 5 (1d6 + 2) piercing damage.
+"""
+
+[actions.shortbow]
+name = "Shortbow"
+description = """
+Ranged Weapon Attack: +4 to hit, range 80-320 ft., one target.
+Hit: 5 (1d6 + 2) piercing damage.
+"""

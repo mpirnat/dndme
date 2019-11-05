@@ -81,6 +81,7 @@ Example:
         encounter_loader = EncounterLoader(
                 self.game.encounters_dir,
                 monster_loader,
+                self.game.combat,
                 count_resolver=prompt_count,
                 initiative_resolver=prompt_initiative)
 
@@ -109,7 +110,7 @@ Example:
             return
 
         encounter = encounters[pick]
-        monsters = encounter_loader.load(encounter, self.game.combat)
+        monsters = encounter_loader.load(encounter)
         print(f"Loaded encounter: {encounter.name}"
                 f" with {len(monsters)} monsters")
 

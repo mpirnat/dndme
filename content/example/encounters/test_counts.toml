@@ -17,3 +17,7 @@ count = "goblins"
 [groups.young_green_dragon]
 monster = "young_green_dragon"
 count = "goblins + evil_mage"
+
+[groups.skeletons]
+monster = "skeleton"
+count = "players + 2"

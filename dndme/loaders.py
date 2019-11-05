@@ -10,10 +10,12 @@ from dndme.models import Character, Encounter, Monster
 
 class EncounterLoader:
 
-    def __init__(self, base_dir, monster_loader, count_resolver=None,
+    def __init__(self, base_dir, monster_loader, combat,
+            count_resolver=None,
             initiative_resolver=None):
         self.base_dir = base_dir
         self.monster_loader = monster_loader
+        self.combat = combat
         self.count_resolver = count_resolver
         self.initiative_resolver = initiative_resolver
 
@@ -23,7 +25,7 @@ class EncounterLoader:
                 for filename in sorted(available_encounter_files)]
         return encounters
 
-    def load(self, encounter, combat=None):
+    def load(self, encounter):
         monster_groups = {}
         for key, group in encounter.groups.items():
             monster_groups[key] = self._load_group(group, monster_groups)
@@ -31,7 +33,7 @@ class EncounterLoader:
         monsters = [y for x in monster_groups.values() for y in x]
 
         self._set_origin(encounter, monsters)
-        self._add_to_combat(combat, monsters)
+        self._add_to_combat(self.combat, monsters)
 
         return monsters
 
@@ -60,14 +62,19 @@ class EncounterLoader:
                     count = self.count_resolver(group['count'], group['monster'])
                 else:
                     count = roll_dice_expr(group['count'])
-            elif group['count'] in monster_groups:
-                count = len(monster_groups[group['count']])
-            elif '+' in group['count']:
-                keys = [x.strip() for x in group['count'].split('+')]
-                count = sum([len(monster_groups[x]) for x in keys
-                        if x in monster_groups])
             else:
-                raise ValueError(f"Invalid monster count: {group['count']}")
+                group_count = group['count']
+                names = {x: 0 for x in re.findall(r"(\w+)", group['count'])
+                        if not x.isdigit()}
+                for name in names:
+                    if name in monster_groups:
+                        names[name] = len(monster_groups[name])
+                    elif name == 'players':
+                        names[name] = len(self.combat.characters)
+                    group_count = group_count.replace(name, str(names[name]))
+                if re.match(r"[^\d\s\(\)\+\-\*\/]", group_count):
+                    raise ValueError(f"Invalid monster count: {group['count']}")
+                count = max(eval(group_count), 1)
 
         return count
 
