@@ -70,6 +70,14 @@ class EncounterLoader:
                     if name in monster_groups:
                         names[name] = len(monster_groups[name])
                     elif name == 'players':
+                        names[name] = len([x for x in
+                            self.combat.characters.values()
+                            if x.ctype == 'player'])
+                    elif name == 'sidekicks':
+                        names[name] = len([x for x in
+                            self.combat.characters.values()
+                            if x.ctype == 'sidekick'])
+                    elif name == 'party':
                         names[name] = len(self.combat.characters)
                     group_count = group_count.replace(name, str(names[name]))
                 if re.match(r"[^\d\s\(\)\+\-\*\/]", group_count):
