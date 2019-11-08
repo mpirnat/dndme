@@ -137,6 +137,7 @@ Example:
         encounter_loader = EncounterLoader(
                 self.game.encounters_dir,
                 monster_loader,
+                self.game.combat,
                 initiative_resolver=prompt_initiative)
         encounter_loader._set_hp([], monsters)
         encounter_loader._set_names([], monsters)
