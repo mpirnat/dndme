@@ -50,6 +50,7 @@ Usage: {keyword}
             if character.ctype != 'player':
                 party_data[character.name]['ctype'] = character.ctype
 
-        writer = PartyWriter(self.game.party_file)
-        writer.write(party_data)
-        print("OK; saved party data")
+        if party_data:
+            writer = PartyWriter(self.game.party_file)
+            writer.write(party_data)
+            print("OK; saved party data")
