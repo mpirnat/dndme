@@ -39,7 +39,10 @@ class PlayerViewManager():
         data = {}
 
         data['combatants'] = []
-        turn_order = combat.tm.turn_order if combat.tm else []
+        turn_order = (
+            combat.tm.turn_order if combat.tm else
+            [('', combat.characters.values())]
+        )
         for roll, combatants in turn_order:
             for combatant in combatants:
                 if not combatant.visible_in_player_view:

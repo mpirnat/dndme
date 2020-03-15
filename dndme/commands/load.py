@@ -55,6 +55,7 @@ Example:
     def load_party(self):
         party_loader = PartyLoader(self.game.party_file)
         party = party_loader.load(self.game.combat)
+        self.game.changed = True
         print("OK; loaded {} characters".format(len(party)))
 
     def load_encounter(self, args):
