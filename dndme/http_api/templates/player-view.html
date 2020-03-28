@@ -217,6 +217,8 @@ tr {
         document.getElementById('misc-info').innerHTML = '<span>dndme</span><span class="right">no connection</span>';
         document.getElementById('message').innerHTML = error;
         document.getElementById('message').style.visibility = 'visible';
+        document.getElementById('image').innerHTML = '';
+        document.getElementById('current_combatant_image').innerHTML = '';
         timerId = setTimeout(getData, 5000);
     }
 
