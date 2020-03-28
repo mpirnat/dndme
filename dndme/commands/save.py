@@ -45,6 +45,7 @@ Usage: {keyword}
                 "cur_hp": character.cur_hp,
                 "ac": character.ac,
                 "initiative_mod": character.initiative_mod,
+                "image_url": character.image_url,
                 "senses": character.senses,
             }
             if character.ctype != 'player':
