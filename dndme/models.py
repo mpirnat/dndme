@@ -22,6 +22,7 @@ class Combatant:
 
     race = attrib(default="")
     ac = attrib(default=0)
+    image_url = attrib(default="")
 
     senses = attrib(default=attr_factory(dict))
     conditions = attrib(default=attr_factory(dict))

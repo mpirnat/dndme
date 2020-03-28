@@ -19,6 +19,7 @@ immune = ""
 languages = "Common, Draconic, Dwarvish, Elvish"
 cr = 1
 speed = 30
+image_url = ""
 notes = """
 Evil mages hunger for arcane power and dwell in isolated places, where
 they can perform terrible magical experiments without interference.

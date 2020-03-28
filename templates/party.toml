@@ -7,6 +7,7 @@ max_hp = 10
 cur_hp = 10
 ac = 10
 initiative_mod = 0
+image_url = ""
 
 [Character.senses]
 darkvision = 0

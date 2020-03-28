@@ -19,6 +19,7 @@ immune = ""
 languages = "Common, Goblin"
 cr = 0.25
 xp = 50
+image_url = ""
 notes = """
 Goblins are black-hearted, gather in overwhelming numbers, and crave power,
 which they abuse.

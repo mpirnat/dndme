@@ -19,6 +19,7 @@ immune = "poison, poisoned"
 languages = "Common, Draconic"
 cr = 8
 xp = 3900
+image_url = ""
 notes = """
 Thoroughly evil, green dragons delight in subverting and corrupting the
 good-hearted. They prefer to dwell in ancient forests.

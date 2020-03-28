@@ -19,6 +19,7 @@ immune = "poison, exhauted, poisoned"
 languages = "understands all languages it knew in life but can't speak"
 cr = 0.25
 xp = 50
+image_url = ""
 notes = """
 Skeletons arise when animated by dark magic. They heed the summons of
 spellcasters who call them from their stony tombs and ancient battlefields, or
