@@ -116,7 +116,7 @@ Usage: {keyword} <what>
             print("No turn in progress.")
             return
         turn = combat.tm.cur_turn
-        print(f"Round: {turn[0]} Initiative: {turn[1]} Name: {turn[2].name}")
+        self.print(f"Round: {turn[0]} Initiative: {turn[1]} Name: <x>{turn[2].name}</x>")
 
     def show_turns(self):
         combat = self.game.combat

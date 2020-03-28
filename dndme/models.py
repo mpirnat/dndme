@@ -82,6 +82,10 @@ class Combatant:
 
         return conditions_removed
 
+    def increment_condition_durations(self):
+        for condition in list(self.conditions):
+            self.conditions[condition] += 1
+
     @property
     def status(self):
         hp_percent = self.cur_hp / self.max_hp
