@@ -110,6 +110,9 @@ tr {
 
     <div id="message">Contacting server...</div>
 
+    <div id="current_combatant_image"></div>
+    <div id="image"></div>
+
     <script>
 
     function handleErrors(response) {
@@ -135,6 +138,10 @@ tr {
         console.log('showUI');
 
         if(data.combatants && data.combatants.length) {
+            if(!data.currentCombatant) {
+                document.getElementById('current_combatant_image').innerHTML = '';
+            }
+
             var combatantTable = `<table>
                 <tr>
                     <th class="col1"></th>
@@ -151,6 +158,12 @@ tr {
                 if(combatant.name == data.currentCombatant) {
                     marker = '→';
                     rowClass = 'current-combatant';
+                    if(combatant.image_url) {
+                        var currentCombatantImage = `${combatant.name}<br><img src="${combatant.image_url}">`;
+                        document.getElementById('current_combatant_image').innerHTML = currentCombatantImage;
+                    } else {
+                        document.getElementById('current_combatant_image').innerHTML = '';
+                    }
                 }
                 var dispositionIcon = "😐";
                 if(combatant.disposition == 'friendly') {
@@ -176,6 +189,7 @@ tr {
             document.getElementById('combatants').innerHTML = combatantTable;
         } else {
             document.getElementById('combatants').innerHTML = '';
+            document.getElementById('current_combatant_image').innerHTML = '';
         }
 
         var miscInfo = `<span>dndme</span><span class="right"><label>Date:</label> ${data.date} <label>Time:</label> ${data.time}</span>`;
@@ -187,6 +201,12 @@ tr {
             document.getElementById('message').style.visibility = 'hidden';
         }
         document.getElementById('message').innerHTML = data.message;
+
+        if(data.image_url) {
+            document.getElementById('image').innerHTML = `<img src="${data.image_url}">`;
+        } else {
+            document.getElementById('image').innerHTML = '';
+        }
 
         timerId = setTimeout(getData, 2000);
     }

@@ -56,6 +56,7 @@ class PlayerViewManager():
                     'conditions': [f"{x}:{y}" if y != inf else x
                             for x, y in sorted(combatant.conditions.items())],
                     'disposition': combatant.disposition,
+                    'image_url': combatant.image_url,
                 })
 
         if combat.tm and combat.tm.cur_turn:
