@@ -13,6 +13,7 @@ def main(name):
     content_dir = create_content_dir(name)
     create_encounters_dir(content_dir)
     create_monsters_dir(content_dir)
+    create_images_dirs(content_dir)
 
 
 def create_content_dir(name):
@@ -20,7 +21,7 @@ def create_content_dir(name):
     if os.path.exists(content_dir):
         print(f"Content package {name} already exists")
         sys.exit(1)
-    
+
     os.mkdir(content_dir)
     return content_dir
 
@@ -41,6 +42,14 @@ def create_monsters_dir(content_dir):
     template_file = f"{base_dir}/templates/monster.toml"
     destination_file = f"{monsters_dir}/TEMPLATE"
     shutil.copyfile(template_file, destination_file)
+
+
+def create_images_dirs(content_dir):
+    images_dir = f"{content_dir}/images"
+    os.mkdir(images_dir)
+
+    monster_images_dir = f"{images_dir}/monsters"
+    os.mkdir(monster_images_dir)
 
 
 if __name__ == '__main__':
