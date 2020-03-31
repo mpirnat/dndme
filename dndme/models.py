@@ -234,7 +234,7 @@ class Combat:
 class Game:
     base_dir = attrib()
     encounters_dir = attrib()
-    images_dir = attrib()
+    #images_dir = attrib()
     party_file = attrib()
     log_file = attrib()
 
@@ -250,8 +250,8 @@ class Game:
     commands = attrib(default={})
 
     changed = attrib(default=True)
-    player_message = attrib(default="")
-    player_image = attrib(default="")
+    player_message = attrib(default="") # TODO: rename for consistency with image
+    player_view_image = attrib(default="")
 
     @combat.default
     def _combat(self):

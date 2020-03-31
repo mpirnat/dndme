@@ -72,6 +72,7 @@ class PlayerViewManager():
         data['date'] = str(self.game.calendar)
         data['time'] = str(self.game.clock)
         data['message'] = self.game.player_message
+        data['image_url'] = self.game.player_view_image
 
         #print(json.dumps(data, indent=4))
 
