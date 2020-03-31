@@ -60,6 +60,8 @@ Examples:
             elif args[0] == 'player':
                 character = self.game.combat.get_target(args[1])
                 image_url = character.image_url
+            else:
+                image_url = ' '.join(args)
 
         elif len(args) == 1:
             image_url = args[0]
