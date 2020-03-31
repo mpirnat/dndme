@@ -281,3 +281,20 @@ class PartyLoader:
                 {x['name']: Character(**x) for x in party.values()})
         return party
 
+
+class ImageLoader:
+
+    def __init__(self, game):
+        self.game = game
+
+    def get_monster_image_path(self, filename):
+        monster_image = glob.glob(f'content/*/images/monsters/{filename}')
+        if monster_image:
+            return f'/static/{monster_image[0]}'
+        return ''
+
+    def get_player_image_path(self, filename):
+        player_image = glob.glob(f'campaigns/*/images/{filename}')
+        if player_image:
+            return f'/static/{player_image[0]}'
+        return ''

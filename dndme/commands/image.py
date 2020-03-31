@@ -1,5 +1,5 @@
 from dndme.commands import Command
-from dndme.loaders import MonsterLoader
+from dndme.loaders import ImageLoader, MonsterLoader
 
 
 class Image(Command):
@@ -25,6 +25,7 @@ Examples:
 
     def __init__(self, game, session, player_view):
         super().__init__(game, session, player_view)
+        self.image_loader = ImageLoader(game)
         self.monster_loader = MonsterLoader()
 
     def get_suggestions(self, words):
@@ -60,4 +61,11 @@ Examples:
                 character = self.game.combat.get_target(args[1])
                 image_url = character.image_url
 
+        if not image_url.startswith('http'):
+            if args[0] == 'monster':
+                image_url = self.image_loader.get_monster_image_path(image_url)
+            elif args[0] == 'player':
+                image_url = self.image_loader.get_player_image_path(image_url)
+
+        print("Resolved image_url:", image_url)
         return image_url
