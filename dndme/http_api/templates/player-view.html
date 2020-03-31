@@ -102,6 +102,15 @@ tr {
     margin: 1em;
 }
 
+#image img {
+    display: block;
+    margin-bottom: 2em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2em;
+    max-width: 80%;
+}
+
 </style>
 
 <div id="misc-info"><span>dndme</span><span class="right">no connection</span></div>
@@ -140,6 +149,7 @@ tr {
         if(data.combatants && data.combatants.length) {
             if(!data.currentCombatant) {
                 document.getElementById('current_combatant_image').innerHTML = '';
+                document.getElementById('current_combatant_image').style.display = 'none';
             }
 
             var combatantTable = `<table>
@@ -161,8 +171,10 @@ tr {
                     if(combatant.image_url) {
                         var currentCombatantImage = `${combatant.name}<br><img src="${combatant.image_url}">`;
                         document.getElementById('current_combatant_image').innerHTML = currentCombatantImage;
+                        document.getElementById('current_combatant_image').style.display = 'block';
                     } else {
                         document.getElementById('current_combatant_image').innerHTML = '';
+                        document.getElementById('current_combatant_image').style.display = 'none';
                     }
                 }
                 var dispositionIcon = "😐";
@@ -190,22 +202,25 @@ tr {
         } else {
             document.getElementById('combatants').innerHTML = '';
             document.getElementById('current_combatant_image').innerHTML = '';
+            document.getElementById('current_combatant_image').style.display = 'none';
         }
 
         var miscInfo = `<span>dndme</span><span class="right"><label>Date:</label> ${data.date} <label>Time:</label> ${data.time}</span>`;
         document.getElementById('misc-info').innerHTML = miscInfo;
 
         if(data.message) {
-            document.getElementById('message').style.visibility = 'visible';
+            document.getElementById('message').style.display = 'block';
         } else {
-            document.getElementById('message').style.visibility = 'hidden';
+            document.getElementById('message').style.display = 'none';
         }
         document.getElementById('message').innerHTML = data.message;
 
         if(data.image_url) {
+            document.getElementById('image').style.display = 'block';
             document.getElementById('image').innerHTML = `<img src="${data.image_url}">`;
         } else {
             document.getElementById('image').innerHTML = '';
+            document.getElementById('image').style.display = 'none';
         }
 
         timerId = setTimeout(getData, 2000);
