@@ -287,6 +287,16 @@ class ImageLoader:
     def __init__(self, game):
         self.game = game
 
+    def get_available_content_images(self):
+        image_dir = self.game.encounters_dir.replace('encounters', 'images')
+        images = [x.replace(image_dir, '').lstrip('/') for x in glob.glob(f'{image_dir}/*.*')]
+        return images
+
+    def get_content_image_path(self, filename):
+        image_dir = self.game.encounters_dir.replace('encounters', 'images').replace(self.game.base_dir, '').lstrip('/')
+        image = f'/static/{image_dir}/{filename}'
+        return image
+
     def get_monster_image_path(self, filename):
         monster_image = glob.glob(f'content/*/images/monsters/{filename}')
         if monster_image:
