@@ -1,7 +1,7 @@
 from fnmatch import fnmatch
 from dndme.commands import Command
 from dndme.commands import convert_to_int, convert_to_int_or_dice_expr
-from dndme.loaders import EncounterLoader, MonsterLoader, PartyLoader
+from dndme.loaders import EncounterLoader, ImageLoader, MonsterLoader, PartyLoader
 
 
 class Load(Command):
@@ -36,7 +36,8 @@ Example:
         if len(words) == 2:
             return ['encounter', 'monster', 'party']
         if len(words) == 3 and words[1] == 'monster':
-            monster_loader = MonsterLoader()
+            image_loader = ImageLoader(self.game)
+            monster_loader = MonsterLoader(image_loader)
             return monster_loader.get_available_monster_keys()
 
     def do_command(self, *args):
@@ -124,7 +125,8 @@ Example:
             print(f"Adding to turn order at: {roll}")
             return roll
 
-        monster_loader = MonsterLoader()
+        image_loader = ImageLoader(self.game)
+        monster_loader = MonsterLoader(image_loader)
         count = self.safe_input(
                 "Number of monsters",
                 converter=convert_to_int_or_dice_expr)

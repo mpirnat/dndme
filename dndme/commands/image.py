@@ -26,7 +26,7 @@ Examples:
     def __init__(self, game, session, player_view):
         super().__init__(game, session, player_view)
         self.image_loader = ImageLoader(game)
-        self.monster_loader = MonsterLoader()
+        self.monster_loader = MonsterLoader(self.image_loader)
 
     def get_suggestions(self, words):
         if len(words) == 2:

@@ -238,8 +238,8 @@ class EncounterLoader:
 
 class MonsterLoader:
 
-    def __init__(self):
-        pass
+    def __init__(self, image_loader):
+        self.image_loader = image_loader
 
     def load(self, monster_name, count=1):
         # TODO: hey maybe make this more efficient, yeah?
@@ -252,6 +252,10 @@ class MonsterLoader:
 
             if monster['name'] != monster_name:
                 continue
+
+            image_url = monster.get('image_url')
+            if image_url and not image_url.startswith('http'):
+                monster['image_url'] = self.image_loader.get_monster_image_path(image_url)
 
             for i in range(count):
                 monsters.append(Monster(**monster))
