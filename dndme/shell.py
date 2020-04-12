@@ -236,7 +236,7 @@ def main_loop(campaign, player_view):
         try:
             user_input = session.prompt("> ",
                 completer=DnDCompleter(commands=game.commands,
-                        ignore_case=True, match_middle=True),
+                        ignore_case=True, match_middle=False),
                 bottom_toolbar=bottom_toolbar,
                 auto_suggest=AutoSuggestFromHistory(),
                 key_bindings=kb,
