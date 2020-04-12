@@ -79,7 +79,8 @@ Example:
             print(f"Adding to turn order at: {roll}")
             return roll
 
-        monster_loader = MonsterLoader()
+        image_loader = ImageLoader(self.game)
+        monster_loader = MonsterLoader(image_loader)
         encounter_loader = EncounterLoader(
                 self.game.encounters_dir,
                 monster_loader,
