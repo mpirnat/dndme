@@ -68,12 +68,12 @@ Examples:
 
         if image_url and not image_url.startswith('http'):
             if args[0] == 'monster':
-                image_url = self.image_loader.get_monster_image_path(image_url)
+                # already resolved when loading the monster
+                pass
             elif args[0] == 'player':
                 image_url = self.image_loader.get_player_image_path(image_url)
             else:
                 image_url = self.image_loader.get_content_image_path(image_url)
-
 
         print("Resolved image_url:", image_url)
         return image_url
