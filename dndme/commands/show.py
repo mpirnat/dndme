@@ -51,7 +51,8 @@ Usage: {keyword} <what>
         combat = self.game.combat
         party = list(sorted(combat.characters.items()))
         for name, character in party:
-            print(f"{name:20}"
+            pronouns = f" ({character.pronouns})" if character.pronouns else ""
+            print(f"{name:20}{pronouns}"
                     f"\tHP: {character.cur_hp:0>2}/{character.max_hp:0>2}"
                     f"\tAC: {character.ac:0>2}"
                     f"\tPer: {character.senses['perception']:0>2}"
@@ -70,11 +71,12 @@ Usage: {keyword} <what>
             if monster.alias:
                 formatted_name = f"{name}:{monster.alias}"
             vis_icon = "(+) " if monster.visible_in_player_view else "( ) "
+            pronouns = f" ({monster.pronouns})" if monster.pronouns else ""
             print(f"{vis_icon}{formatted_name[:30]:30}"
                     f"\tHP: {monster.cur_hp:0>2}/{monster.max_hp:0>2}"
                     f"\tAC: {monster.ac:0>2}"
                     f"\tPer: {monster.senses['perception']:0>2}"
-                    f"\t{monster.disposition}"
+                    f"\t{monster.disposition}{pronouns}"
             )
             if monster.conditions:
                 conds = ', '.join([f"{x}:{y}"

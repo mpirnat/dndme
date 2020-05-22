@@ -21,6 +21,7 @@ class Combatant:
         self._alias = value
 
     race = attrib(default="")
+    pronouns = attrib(default="")
     ac = attrib(default=0)
     image_url = attrib(default="")
 

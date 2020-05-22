@@ -3,6 +3,7 @@ name = "name"
 race = "race"
 cclass = "class"
 level = 1
+pronouns = "they/them"
 max_hp = 10
 cur_hp = 10
 ac = 10

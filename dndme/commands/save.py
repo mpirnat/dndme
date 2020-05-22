@@ -41,6 +41,7 @@ Usage: {keyword}
                 "race": character.race,
                 "cclass": character.cclass,
                 "level": character.level,
+                "pronouns": character.pronouns,
                 "max_hp": character.max_hp,
                 "cur_hp": character.cur_hp,
                 "ac": character.ac,
