@@ -25,27 +25,29 @@ Examples:
     def do_command(self, *args):
         combat = self.game.combat
 
-        for target_name in args:
-            if target_name not in self.game.stash:
-                print(f"Invalid target: {target_name}")
-                continue
+        targets = self.game.get_stash_targets(args)
 
-            target = self.game.stash.pop(target_name)
+        if not targets:
+            print(f"No targets found in stash from `{args}`")
+            return
+
+        for target in targets:
+            target = self.game.stash.pop(target.name)
 
             if hasattr(target, 'mtype'):
-                combat.monsters[target_name] = target
+                combat.monsters[target.name] = target
             else:
-                combat.characters[target_name] = target
+                combat.characters[target.name] = target
 
-            print(f"Unstashed {target_name}")
+            print(f"Unstashed {target.name}")
             self.game.changed = True
 
             if combat.tm:
                 roll_advice = f"1d20{target.initiative_mod:+}" \
-                        if target.initiative_mod else "1d20"
+                    if target.initiative_mod else "1d20"
                 roll = self.safe_input(
-                        f"Initiative for {target.name}",
-                        default=roll_advice,
-                        converter=convert_to_int_or_dice_expr)
+                    f"Initiative for {target.name}",
+                    default=roll_advice,
+                    converter=convert_to_int_or_dice_expr)
                 combat.tm.add_combatant(target, roll)
                 print(f"Added to turn order in {roll}")
