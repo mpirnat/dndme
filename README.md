@@ -421,6 +421,9 @@ For example:
     # install dndme
     pip install -e .[dev,test]
 
+    # install pre-commit hooks
+    pre-commit install
+
     # run the tests
     tox
 ```
@@ -436,6 +439,13 @@ Tests are runnable with either `pytest` or `tox`:
 * `tox` - for running more comprehensive tests in (potentially) many Python versions
 
 Testing command examples can be found in tox.ini under the "commands" heading.
+
+### pre-commit
+
+[`pre-commit`](https://pre-commit.com/) automatically runs tools like
+autoformatters (e.g. `black`) on commit. Install its git hooks with `pre-commit
+install`, and configured hooks will automaticaly run on each future commit. See
+the documentation for full configuration and invocation information.
 
 ### Packaging
 

@@ -30,6 +30,7 @@ setup(
         ],
         'dev': [
             'pip-tools',
+            'pre-commit',
         ],
     },
     tests_require=['pytest'],
