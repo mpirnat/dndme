@@ -7,7 +7,7 @@ from dndme.commands.switch_combat import SwitchCombat
 
 class JoinCombat(Command):
 
-    keywords = ['join']
+    keywords = ["join"]
     help_text = """{keyword}
 {divider}
 Summary: Move one or more combatants into a different combat group;
@@ -21,14 +21,15 @@ Example: {keyword} 1 Aragorn Gimli Legolas
 
     def get_suggestions(self, words):
         if len(words) == 2:
-            return [f"{i} - {', '.join([x for x in combat.characters])}"
-                    for i, combat in enumerate(self.game.combats, 1)]
+            return [
+                f"{i} - {', '.join([x for x in combat.characters])}"
+                for i, combat in enumerate(self.game.combats, 1)
+            ]
 
         elif len(words) > 2:
             names_already_chosen = words[2:]
             combat = self.game.combat
-            return sorted(set(combat.combatant_names) - \
-                    set(names_already_chosen))
+            return sorted(set(combat.combatant_names) - set(names_already_chosen))
 
     def do_command(self, *args):
         source_combat = self.game.combat
@@ -67,7 +68,7 @@ Example: {keyword} 1 Aragorn Gimli Legolas
             else:
                 source_initiative = None
 
-            if hasattr(target, 'mtype'):
+            if hasattr(target, "mtype"):
                 source_combat.monsters.pop(target.name)
                 dest_combat.monsters[target.name] = target
             else:
@@ -78,19 +79,22 @@ Example: {keyword} 1 Aragorn Gimli Legolas
                 if source_initiative is not None:
                     roll_advice = source_initiative
                 else:
-                    roll_advice = f"1d20{target.initiative_mod:+}" \
-                            if target.initiative_mod else "1d20"
+                    roll_advice = (
+                        f"1d20{target.initiative_mod:+}"
+                        if target.initiative_mod
+                        else "1d20"
+                    )
                 roll = self.safe_input(
-                        f"Initiative for {target.name}",
-                        default=roll_advice,
-                        converter=convert_to_int_or_dice_expr)
+                    f"Initiative for {target.name}",
+                    default=roll_advice,
+                    converter=convert_to_int_or_dice_expr,
+                )
                 print(f"Adding to turn order at {roll}")
                 dest_combat.tm.add_combatant(target, roll)
 
         if source_combat.monsters and not source_combat.characters:
             print("Monsters remain, stashing them:\n")
-            StashCombatant.do_command(self,
-                    *list(source_combat.monsters.keys()))
+            StashCombatant.do_command(self, *list(source_combat.monsters.keys()))
 
         if not source_combat.characters and not source_combat.monsters:
             print("Combat group is empty; switching...")

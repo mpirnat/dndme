@@ -1,8 +1,9 @@
 from dndme.commands import Command
 
+
 class Latitude(Command):
 
-    keywords = ['latitude', 'lat']
+    keywords = ["latitude", "lat"]
     help_text = """{keyword}
 {divider}
 Summary: check or set the current latitude that will be used for calculating
@@ -26,7 +27,7 @@ Examples:
         if not args:
             print(f"The current latitude is {self.game.latitude}")
             return
-        
+
         try:
             new_latitude = float(args[0])
             if new_latitude < -90 or new_latitude > 90:
@@ -34,6 +35,6 @@ Examples:
         except ValueError:
             print(f"Invalid latitude: {args[0]}")
             return
-        
+
         self.game.latitude = new_latitude
         print(f"Okay; the latitude is now {new_latitude}")

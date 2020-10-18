@@ -5,7 +5,7 @@ from dndme.gametime import Date
 
 class AdjustDate(Command):
 
-    keywords = ['date']
+    keywords = ["date"]
     help_text = """{keyword}
 {divider}
 Summary: Query, set, or adjust the in-game date using the calendar
@@ -29,18 +29,17 @@ Examples:
     def get_suggestions(self, words):
         calendar = self.game.calendar
         if len(words) == 3:
-            return [month['name']
-                    for month in calendar.cal_data['months'].values()]
+            return [month["name"] for month in calendar.cal_data["months"].values()]
 
     def do_command(self, *args):
         calendar = self.game.calendar
-        data = ' '.join(args)
+        data = " ".join(args)
 
         if not data:
             print(f"The date is {calendar}")
             return
 
-        m_adjustment = re.match('([+-]\d+)', data)
+        m_adjustment = re.match("([+-]\d+)", data)
         if m_adjustment:
             days = int(m_adjustment.groups()[0])
             calendar.adjust_date(days)
@@ -48,7 +47,7 @@ Examples:
             self.game.changed = True
             return
 
-        m_set = re.match('(\d+) (\w+) *(\d*)', data)
+        m_set = re.match("(\d+) (\w+) *(\d*)", data)
         if m_set:
             day, month, year = m_set.groups()
             day = int(day)

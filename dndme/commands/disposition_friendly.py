@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class DispositionFriendly(Command):
 
-    keywords = ['friendly']
+    keywords = ["friendly"]
     help_text = """{keyword}
 {divider}
 Summary: Mark one or more combatants as friendly in the player view.

@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class StashCombatant(Command):
 
-    keywords = ['stash']
+    keywords = ["stash"]
     help_text = """{keyword}
 {divider}
 Summary: Remove a combatant from a combat group and place them into a 'stash'

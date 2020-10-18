@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class DefeatMonster(Command):
 
-    keywords = ['defeat']
+    keywords = ["defeat"]
     help_text = """{keyword}
 {divider}
 Summary: Mark one or more monsters as defeated; the monster will be removed

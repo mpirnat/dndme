@@ -7,7 +7,7 @@ from dndme.models import Combat
 
 class SplitCombat(Command):
 
-    keywords = ['split']
+    keywords = ["split"]
     help_text = """{keyword}
 {divider}
 Summary: Split the party! Make a new combat group with an independent turn
@@ -50,16 +50,20 @@ Example: {keyword} Frodo Sam
                 if source_initiative is not None:
                     roll_advice = source_initiative
                 else:
-                    roll_advice = f"1d20{target.initiative_mod:+}" \
-                            if target.initiative_mod else "1d20"
+                    roll_advice = (
+                        f"1d20{target.initiative_mod:+}"
+                        if target.initiative_mod
+                        else "1d20"
+                    )
                 roll = self.safe_input(
                     f"Initiative for {target.name}",
                     default=roll_advice,
-                    converter=convert_to_int_or_dice_expr)
+                    converter=convert_to_int_or_dice_expr,
+                )
                 print(f"Adding to turn order at {roll}")
                 dest_combat.tm.add_combatant(target, roll)
 
-            if hasattr(target, 'mtype'):
+            if hasattr(target, "mtype"):
                 source_combat.monsters.pop(target.name)
                 dest_combat.monsters[target.name] = target
             else:
@@ -72,8 +76,9 @@ Example: {keyword} Frodo Sam
         if source_combat.tm:
             source_combat.tm.remove_empty_initiatives()
 
-        print("Okay; created new combat with "
-                f"{', '.join(dest_combat.combatant_names)}")
+        print(
+            "Okay; created new combat with " f"{', '.join(dest_combat.combatant_names)}"
+        )
 
         self.game.changed = True
 
@@ -81,6 +86,5 @@ Example: {keyword} Frodo Sam
         # we should automatically advance the turn to the next remaining
         # combatant.
         current_combatant = source_combat.current_combatant
-        if current_combatant and \
-                current_combatant in dest_combat.combatant_names:
+        if current_combatant and current_combatant in dest_combat.combatant_names:
             NextTurn.do_command(self)

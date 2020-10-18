@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class MoveCombatant(Command):
 
-    keywords = ['move']
+    keywords = ["move"]
     help_text = """{keyword}
 {divider}
 Summary: Move a combatant to a different initiative value.

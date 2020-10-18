@@ -5,7 +5,8 @@ import sys
 import click
 import pytoml as toml
 
-base_dir = os.path.normpath(os.path.join( os.path.dirname(__file__), '..'))
+base_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+
 
 @click.command()
 @click.argument("name")
@@ -52,5 +53,5 @@ def create_images_dirs(content_dir):
     os.mkdir(monster_images_dir)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(sys.argv[-1])

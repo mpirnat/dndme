@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class DispositionNeutral(Command):
 
-    keywords = ['neutral']
+    keywords = ["neutral"]
     help_text = """{keyword}
 {divider}
 Summary: Mark one or more combatants as neutral in the player view.

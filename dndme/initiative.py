@@ -60,10 +60,10 @@ class TurnManager:
         if None in [c1_init, c2_init, c1_i, c2_i]:
             raise Exception("Could not find one or more combatants")
 
-        self.initiative[c1_init][c1_i], \
-                self.initiative[c2_init][c2_i] = \
-                self.initiative[c2_init][c2_i], \
-                self.initiative[c1_init][c1_i]
+        self.initiative[c1_init][c1_i], self.initiative[c2_init][c2_i] = (
+            self.initiative[c2_init][c2_i],
+            self.initiative[c1_init][c1_i],
+        )
 
     def move(self, combatant, initiative_roll):
         for combatants in self.initiative.values():

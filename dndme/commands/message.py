@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class Message(Command):
 
-    keywords = ['message']
+    keywords = ["message"]
     help_text = """{keyword}
 {divider}
 Summary: Send a message to be displayed in the player view or, with no message

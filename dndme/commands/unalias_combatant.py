@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class UnaliasCombatant(Command):
 
-    keywords = ['unalias']
+    keywords = ["unalias"]
     help_text = """{keyword}
 {divider}
 Summary: Remove the alias set on one or more combatants

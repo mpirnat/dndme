@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class ReorderInitiative(Command):
 
-    keywords = ['reorder']
+    keywords = ["reorder"]
     help_text = """{keyword}
 {divider}
 Summary: Reorder the combatants with a particular initiative value.
@@ -22,8 +22,7 @@ Example: {keyword} 17 Frodo Sam Gandalf
             except ValueError:
                 return []
 
-            combatant_names = [x.name for x in
-                    combat.tm.initiative[initiative_value]]
+            combatant_names = [x.name for x in combat.tm.initiative[initiative_value]]
             names_already_chosen = words[2:]
             return list(set(combatant_names) - set(names_already_chosen))
 
@@ -57,6 +56,8 @@ Example: {keyword} 17 Frodo Sam Gandalf
             return
 
         combat.tm.initiative[i] = new_initiative
-        print(f"Okay; updated {i}: "
-                f"{', '.join([x.name for x in combat.tm.initiative[i]])}")
+        print(
+            f"Okay; updated {i}: "
+            f"{', '.join([x.name for x in combat.tm.initiative[i]])}"
+        )
         self.game.changed = True

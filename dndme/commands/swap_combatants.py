@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class SwapCombatants(Command):
 
-    keywords = ['swap']
+    keywords = ["swap"]
     help_text = """{keyword}
 {divider}
 Summary: Swap two combatants in turn order.

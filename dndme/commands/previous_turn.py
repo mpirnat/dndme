@@ -4,7 +4,7 @@ from dndme.commands.show import Show
 
 class PreviousTurn(Command):
 
-    keywords = ['prev', 'previous']
+    keywords = ["prev", "previous"]
     help_text = """{keyword}
 {divider}
 Summary: Roll back to the previous turn of combat.
@@ -40,8 +40,10 @@ Usage: {keyword}
             if conditions_to_add:
                 for condition in conditions_to_add:
                     combatant.set_condition(condition, duration=1)
-                self.print(f"<x>{combatant.name}</x> conditions added: "
-                        f"{', '.join(conditions_to_add)}")
+                self.print(
+                    f"<x>{combatant.name}</x> conditions added: "
+                    f"{', '.join(conditions_to_add)}"
+                )
 
             self.print(f"Reverted turn to <x>{combatant.name}</x>")
             Show.show_turn(self)

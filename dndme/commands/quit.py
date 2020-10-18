@@ -5,7 +5,7 @@ from dndme.commands import Command
 
 class Quit(Command):
 
-    keywords = ['quit', 'exit']
+    keywords = ["quit", "exit"]
     help_text = """{keyword}
 {divider}
 Summary: Quit the shell

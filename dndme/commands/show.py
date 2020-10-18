@@ -4,7 +4,7 @@ from dndme.commands import Command
 
 class Show(Command):
 
-    keywords = ['show']
+    keywords = ["show"]
     help_text = """{keyword}
 {divider}
 Summary: Show various things:
@@ -23,26 +23,35 @@ Usage: {keyword} <what>
 
     def get_suggestions(self, words):
         if len(words) == 2:
-            return ['monsters', 'party', 'stash', 'defeated', 'turn',
-                    'initiative', 'order', 'turns', 'combats']
+            return [
+                "monsters",
+                "party",
+                "stash",
+                "defeated",
+                "turn",
+                "initiative",
+                "order",
+                "turns",
+                "combats",
+            ]
 
     def do_command(self, *args):
         if not args:
             print("Show what?")
             return
-        if args[0] == 'party':
+        if args[0] == "party":
             self.show_party()
-        elif args[0] == 'monsters':
+        elif args[0] == "monsters":
             self.show_monsters()
-        elif args[0] == 'stash':
+        elif args[0] == "stash":
             self.show_stash()
-        elif args[0] == 'defeated':
+        elif args[0] == "defeated":
             self.show_defeated()
-        elif args[0] == 'turn':
+        elif args[0] == "turn":
             self.show_turn()
-        elif args[0] in ('initiative', 'order', 'turns'):
+        elif args[0] in ("initiative", "order", "turns"):
             self.show_turns()
-        elif args[0] == 'combats':
+        elif args[0] == "combats":
             self.show_combats()
         else:
             print("Sorry; can't show that.")
@@ -52,15 +61,19 @@ Usage: {keyword} <what>
         party = list(sorted(combat.characters.items()))
         for name, character in party:
             pronouns = f" ({character.pronouns})" if character.pronouns else ""
-            print(f"{name:20}{pronouns}"
-                    f"\tHP: {character.cur_hp:0>2}/{character.max_hp:0>2}"
-                    f"\tAC: {character.ac:0>2}"
-                    f"\tPer: {character.senses['perception']:0>2}"
+            print(
+                f"{name:20}{pronouns}"
+                f"\tHP: {character.cur_hp:0>2}/{character.max_hp:0>2}"
+                f"\tAC: {character.ac:0>2}"
+                f"\tPer: {character.senses['perception']:0>2}"
             )
             if character.conditions:
-                conds = ', '.join([f"{x}:{y}"
-                        if y != inf else x
-                        for x, y in character.conditions.items()])
+                conds = ", ".join(
+                    [
+                        f"{x}:{y}" if y != inf else x
+                        for x, y in character.conditions.items()
+                    ]
+                )
                 print(f"    Conditions: {conds}")
 
     def show_monsters(self):
@@ -72,16 +85,20 @@ Usage: {keyword} <what>
                 formatted_name = f"{name}:{monster.alias}"
             vis_icon = "(+) " if monster.visible_in_player_view else "( ) "
             pronouns = f" ({monster.pronouns})" if monster.pronouns else ""
-            print(f"{vis_icon}{formatted_name[:30]:30}"
-                    f"\tHP: {monster.cur_hp:0>2}/{monster.max_hp:0>2}"
-                    f"\tAC: {monster.ac:0>2}"
-                    f"\tPer: {monster.senses['perception']:0>2}"
-                    f"\t{monster.disposition}{pronouns}"
+            print(
+                f"{vis_icon}{formatted_name[:30]:30}"
+                f"\tHP: {monster.cur_hp:0>2}/{monster.max_hp:0>2}"
+                f"\tAC: {monster.ac:0>2}"
+                f"\tPer: {monster.senses['perception']:0>2}"
+                f"\t{monster.disposition}{pronouns}"
             )
             if monster.conditions:
-                conds = ', '.join([f"{x}:{y}"
-                        if y != inf else x
-                        for x, y in monster.conditions.items()])
+                conds = ", ".join(
+                    [
+                        f"{x}:{y}" if y != inf else x
+                        for x, y in monster.conditions.items()
+                    ]
+                )
                 print(f"    Conditions: {conds}")
 
     def show_stash(self):
@@ -90,7 +107,7 @@ Usage: {keyword} <what>
             return
 
         for combatant in self.game.stash.values():
-            if hasattr(combatant, 'origin'):
+            if hasattr(combatant, "origin"):
                 print(f"{combatant.name:20} {combatant.origin:.50}")
             else:
                 print(f"{combatant.name:20} (party)")
@@ -118,7 +135,9 @@ Usage: {keyword} <what>
             print("No turn in progress.")
             return
         turn = combat.tm.cur_turn
-        self.print(f"Round: {turn[0]} Initiative: {turn[1]} Name: <x>{turn[2].name}</x>")
+        self.print(
+            f"Round: {turn[0]} Initiative: {turn[1]} Name: <x>{turn[2].name}</x>"
+        )
 
     def show_turns(self):
         combat = self.game.combat

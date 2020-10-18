@@ -4,7 +4,7 @@ from dndme.commands import Command
 
 class SetCondition(Command):
 
-    keywords = ['set']
+    keywords = ["set"]
     help_text = """{keyword}
 {divider}
 Summary: Set a condition on a target, optionally for a duration
@@ -19,33 +19,33 @@ Examples:
     {keyword} Gollum lucid 5 minutes
 """
     conditions = [
-        'blinded',
-        'charmed',
-        'concentrating',
-        'deafened',
-        'dead',
-        'exhausted',
-        'frightened',
-        'grappled',
-        'incapacitated',
-        'invisible',
-        'paralyzed',
-        'petrified',
-        'poisoned',
-        'prone',
-        'restrained',
-        'stunned',
-        'unconscious',
+        "blinded",
+        "charmed",
+        "concentrating",
+        "deafened",
+        "dead",
+        "exhausted",
+        "frightened",
+        "grappled",
+        "incapacitated",
+        "invisible",
+        "paralyzed",
+        "petrified",
+        "poisoned",
+        "prone",
+        "restrained",
+        "stunned",
+        "unconscious",
     ]
 
     multipliers = {
-        'turn': 1,
-        'turns': 1,
-        'round': 1,
-        'rounds': 1,
-        'minute': 10,
-        'minutes': 10,
-        'min': 10,
+        "turn": 1,
+        "turns": 1,
+        "round": 1,
+        "rounds": 1,
+        "minute": 10,
+        "minutes": 10,
+        "min": 10,
     }
 
     def get_suggestions(self, words):
@@ -80,9 +80,11 @@ Examples:
             print(f"Invalid target: {target_name}")
             return
 
-        if hasattr(target, 'immune') and condition in target.immune:
-            print(f"Cannot set condition '{condition}' on {target_name};"
-                    " target is immune.")
+        if hasattr(target, "immune") and condition in target.immune:
+            print(
+                f"Cannot set condition '{condition}' on {target_name};"
+                " target is immune."
+            )
             return
 
         target.set_condition(condition, duration=duration)
