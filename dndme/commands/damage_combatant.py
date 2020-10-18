@@ -4,7 +4,7 @@ from dndme.commands.defeat_monster import DefeatMonster
 
 class DamageCombatant(Command):
 
-    keywords = ['damage', 'hurt', 'hit']
+    keywords = ["damage", "hurt", "hit"]
     help_text = """{keyword}
 {divider}
 Summary: Apply damage to one or more combatants.
@@ -42,14 +42,17 @@ Examples:
 
         for target in targets:
             target.cur_hp -= amount
-            print(f"Okay; damaged {target.name}. "
-                    f"Now: {target.cur_hp}/{target.max_hp}")
+            print(
+                f"Okay; damaged {target.name}. " f"Now: {target.cur_hp}/{target.max_hp}"
+            )
             self.game.changed = True
 
             if target.name in combat.monsters and target.cur_hp == 0:
-                if (self.session.prompt(
-                        f"{target.name} reduced to 0 HP--"
-                        "mark as defeated? [Y]: ")
-                        or 'y').lower() != 'y':
+                if (
+                    self.session.prompt(
+                        f"{target.name} reduced to 0 HP--" "mark as defeated? [Y]: "
+                    )
+                    or "y"
+                ).lower() != "y":
                     continue
                 DefeatMonster.do_command(self, target.name)

@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class ConcealCombatant(Command):
 
-    keywords = ['conceal']
+    keywords = ["conceal"]
     help_text = """{keyword}
 {divider}
 Summary: Conceal one or more combatants from the player view.
@@ -20,7 +20,6 @@ Example:
     def get_suggestions(self, words):
         combat = self.game.combat
         names_already_chosen = words[1:]
-
 
         return sorted(set(combat.combatant_names) - set(names_already_chosen))
 

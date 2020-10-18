@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class DispositionHostile(Command):
 
-    keywords = ['hostile']
+    keywords = ["hostile"]
     help_text = """{keyword}
 {divider}
 Summary: Mark one or more combatants as hostile in the player view.

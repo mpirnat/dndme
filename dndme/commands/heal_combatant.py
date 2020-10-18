@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class HealCombatant(Command):
 
-    keywords = ['heal']
+    keywords = ["heal"]
     help_text = """{keyword}
 {divider}
 Summary: Heal one or more combatants.
@@ -44,11 +44,12 @@ Examples:
             return
 
         for target in targets:
-            if 'dead' in target.conditions:
+            if "dead" in target.conditions:
                 print(f"Cannot heal {target.name} (dead)")
                 continue
 
             target.cur_hp += amount
-            print(f"Okay; healed {target.name}. "
-                    f"Now: {target.cur_hp}/{target.max_hp}")
+            print(
+                f"Okay; healed {target.name}. " f"Now: {target.cur_hp}/{target.max_hp}"
+            )
             self.game.changed = True

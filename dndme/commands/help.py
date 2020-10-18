@@ -4,7 +4,7 @@ from dndme.commands.list_commands import ListCommands
 
 class Help(Command):
 
-    keywords = ['help']
+    keywords = ["help"]
     help_text = """{keyword}
 {divider}
 Summary: Get help for a command.
@@ -17,7 +17,7 @@ Usage: {keyword} <command>
 
     def do_command(self, *args):
         if not args:
-            self.show_help_text('help')
+            self.show_help_text("help")
             return
 
         keyword = args[0]

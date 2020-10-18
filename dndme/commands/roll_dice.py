@@ -4,7 +4,7 @@ from dndme.dice import roll_dice, roll_dice_expr
 
 class RollDice(Command):
 
-    keywords = ['roll', 'dice']
+    keywords = ["roll", "dice"]
     help_text = """{keyword}
 {divider}
 Summary: Roll dice using a dice expression. Use multiple dice expressions to
@@ -28,4 +28,4 @@ Examples:
             except ValueError:
                 print(f"Invalid dice expression: {dice_expr}")
                 return
-        print(', '.join(results))
+        print(", ".join(results))

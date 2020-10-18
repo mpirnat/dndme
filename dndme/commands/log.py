@@ -7,7 +7,7 @@ from dndme.commands import Command
 
 class Log(Command):
 
-    keywords = ['log']
+    keywords = ["log"]
     help_text = """{keyword}
 {divider}
 Summary: With some text, write an entry in the campaign log for later
@@ -28,17 +28,20 @@ Examples:
         now = datetime.datetime.now()
         self.log_buf = []
         self.log_file = self.game.log_file
-        self.log_message(f"Session started {now:%Y-%m-%d %H:%M:%S}",
-                with_leading_newline=os.path.exists(self.log_file or ''))
+        self.log_message(
+            f"Session started {now:%Y-%m-%d %H:%M:%S}",
+            with_leading_newline=os.path.exists(self.log_file or ""),
+        )
 
         def sign_off():
             self.do_command(
-                    "Session ended on",
-                    str(self.game.calendar),
-                    "at",
-                    str(self.game.clock),
-                    "at",
-                    f"{self.game.latitude}°")
+                "Session ended on",
+                str(self.game.calendar),
+                "at",
+                str(self.game.clock),
+                "at",
+                f"{self.game.latitude}°",
+            )
 
         atexit.register(sign_off)
 
@@ -58,5 +61,5 @@ Examples:
             message = "\n" + message
 
         if self.log_file:
-            with open(self.game.log_file, 'a') as f:
-                f.write(message+"\n")
+            with open(self.game.log_file, "a") as f:
+                f.write(message + "\n")

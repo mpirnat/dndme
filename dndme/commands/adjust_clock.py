@@ -4,7 +4,7 @@ from dndme.commands import Command
 
 class AdjustClock(Command):
 
-    keywords = ['clock', 'time']
+    keywords = ["clock", "time"]
     help_text = """{keyword}
 {divider}
 Summary: Set, adjust, or check the in-game time.
@@ -50,7 +50,7 @@ Cited from https://rpg.stackexchange.com/questions/55461/how-to-handle-time-in-d
         if not args:
             return
 
-        m = re.match('([+-]?)(\d{1,2}):(\d{1,2})', args[0])
+        m = re.match("([+-]?)(\d{1,2}):(\d{1,2})", args[0])
         if not m:
             print("Invalid time or time adjustment")
             return
@@ -60,8 +60,12 @@ Cited from https://rpg.stackexchange.com/questions/55461/how-to-handle-time-in-d
 
         if not sign:
 
-            if hours < 0 or hours >= self.game.clock.hours_in_day or \
-                    minutes < 0 or minutes >= self.game.clock.minutes_in_hour:
+            if (
+                hours < 0
+                or hours >= self.game.clock.hours_in_day
+                or minutes < 0
+                or minutes >= self.game.clock.minutes_in_hour
+            ):
                 print("Invalid time")
                 return
 
@@ -69,7 +73,7 @@ Cited from https://rpg.stackexchange.com/questions/55461/how-to-handle-time-in-d
             self.game.clock.minute = minutes
 
         else:
-            if sign == '-':
+            if sign == "-":
                 hours = -hours
                 minutes = -minutes
 

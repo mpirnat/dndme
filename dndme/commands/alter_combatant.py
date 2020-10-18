@@ -6,7 +6,7 @@ number_re = re.compile(r"([+\-]){0,1}(\d+)")
 
 class AlterCombatant(Command):
 
-    keywords = ['alter']
+    keywords = ["alter"]
     help_text = """{keyword}
 {divider}
 Summary: Alter an attribute of a combatant.
@@ -50,9 +50,12 @@ It's also possible to fix them with it, but that can be really annoying.
             target = combat.get_target(words[1])
             if not target:
                 return []
-            return [x for x in dir(target)
-                    if not x.startswith('_')
-                    and not 'method' in str(type(getattr(target, x)))]
+            return [
+                x
+                for x in dir(target)
+                if not x.startswith("_")
+                and not "method" in str(type(getattr(target, x)))
+            ]
         return []
 
     def do_command(self, *args):

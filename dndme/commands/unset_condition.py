@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class UnsetCondition(Command):
 
-    keywords = ['unset']
+    keywords = ["unset"]
     help_text = """{keyword}
 {divider}
 Summary: Remove a condition from a target

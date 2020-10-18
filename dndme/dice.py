@@ -1,7 +1,8 @@
 import random
 import re
 
-dice_expr = re.compile(r'^(\d+)d(\d+)\+?(\-?\d+)?$')
+dice_expr = re.compile(r"^(\d+)d(\d+)\+?(\-?\d+)?$")
+
 
 def roll_dice(times, sides, modifier=0, dice_mult=1, total_mult=1):
     """

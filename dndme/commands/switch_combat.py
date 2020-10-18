@@ -4,7 +4,7 @@ from dndme.commands.show import Show
 
 class SwitchCombat(Command):
 
-    keywords = ['switch']
+    keywords = ["switch"]
     help_text = """{keyword}
 {divider}
 Summary: Pause one combat group and switch to another. By itself, 'switch'
@@ -21,8 +21,10 @@ Examples:
 
     def get_suggestions(self, words):
         if len(words) == 2:
-            return [f"{i} - {', '.join([x for x in combat.characters])}"
-                    for i, combat in enumerate(self.game.combats, 1)]
+            return [
+                f"{i} - {', '.join([x for x in combat.characters])}"
+                for i, combat in enumerate(self.game.combats, 1)
+            ]
 
     def do_command(self, *args):
         switch_to = int(args[0]) if args else None

@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class AliasCombatant(Command):
 
-    keywords = ['alias']
+    keywords = ["alias"]
     help_text = """{keyword}
 {divider}
 Summary: Override the combatant name that shows on the player view.

@@ -4,7 +4,7 @@ from dndme.commands import convert_to_int, convert_to_int_or_dice_expr
 
 class UnstashCombatant(Command):
 
-    keywords = ['unstash']
+    keywords = ["unstash"]
     help_text = """{keyword}
 {divider}
 Summary: Move one or more stashed combatants back into the current combat
@@ -32,7 +32,7 @@ Examples:
 
             target = self.game.stash.pop(target_name)
 
-            if hasattr(target, 'mtype'):
+            if hasattr(target, "mtype"):
                 combat.monsters[target_name] = target
             else:
                 combat.characters[target_name] = target
@@ -41,11 +41,15 @@ Examples:
             self.game.changed = True
 
             if combat.tm:
-                roll_advice = f"1d20{target.initiative_mod:+}" \
-                        if target.initiative_mod else "1d20"
+                roll_advice = (
+                    f"1d20{target.initiative_mod:+}"
+                    if target.initiative_mod
+                    else "1d20"
+                )
                 roll = self.safe_input(
-                        f"Initiative for {target.name}",
-                        default=roll_advice,
-                        converter=convert_to_int_or_dice_expr)
+                    f"Initiative for {target.name}",
+                    default=roll_advice,
+                    converter=convert_to_int_or_dice_expr,
+                )
                 combat.tm.add_combatant(target, roll)
                 print(f"Added to turn order in {roll}")

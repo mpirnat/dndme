@@ -4,7 +4,7 @@ from dndme.commands.show import Show
 
 class NextTurn(Command):
 
-    keywords = ['next']
+    keywords = ["next"]
     help_text = """{keyword}
 {divider}
 Summary: Advance to the next turn of combat.
@@ -27,8 +27,10 @@ Usage: {keyword}
                 combatant = turn[-1]
                 conditions_removed = combatant.decrement_condition_durations()
                 if conditions_removed:
-                    self.print(f"<x>{combatant.name}</x> conditions removed: "
-                            f"{', '.join(conditions_removed)}")
+                    self.print(
+                        f"<x>{combatant.name}</x> conditions removed: "
+                        f"{', '.join(conditions_removed)}"
+                    )
 
                 combat.tm.previous_turns.append((turn, conditions_removed))
 

@@ -8,7 +8,7 @@ from dndme.commands.stash_combatant import StashCombatant
 
 class EndCombat(Command):
 
-    keywords = ['end']
+    keywords = ["end"]
     help_text = """{keyword}
 {divider}
 Summary: End the current combat and distribute experience points.
@@ -30,16 +30,16 @@ Usage: {keyword}
 
         # Allow some leftover monsters to remain in the combat group;
         # perhaps some are friendly NPCs along for the ride?
-        choices = WordCompleter(['keep', 'remove', 'stash'])
+        choices = WordCompleter(["keep", "remove", "stash"])
         for monster in list(combat.monsters.values()):
             choice = self.session.prompt(
                 f"What should we do with {monster.name}? "
                 "[R]emove [S]tash [K]eep (default: Keep) ",
-                completer=choices
+                completer=choices,
             ).lower()
-            if choice in ('r', 'remove'):
+            if choice in ("r", "remove"):
                 RemoveCombatant.do_command(self, monster.name)
-            elif choice in ('s', 'stash'):
+            elif choice in ("s", "stash"):
                 StashCombatant.do_command(self, monster.name)
             else:
                 print(f"Okay, keeping {monster.name}")

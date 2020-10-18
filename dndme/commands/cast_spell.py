@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class CastSpell(Command):
 
-    keywords = ['cast']
+    keywords = ["cast"]
     help_text = """{keyword}
 {divider}
 Summary: Make a combatant cast a spell at a particular spell level. By default
@@ -30,9 +30,9 @@ Examples:
             if current_combatant and current_combatant.can_cast_spells:
                 suggestions.extend(current_combatant.available_spell_slots)
 
-            suggestions.extend(sorted(
-                    [x.name for x in combat.monsters.values()
-                            if x.can_cast_spells]))
+            suggestions.extend(
+                sorted([x.name for x in combat.monsters.values() if x.can_cast_spells])
+            )
 
         elif len(words) == 3:
             # Return a list of available spell slots for the specified caster
@@ -75,9 +75,9 @@ Examples:
             return
 
         # And cast it!
-        spells = caster.features['spellcasting']['spells']
-        slots = caster.features['spellcasting']['slots']
-        slots_used = caster.features['spellcasting']['slots_used']
+        spells = caster.features["spellcasting"]["spells"]
+        slots = caster.features["spellcasting"]["slots"]
+        slots_used = caster.features["spellcasting"]["slots_used"]
 
         try:
             if slots_used[spell_level] < slots[spell_level]:

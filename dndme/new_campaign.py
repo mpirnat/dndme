@@ -5,7 +5,8 @@ import sys
 import click
 import pytoml as toml
 
-base_dir = os.path.normpath(os.path.join( os.path.dirname(__file__), '..'))
+base_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+
 
 @click.command()
 @click.argument("campaign")
@@ -28,9 +29,8 @@ def create_settings_file(campaign):
     template_file = f"{base_dir}/templates/settings.toml"
     settings_file = f"{base_dir}/campaigns/{campaign}/settings.toml"
 
-    with open(template_file, 'r') as f_in, \
-            open(settings_file, 'w') as f_out:
-        f_out.write(f_in.read().replace('CAMPAIGN', campaign))
+    with open(template_file, "r") as f_in, open(settings_file, "w") as f_out:
+        f_out.write(f_in.read().replace("CAMPAIGN", campaign))
 
 
 def create_party_file(campaign):
@@ -39,5 +39,5 @@ def create_party_file(campaign):
     shutil.copyfile(template_file, party_file)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(sys.argv[-1])

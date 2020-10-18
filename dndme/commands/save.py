@@ -5,7 +5,7 @@ from dndme.writers import PartyWriter
 
 class Save(Command):
 
-    keywords = ['save']
+    keywords = ["save"]
 
     help_text = """{keyword}
 {divider}
@@ -19,6 +19,7 @@ Usage: {keyword}
 
         def sign_off():
             self.do_command()
+
         atexit.register(sign_off)
 
     def do_command(self, *args):
@@ -29,9 +30,13 @@ Usage: {keyword}
             characters.update(combat.characters)
 
         # In case there are stashed party members...
-        characters.update({name: combatant
-            for name, combatant in self.game.stash.items()
-            if hasattr(combatant, 'ctype')})
+        characters.update(
+            {
+                name: combatant
+                for name, combatant in self.game.stash.items()
+                if hasattr(combatant, "ctype")
+            }
+        )
 
         # Convert data classes to dicts
         party_data = {}
@@ -49,8 +54,8 @@ Usage: {keyword}
                 "image_url": character.image_url,
                 "senses": character.senses,
             }
-            if character.ctype != 'player':
-                party_data[character.name]['ctype'] = character.ctype
+            if character.ctype != "player":
+                party_data[character.name]["ctype"] = character.ctype
 
         if party_data:
             writer = PartyWriter(self.game.party_file)

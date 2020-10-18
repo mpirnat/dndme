@@ -1,10 +1,9 @@
-
 from dndme.commands import Command
 
 
 class RefreshPlayerView(Command):
 
-    keywords = ['refresh']
+    keywords = ["refresh"]
     help_text = """{keyword}
 {divider}
 Summary: Force a refresh of the data that drives the player view,

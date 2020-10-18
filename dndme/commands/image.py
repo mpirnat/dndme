@@ -4,7 +4,7 @@ from dndme.loaders import ImageLoader, MonsterLoader
 
 class Image(Command):
 
-    keywords = ['image']
+    keywords = ["image"]
     help_text = """{keyword}
 {divider}
 Summary: Send an image to be displayed in the player view or, with no image
@@ -30,13 +30,15 @@ Examples:
 
     def get_suggestions(self, words):
         if len(words) == 2:
-            return ['monster', 'player'] + self.image_loader.get_available_content_images()
+            return [
+                "monster",
+                "player",
+            ] + self.image_loader.get_available_content_images()
         if len(words) == 3:
-            if words[1] == 'monster':
+            if words[1] == "monster":
                 return self.monster_loader.get_available_monster_keys()
-            elif words[1] == 'player':
+            elif words[1] == "player":
                 return list(sorted(self.game.combat.characters.keys()))
-
 
     def do_command(self, *args):
         orig_image = self.game.player_view_image
@@ -51,26 +53,26 @@ Examples:
             self.game.changed = True
 
     def get_image_url(self, *args):
-        image_url = ''
+        image_url = ""
 
         if len(args) >= 2:
-            if args[0] == 'monster':
+            if args[0] == "monster":
                 monster = self.monster_loader.load(args[1])[0]
                 image_url = monster.image_url
-            elif args[0] == 'player':
+            elif args[0] == "player":
                 character = self.game.combat.get_target(args[1])
                 image_url = character.image_url
             else:
-                image_url = ' '.join(args)
+                image_url = " ".join(args)
 
         elif len(args) == 1:
             image_url = args[0]
 
-        if image_url and not image_url.startswith('http'):
-            if args[0] == 'monster':
+        if image_url and not image_url.startswith("http"):
+            if args[0] == "monster":
                 # already resolved when loading the monster
                 pass
-            elif args[0] == 'player':
+            elif args[0] == "player":
                 image_url = self.image_loader.get_player_image_path(image_url)
             else:
                 image_url = self.image_loader.get_content_image_path(image_url)

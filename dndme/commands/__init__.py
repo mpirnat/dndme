@@ -5,12 +5,14 @@ from prompt_toolkit.styles import Style
 
 class Command:
 
-    keywords = ['command']
+    keywords = ["command"]
 
-    style = Style.from_dict({
-        'x1': '#ffcc00 bold',
-        'x': '#ffcc00',
-    })
+    style = Style.from_dict(
+        {
+            "x1": "#ffcc00 bold",
+            "x": "#ffcc00",
+        }
+    )
 
     def __init__(self, game, session, player_view):
         self.game = game
@@ -20,7 +22,7 @@ class Command:
         for kw in self.keywords:
             game.commands[kw] = self
 
-        print("Registered "+self.__class__.__name__)
+        print("Registered " + self.__class__.__name__)
 
     def get_suggestions(self, words):
         return []
@@ -29,7 +31,7 @@ class Command:
         print("Nothing happens.")
 
     def show_help_text(self, keyword):
-        help_text = getattr(self, 'help_text', None)
+        help_text = getattr(self, "help_text", None)
         if help_text:
             divider = "-" * len(keyword)
             print(help_text.format(**locals()).strip())
@@ -69,7 +71,7 @@ def convert_to_int_or_dice_expr(value):
     try:
         value = int(value)
     except ValueError:
-        if 'd' in value:
+        if "d" in value:
             try:
                 value = roll_dice_expr(value)
             except ValueError:

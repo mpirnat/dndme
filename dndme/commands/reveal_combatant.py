@@ -3,7 +3,7 @@ from dndme.commands import Command
 
 class RevealCombatant(Command):
 
-    keywords = ['reveal']
+    keywords = ["reveal"]
     help_text = """{keyword}
 {divider}
 Summary: Mark one or more combatants as visible in the player view.
