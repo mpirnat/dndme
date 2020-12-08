@@ -30,6 +30,7 @@ class Combatant:
 
     _max_hp = attrib(default=10)
     _cur_hp = attrib(default=10)
+    temp_hp = attrib(default=0)
 
     @property
     def max_hp(self):
@@ -48,16 +49,38 @@ class Combatant:
 
     @property
     def cur_hp(self):
-        return self._cur_hp
+        return self._cur_hp + self.temp_hp
 
     @cur_hp.setter
     def cur_hp(self, value):
+        # If we're taking damage, do we have any temporary
+        # hit points to absorb some of it?
+        delta = value - self.cur_hp
+        if delta < 0 and self.temp_hp:
+            delta += self.temp_hp
+            self.temp_hp = max(delta, 0)
+            # Temp hit points absorbed all of the hit;
+            # don't change the actual current hit points
+            if delta > -1:
+                return
+            # Temp hit points blunted some but not all damage,
+            # so figure out what the new current hp should be
+            # set to
+            value = self._cur_hp + delta
+
+        # Can't set our new current hit points above our max
         if value > self.max_hp:
             value = self.max_hp
+
+        # If we got knocked below 0 hit points...
         if value < 0:
+            # If we took a lot of damage, it might be an
+            # instant death!
             if abs(value) >= self.max_hp:
                 self.conditions = {"dead": inf}
+            # Regardless, we always "stop" at 0 hit points
             value = 0
+
         self._cur_hp = value
 
     def set_condition(self, condition, duration=inf):
