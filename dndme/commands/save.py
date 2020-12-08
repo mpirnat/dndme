@@ -59,6 +59,8 @@ Usage: {keyword}
                 party_data[character.name][
                     "max_hp_override"
                 ] = character.max_hp_override
+            if character.exhaustion:
+                party_data[character.name]["exhaustion"] = character.exhaustion
             if character.ctype != "player":
                 party_data[character.name]["ctype"] = character.ctype
 

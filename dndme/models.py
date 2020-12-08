@@ -33,6 +33,8 @@ class Combatant:
     max_hp_override = attrib(default=None)
     temp_hp = attrib(default=0)
 
+    _exhaustion = attrib(default=0)
+
     @property
     def max_hp(self):
         if self.max_hp_override is not None:
@@ -85,6 +87,23 @@ class Combatant:
             value = 0
 
         self._cur_hp = value
+
+    @property
+    def exhaustion(self):
+        return self._exhaustion
+
+    @exhaustion.setter
+    def exhaustion(self, value):
+        if value < 0:
+            value = 0
+        if value > 6:
+            value = 6
+        self._exhaustion = value
+
+        # 6 points of exhaustion => death!
+        if value == 6:
+            self.cur_hp = 0
+            self.conditions = {"dead": inf}
 
     def set_condition(self, condition, duration=inf):
         self.conditions[condition] = duration
