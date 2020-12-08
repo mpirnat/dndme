@@ -30,10 +30,13 @@ class Combatant:
 
     _max_hp = attrib(default=10)
     _cur_hp = attrib(default=10)
+    max_hp_override = attrib(default=None)
     temp_hp = attrib(default=0)
 
     @property
     def max_hp(self):
+        if self.max_hp_override is not None:
+            return self.max_hp_override
         return self._max_hp
 
     @max_hp.setter

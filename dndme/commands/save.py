@@ -55,6 +55,10 @@ Usage: {keyword}
                 "image_url": character.image_url,
                 "senses": character.senses,
             }
+            if character.max_hp_override is not None:
+                party_data[character.name][
+                    "max_hp_override"
+                ] = character.max_hp_override
             if character.ctype != "player":
                 party_data[character.name]["ctype"] = character.ctype
 

@@ -91,6 +91,8 @@ It's also possible to fix them with it, but that can be really annoying.
                 new_value = int(value)
             elif value.startswith("[") or value.startswith("{"):
                 new_value = ast.literal_eval(value)
+            elif value == "None":
+                new_value = None
             else:
                 new_value = value
         except (SyntaxError, TypeError, ValueError):
