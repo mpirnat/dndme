@@ -58,8 +58,9 @@ Cited from https://rpg.stackexchange.com/questions/55461/how-to-handle-time-in-d
         (sign, hours, minutes) = m.groups()
         hours, minutes = int(hours), int(minutes)
 
-        if not sign:
+        day_delta = 0
 
+        if not sign:
             if (
                 hours < 0
                 or hours >= self.game.clock.hours_in_day
@@ -77,7 +78,11 @@ Cited from https://rpg.stackexchange.com/questions/55461/how-to-handle-time-in-d
                 hours = -hours
                 minutes = -minutes
 
-            self.game.clock.adjust_time(hours, minutes)
+            day_delta = self.game.clock.adjust_time(hours, minutes)
+            if day_delta:
+                self.game.calendar.adjust_date(day_delta)
 
         print(f"Okay; game time is now {self.game.clock}")
+        if day_delta:
+            print(f"The date is now {self.game.calendar}")
         self.game.changed = True

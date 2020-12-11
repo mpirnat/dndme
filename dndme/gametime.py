@@ -21,9 +21,17 @@ class Clock:
         new_hour = (
             (self.hour + hours) + ((self.minute + minutes) // self.minutes_in_hour)
         ) % self.hours_in_day
+        day_delta = (
+            (self.hour + hours) + ((self.minute + minutes) // self.minutes_in_hour)
+        ) // self.hours_in_day
+
+        orig_time = (self.hour, self.minute)
+        new_time = (new_hour, new_minute)
 
         self.hour = new_hour
         self.minute = new_minute
+
+        return day_delta
 
 
 class Calendar:
