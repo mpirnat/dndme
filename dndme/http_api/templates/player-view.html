@@ -188,7 +188,7 @@ tr {
                     marker = '→';
                     rowClass = 'current-combatant';
                     if(combatant.image_url) {
-                        var currentCombatantImage = `${combatant.name}<br><img src="${combatant.image_url}">`;
+                        var currentCombatantImage = `${combatant.alias}<br><img src="${combatant.image_url}">`;
                         document.getElementById('current_combatant_image').innerHTML = currentCombatantImage;
                         document.getElementById('current_combatant_image').style.display = 'block';
                     } else {
