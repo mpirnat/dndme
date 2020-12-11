@@ -50,7 +50,7 @@ class Command:
             else:
                 data = self.session.prompt(f"{text}: ").strip()
 
-            if default and not data:
+            if default is not None and not data:
                 data = default
 
             if converter:
@@ -79,3 +79,14 @@ def convert_to_int_or_dice_expr(value):
         else:
             value = None
     return value
+
+
+def convert_to_oxford_comma_string(seq):
+    seq_length = len(seq)
+    if seq_length == 0:
+        return ""
+    elif seq_length == 1:
+        return seq[0]
+    elif seq_length == 2:
+        return " and ".join(seq)
+    return ", ".join(seq[:-1]) + f", and {seq[-1]}"
