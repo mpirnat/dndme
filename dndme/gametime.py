@@ -324,7 +324,7 @@ class Almanac:
             (0.99, 0.02): "full",
             (0.02, 0.218): "waning gibbous",
             (0.218, 0.25): "third quarter",
-            (0.26, 0.467): "waning crescent",
+            (0.25, 0.467): "waning crescent",
             (0.467, 0.50): "new",
             (0.50, 0.72): "waxing crescent",
             (0.72, 0.75): "first quarter",
