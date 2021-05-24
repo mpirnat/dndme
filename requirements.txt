@@ -8,7 +8,7 @@ attrs==19.3.0
 click==6.7
 flask==1.0.2
 itsdangerous==1.1.0       # via flask
-jinja2==2.10.1            # via flask
+jinja2==2.11.3            # via flask
 markupsafe==1.1.0         # via jinja2
 prompt-toolkit==2.0.6
 pytoml==0.1.14
