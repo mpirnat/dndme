@@ -33,20 +33,25 @@ Examples:
             year = calendar.date.year
 
         self.print(f"<x1>{year}</x1>")
-        print("-" * 20)
+        print("-" * 60)
         for key, month in calendar.cal_data["months"].items():
             days_in_month = calendar.days_in_month(key, year)
+            alt_name = f"\t{month.get('alt_name')}" if month.get("alt_name") else ""
             sdates = calendar.seasonal_dates_in_month(key)
             if sdates:
                 if days_in_month > 1:
-                    sdates = ", ".join([f"{x['name']}: {x['day']}" for x in sdates])
+                    sdates = ", ".join(
+                        [f"<x>{x['name']}:</x> {x['day']}" for x in sdates]
+                    )
                 else:
-                    sdates = ", ".join([f"{x['name']}" for x in sdates])
-            sdates = f" - {sdates}" if sdates else ""
+                    sdates = ", ".join([f"<x>{x['name']}</x>" for x in sdates])
+            sdates = f"\t{sdates}" if sdates else ""
 
             if days_in_month == 0:
                 continue
             elif days_in_month == 1:
-                self.print(f"     <x>{month['name']}</x>{sdates}")
+                self.print(f"     <x>{month['name']:12}</x>{alt_name}{sdates}")
             else:
-                print(f"1-{days_in_month} {month['name']}{sdates}")
+                self.print(
+                    f"1-{days_in_month} <x>{month['name']:12}</x>{alt_name:25}{sdates}"
+                )

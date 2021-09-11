@@ -41,7 +41,7 @@ Examples:
         if date:
             for moon_key, moon_info in calendar.cal_data["moons"].items():
                 phase, _ = almanac.moon_phase(moon_key, date)
-                print(f"{moon_info['name']}: {phase}")
+                self.print(f"<x>{moon_info['name']}:</x> {phase}")
             return
 
         print(f"Invalid date: {data}")
