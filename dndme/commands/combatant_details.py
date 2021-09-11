@@ -49,7 +49,11 @@ Examples:
 
         if hasattr(target, "cclass"):
             self.print(f"<x1>{t.name}:</x1> Level {t.level} {t.race} {t.cclass}")
-            self.print(f"<x>AC:</x> {t.ac} <x>HP:</x> {t.cur_hp}/{t.max_hp}")
+            self.print(
+                f"<x>AC:</x> {t.ac} "
+                f"<x>HP:</x> {t.cur_hp}/{t.max_hp} "
+                f"({int(100*t.cur_hp/t.max_hp):>3}%)"
+            )
             self.print(", ".join([f"<x>{x}:</x> {y}" for x, y in t.senses.items()]))
 
             if t.conditions:
@@ -63,10 +67,13 @@ Examples:
 
             print()
             self.print(
-                f"<x1>{t.name}:</x1> {t.race} - {t.size} {t.mtype}, {t.alignment}"
+                f"<x1>{t.alias}:</x1>{t.name}: "
+                f"{t.race} - {t.size} {t.mtype}, {t.alignment}"
             )
             self.print(
-                f"<x>AC:</x> {t.ac} ({t.armor or None}) <x>HP:</x> {t.cur_hp}/{t.max_hp}"
+                f"<x>AC:</x> {t.ac} ({t.armor or None}) "
+                f"<x>HP:</x> {t.cur_hp}/{t.max_hp} "
+                f"({int(100*t.cur_hp/t.max_hp):>3}%)"
             )
             self.print(f"<x>Speed:</x> {t.speed}")
             self.print(

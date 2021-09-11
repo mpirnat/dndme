@@ -60,12 +60,15 @@ Usage: {keyword} <what>
         combat = self.game.combat
         party = list(sorted(combat.characters.items()))
         for name, character in party:
-            pronouns = f" ({character.pronouns})" if character.pronouns else ""
-            print(
-                f"{name:20}{pronouns}"
-                f"\tHP: {character.cur_hp:0>2}/{character.max_hp:0>2}"
-                f"\tAC: {character.ac:0>2}"
-                f"\tPer: {character.senses['perception']:0>2}"
+            pronouns = f"({character.pronouns})" if character.pronouns else ""
+            self.print(
+                f"<x>{name:20}</x>{pronouns:10}"
+                f"\t<x>HP:</x> {character.cur_hp:0>2}/{character.max_hp:0>2}"
+                f" ({int(100*character.cur_hp/character.max_hp):>3}%)"
+                f"    <x>AC:</x> {character.ac:0>2}"
+                f"    <x>Per:</x> {character.senses['perception']:0>2}"
+                f"    <x>Inv:</x> {character.senses.get('investigation'):0>2}"
+                f"    <x>Ins:</x> {character.senses.get('insight'):0>2}"
             )
             if character.conditions:
                 conds = ", ".join(
@@ -82,14 +85,15 @@ Usage: {keyword} <what>
         for name, monster in monsters:
             formatted_name = name
             if monster.alias:
-                formatted_name = f"{name}:{monster.alias}"
+                formatted_name = f"<x>{monster.alias}</x>:{name}"
             vis_icon = "(+) " if monster.visible_in_player_view else "( ) "
             pronouns = f" ({monster.pronouns})" if monster.pronouns else ""
-            print(
+            self.print(
                 f"{vis_icon}{formatted_name[:30]:30}"
-                f"\tHP: {monster.cur_hp:0>2}/{monster.max_hp:0>2}"
-                f"\tAC: {monster.ac:0>2}"
-                f"\tPer: {monster.senses['perception']:0>2}"
+                f"\t<x>HP:</x> {monster.cur_hp:0>2}/{monster.max_hp:0>2}"
+                f" ({int(100*monster.cur_hp/monster.max_hp):>3}%)"
+                f"\t<x>AC:</x> {monster.ac:0>2}"
+                f"\t<x>Per:</x> {monster.senses['perception']:0>2}"
                 f"\t{monster.disposition}{pronouns}"
             )
             if monster.conditions:
@@ -99,7 +103,7 @@ Usage: {keyword} <what>
                         for x, y in monster.conditions.items()
                     ]
                 )
-                print(f"    Conditions: {conds}")
+                self.print(f"    <x>Conditions:</x> {conds}")
 
     def show_stash(self):
         if not self.game.stash:
@@ -108,9 +112,9 @@ Usage: {keyword} <what>
 
         for combatant in self.game.stash.values():
             if hasattr(combatant, "origin"):
-                print(f"{combatant.name:20} {combatant.origin:.50}")
+                self.print(f"<x>{combatant.name:20}</x> {combatant.origin:.50}")
             else:
-                print(f"{combatant.name:20} (party)")
+                self.print(f"<x>{combatant.name:20}</x> (party)")
 
     def show_defeated(self):
         combat = self.game.combat
