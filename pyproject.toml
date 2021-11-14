@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "dndme"
+version = "0.1.0"
+description = "Tools for helping the DM run Dungeons & Dragons sessions"
+authors = ["Mike Pirnat <mpirnat@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+attrs = "^21.2.0"
+click = "^8.0.3"
+Flask = "^2.0.2"
+prompt-toolkit = "^3.0.22"
+pytoml = "^0.1.21"
+
+[tool.poetry.dev-dependencies]
+black = "^21.10b0"
+tox = "^3.24.4"
+pre-commit = "^2.15.0"
+pytest = "^6.2.5"
+
+[tool.poetry.scripts]
+dndme = "dndme.shell:main_loop"
+dndme-new-campaign = "dndme.new_campaign:main"
+dndme-new-content = "dndme.new_content:main"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
