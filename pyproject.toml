@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dndme"
-version = "0.1.0"
+version = "0.0.6"
 description = "Tools for helping the DM run Dungeons & Dragons sessions"
 authors = ["Mike Pirnat <mpirnat@gmail.com>"]
 license = "MIT"
