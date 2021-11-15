@@ -13,6 +13,7 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.shortcuts import clear
 from prompt_toolkit.styles import Style
 
 from dndme.gametime import Calendar, Clock, Almanac
@@ -27,6 +28,18 @@ default_party_file = f"{base_dir}/campaigns/example/party.toml"
 default_calendar_file = f"{base_dir}/calendars/forgotten_realms.toml"
 default_latitude = 41
 default_player_view_port = "8042"
+
+# Used https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=dndme
+# Pretty neat little site!
+welcome_text = """
+Welcome to
+██████╗ ███╗   ██╗██████╗ ███╗   ███╗███████╗
+██╔══██╗████╗  ██║██╔══██╗████╗ ████║██╔════╝
+██║  ██║██╔██╗ ██║██║  ██║██╔████╔██║█████╗
+██║  ██║██║╚██╗██║██║  ██║██║╚██╔╝██║██╔══╝
+██████╔╝██║ ╚████║██████╔╝██║ ╚═╝ ██║███████╗
+╚═════╝ ╚═╝  ╚═══╝╚═════╝ ╚═╝     ╚═╝╚══════╝
+"""
 
 
 class DnDCompleter(Completer):
@@ -212,7 +225,7 @@ def main_loop(campaign, player_view):
         return [
             (
                 "class:bottom-toolbar",
-                " dndme 0.0.5 - help for help, exit to exit"
+                " dndme 0.0.6 - help for help, exit to exit"
                 f" - 📆 {game.calendar}"
                 f" ⏰ {game.clock} {pos} {day_night} "
                 f"{''.join(moon_icons)}",
@@ -253,6 +266,9 @@ def main_loop(campaign, player_view):
             break
         else:
             print("Couldn't init date/time/lat from log file")
+
+    clear()
+    print(welcome_text)
 
     while True:
         try:
