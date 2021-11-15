@@ -5,12 +5,17 @@ from math import inf
 
 
 class PlayerViewManager:
-    def __init__(self, base_dir, game):
+    def __init__(self, base_dir, game, port):
         self.base_dir = base_dir
         self.game = game
 
         self.json_filename = f"{self.base_dir}/player_view.json"
         self.server_process = None
+        self.port = port
+
+    @property
+    def url(self):
+        return f"http://localhost:{self.port}/player-view"
 
     def start(self):
         server_env = os.environ.copy()
@@ -18,7 +23,7 @@ class PlayerViewManager:
         server_env["FLASK_ENV"] = "development"
         server_env["FLASK_SUPPRESS_LOGGING"] = "The adults are talking"
         server_process = subprocess.Popen(
-            ["flask", "run"], env=server_env, stdout=subprocess.DEVNULL
+            ["flask", "run", "-p", self.port], env=server_env, stdout=subprocess.DEVNULL
         )
         self.server_process = server_process
 

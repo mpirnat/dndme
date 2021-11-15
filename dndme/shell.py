@@ -26,6 +26,7 @@ default_encounters_dir = f"{base_dir}/content/example/encounters"
 default_party_file = f"{base_dir}/campaigns/example/party.toml"
 default_calendar_file = f"{base_dir}/calendars/forgotten_realms.toml"
 default_latitude = 41
+default_player_view_port = "8042"
 
 
 class DnDCompleter(Completer):
@@ -73,7 +74,7 @@ class DnDCompleter(Completer):
             word_before_cursor = word_before_cursor.lower()
 
         def word_matcher(word):
-            """ True when the command before the cursor matches. """
+            """True when the command before the cursor matches."""
             if self.ignore_case:
                 word = word.lower()
 
@@ -171,7 +172,7 @@ def main_loop(campaign, player_view):
 
     session = PromptSession()
 
-    player_view_manager = PlayerViewManager(base_dir, game)
+    player_view_manager = PlayerViewManager(base_dir, game, default_player_view_port)
 
     load_commands(game, session, player_view_manager)
 
@@ -227,10 +228,10 @@ def main_loop(campaign, player_view):
     kb = KeyBindings()
 
     if player_view:
-        print("Starting player view on port 5000...")
+        print(f"Starting player view on port {player_view_manager.port}...")
         player_view_manager.start()
         player_view_manager.update()
-        print("Started! Browse to http://localhost:5000/player-view")
+        print(f"Player view started! Browse to {player_view_manager.url}")
 
     # Attempte to init date, time, and latitude state from log file
     if log_file:
