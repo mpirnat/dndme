@@ -14,4 +14,4 @@ prompt-toolkit==2.0.6
 pytoml==0.1.14
 six==1.11.0
 wcwidth==0.1.7
-werkzeug==0.15.3          # via flask
+werkzeug==0.15.5          # via flask
