@@ -220,6 +220,7 @@ class Monster(Combatant):
         return floor((stat - 10) / 2)
 
     armor = attrib(default="")
+    gear = attrib(default="")
     speed = attrib(default=30)
     skills = attrib(default=attr_factory(dict))
     resist = attrib(default=attr_factory(list))
@@ -228,6 +229,7 @@ class Monster(Combatant):
     languages = attrib(default=attr_factory(list))
     traits = attrib(default=attr_factory(dict))
     actions = attrib(default=attr_factory(dict))
+    bonus_actions = attrib(default=attr_factory(dict))
     lair_actions = attrib(default=attr_factory(dict))
     legendary_actions = attrib(default=attr_factory(dict))
     reactions = attrib(default=attr_factory(dict))

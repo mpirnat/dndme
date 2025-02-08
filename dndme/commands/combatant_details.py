@@ -112,11 +112,11 @@ Examples:
 
             print()
 
-            if t.features:
-                self.print("<x1>Features</x1>")
+            if t.traits:
+                self.print("<x1>traits</x1>")
                 self.print("--------")
 
-                for k, s in t.features.items():
+                for k, s in t.traits.items():
                     self.print(f"<x>{s['name']}</x>\n{s['description'].strip()}")
 
                     if k == "spellcasting":
@@ -134,6 +134,14 @@ Examples:
                 self.print("<x1>Actions</x1>")
                 self.print("-------")
                 for a in t.actions.values():
+                    self.print(f"<x>{a['name']}</x>")
+                    self.print(a["description"].strip())
+                    print()
+
+            if t.bonus_actions:
+                self.print("<x1>Bonus Actions</x1>")
+                self.print("-------------")
+                for a in t.bonus_actions.values():
                     self.print(f"<x>{a['name']}</x>")
                     self.print(a["description"].strip())
                     print()
