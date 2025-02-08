@@ -1,11 +1,12 @@
 name = ""
 size = ""
 mtype = ""
-race = ""
+species = ""
 alignment = ""
 ac = 10
 armor = ""
 max_hp = "1d8"
+avg_hp = 5
 speed = 30
 str = 10
 dex = 10
@@ -19,6 +20,7 @@ immune = ""
 languages = ""
 cr = 1
 xp = 1
+pb = 0
 image_url = ""
 notes = """
 """
@@ -29,12 +31,12 @@ skill = 1
 [senses]
 perception = 10
 
-[features.feature]
+[traits.feature]
 name = ""
 description = """
 """
 
-[features.spellcasting]
+[traits.spellcasting]
 name = "Spellcasting"
 description = """
 """

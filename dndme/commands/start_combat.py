@@ -21,14 +21,24 @@ Usage: {keyword}
 
         print("Enter initiative rolls or press enter to 'roll' automatically.")
         for monster in combat.monsters.values():
-            roll_advice = (
-                f"1d20{monster.initiative_mod:+}" if monster.initiative_mod else "1d20"
+            default_roll = 10 + monster.initiative_mod
+            use_default = self.safe_input(
+                f"Use default initiative ({default_roll}) for {monster.name} Y/N?",
+                default="Y",
             )
-            roll = self.safe_input(
-                f"Initiative for {monster.name}",
-                default=roll_advice,
-                converter=convert_to_int_or_dice_expr,
-            )
+            if use_default.upper() == "Y":
+                roll = default_roll
+            else:
+                roll_advice = (
+                    f"1d20{monster.initiative_mod:+}"
+                    if monster.initiative_mod
+                    else "1d20"
+                )
+                roll = self.safe_input(
+                    f"Initiative for {monster.name}",
+                    default=roll_advice,
+                    converter=convert_to_int_or_dice_expr,
+                )
             combat.tm.add_combatant(monster, roll)
             print(f"Added to turn order in {roll}\n")
 

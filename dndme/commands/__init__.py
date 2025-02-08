@@ -41,7 +41,7 @@ class Command:
     def print(self, content):
         print_formatted_text(HTML(content), style=self.style)
 
-    def safe_input(self, text, default=None, converter=None):
+    def safe_input(self, text, default=None, converter=None, choices=None):
         data = None
 
         while data is None:
@@ -55,6 +55,9 @@ class Command:
 
             if converter:
                 data = converter(data)
+
+            if choices and data not in choices:
+                data = None
 
         return data
 
@@ -90,3 +93,7 @@ def convert_to_oxford_comma_string(seq):
     elif seq_length == 2:
         return " and ".join(seq)
     return ", ".join(seq[:-1]) + f", and {seq[-1]}"
+
+
+def convert_str_to_bool(value):
+    return value.upper() in ("Y", "YES", "TRUE")

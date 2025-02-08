@@ -1,6 +1,10 @@
 from fnmatch import fnmatch
 from dndme.commands import Command
-from dndme.commands import convert_to_int, convert_to_int_or_dice_expr
+from dndme.commands import (
+    convert_str_to_bool,
+    convert_to_int,
+    convert_to_int_or_dice_expr,
+)
 from dndme.loaders import EncounterLoader, ImageLoader, MonsterLoader, PartyLoader
 
 
@@ -70,6 +74,15 @@ Example:
 
         def prompt_initiative(monster):
             # prompt to add the monsters to initiative order
+            default_roll = 10 + monster.initiative_mod
+            use_default = self.safe_input(
+                f"Use default initiative ({default_roll}) for {monster.name} Y/N?",
+                default="Y",
+                converter=convert_str_to_bool,
+            )
+            if use_default:
+                return default_roll
+
             roll_advice = (
                 f"1d20{monster.initiative_mod:+}" if monster.initiative_mod else "1d20"
             )
@@ -121,6 +134,15 @@ Example:
     def load_monster(self, monster_name):
         def prompt_initiative(monster):
             # prompt to add the monsters to initiative order
+            default_roll = 10 + monster.initiative_mod
+            use_default = self.safe_input(
+                f"Use default initiative ({default_roll}) for {monster.name} Y/N?",
+                default="Y",
+                converter=convert_str_to_bool,
+            )
+            if use_default:
+                return default_roll
+
             roll_advice = (
                 f"1d20{monster.initiative_mod:+}" if monster.initiative_mod else "1d20"
             )
@@ -131,6 +153,26 @@ Example:
             )
             print(f"Adding to turn order at: {roll}")
             return roll
+
+        def prompt_hp(monster):
+            # prompt to pick strategy for initializing monster hp
+            avg_hp = monster.avg_hp
+            maxed_hp = monster.max_hp_forced(monster.max_hp)
+            rolled_hp = monster.max_hp
+
+            choice = self.safe_input(
+                f"Use (A)verage HP ({avg_hp}), "
+                f"(M)ax HP ({maxed_hp}), "
+                f"or (R)olled HP ({rolled_hp})?",
+                default="R",
+                choices=["A", "M", "R"],
+            )
+            if choice == "A":
+                return avg_hp
+            elif choice == "M":
+                return maxed_hp
+            elif choice == "R":
+                return rolled_hp
 
         image_loader = ImageLoader(self.game)
         monster_loader = MonsterLoader(image_loader)
@@ -149,6 +191,7 @@ Example:
             monster_loader,
             self.game.combat,
             initiative_resolver=prompt_initiative,
+            hp_resolver=prompt_hp,
         )
         encounter_loader._set_hp([], monsters)
         encounter_loader._set_names([], monsters)

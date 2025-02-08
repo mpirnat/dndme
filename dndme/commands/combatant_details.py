@@ -48,7 +48,7 @@ Examples:
         t = target
 
         if hasattr(target, "cclass"):
-            self.print(f"<x1>{t.name}:</x1> Level {t.level} {t.race} {t.cclass}")
+            self.print(f"<x1>{t.name}:</x1> Level {t.level} {t.species} {t.cclass}")
             self.print(
                 f"<x>AC:</x> {t.ac} "
                 f"<x>HP:</x> {t.cur_hp}/{t.max_hp} "
@@ -68,7 +68,7 @@ Examples:
             print()
             self.print(
                 f"<x1>{t.alias}:</x1>{t.name}: "
-                f"{t.race} - {t.size} {t.mtype}, {t.alignment}"
+                f"{t.species} - {t.size} {t.mtype}, {t.alignment}"
             )
             self.print(
                 f"<x>AC:</x> {t.ac} ({t.armor or None}) "

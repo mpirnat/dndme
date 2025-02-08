@@ -20,7 +20,7 @@ class Combatant:
     def alias(self, value):
         self._alias = value
 
-    race = attrib(default="")
+    species = attrib(default="")
     pronouns = attrib(default="")
     ac = attrib(default=0)
     image_url = attrib(default="")
@@ -29,6 +29,7 @@ class Combatant:
     conditions = attrib(default=attr_factory(dict))
 
     _max_hp = attrib(default=10)
+    _max_hp_expr = attrib(default="")
     _cur_hp = attrib(default=10)
     max_hp_override = attrib(default=None)
     temp_hp = attrib(default=0)
@@ -47,10 +48,21 @@ class Combatant:
             self._max_hp = int(value)
         except ValueError:
             # we have an expression for max hp, so roll it
+            self._max_hp_expr = value
             self._max_hp = dice.roll_dice_expr(value)
         # setting max_hp for the first time? we should set cur_hp too
         if self.cur_hp is None:
             self.cur_hp = self._max_hp
+
+    def max_hp_forced(self, value):
+        try:
+            value = int(value)
+        except ValueError:
+            # we have an expression for max hp, so force it to the max value
+            self._max_hp_expr = value
+            return dice.max_dice_expr(self._max_hp_expr, floor=1)
+        # Otherwise use the int we've already got
+        return value
 
     @property
     def cur_hp(self):
@@ -149,15 +161,15 @@ class Combatant:
 
     @property
     def can_cast_spells(self):
-        return hasattr(self, "features") and "spellcasting" in self.features
+        return hasattr(self, "traits") and "spellcasting" in self.traits
 
     @property
     def available_spell_slots(self):
         if not self.can_cast_spells:
             return []
 
-        slots = self.features["spellcasting"]["slots"]
-        slots_used = self.features["spellcasting"]["slots_used"]
+        slots = self.traits["spellcasting"]["slots"]
+        slots_used = self.traits["spellcasting"]["slots_used"]
         return [str(i + 1) for i in range(len(slots)) if slots_used[i] < slots[i]]
 
 
@@ -176,9 +188,11 @@ class Character(Combatant):
 class Monster(Combatant):
     cr = attrib(default=0)
     xp = attrib(default=0)
+    pb = attrib(default=0)
     size = attrib(default="medium")
     mtype = attrib(default="humanoid")
     alignment = attrib(default="unaligned")
+    avg_hp = attrib(default=1)
 
     str = attrib(default=10)
     dex = attrib(default=10)
@@ -212,7 +226,7 @@ class Monster(Combatant):
     immune = attrib(default=attr_factory(list))
     vulnerable = attrib(default=attr_factory(list))
     languages = attrib(default=attr_factory(list))
-    features = attrib(default=attr_factory(dict))
+    traits = attrib(default=attr_factory(dict))
     actions = attrib(default=attr_factory(dict))
     lair_actions = attrib(default=attr_factory(dict))
     legendary_actions = attrib(default=attr_factory(dict))

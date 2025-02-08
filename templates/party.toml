@@ -1,6 +1,6 @@
 [Character]
 name = "name"
-race = "race"
+species = "species"
 cclass = "class"
 level = 1
 pronouns = "they/them"

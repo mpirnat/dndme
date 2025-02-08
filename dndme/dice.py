@@ -47,3 +47,41 @@ def roll_dice_expr(value):
     sides = int(sides)
     modifier = int(modifier or 0)
     return roll_dice(times, sides, modifier=modifier)
+
+
+def max_dice_expr(value, floor=None):
+    """
+    Get the maximum value of a dice expression.
+    """
+    m = dice_expr.match(value)
+
+    if not m:
+        raise ValueError(f"Invalid dice expression '{value}'")
+
+    times, sides, modifier = m.groups()
+    times = int(times)
+    sides = int(sides)
+    modifier = int(modifier or 0)
+    calculated = (times * sides) + modifier
+    if floor is not None:
+        return max(calculated, floor)
+    return calculated
+
+
+def min_dice_expr(value, floor=None):
+    """
+    Get the minimum value of a dice expression.
+    """
+    m = dice_expr.match(value)
+
+    if not m:
+        raise ValueError(f"Invalid dice expression '{value}'")
+
+    times, sides, modifier = m.groups()
+    times = int(times)
+    sides = int(sides)
+    modifier = int(modifier or 0)
+    calculated = times + modifier
+    if floor is not None:
+        return max(calculated, floor)
+    return calculated

@@ -16,12 +16,14 @@ class EncounterLoader:
         combat,
         count_resolver=None,
         initiative_resolver=None,
+        hp_resolver=None,
     ):
         self.base_dir = base_dir
         self.monster_loader = monster_loader
         self.combat = combat
         self.count_resolver = count_resolver
         self.initiative_resolver = initiative_resolver
+        self.hp_resolver = hp_resolver
 
     def get_available_encounters(self):
         available_encounter_files = glob.glob(f"{self.base_dir}/*.toml")
@@ -51,7 +53,7 @@ class EncounterLoader:
         self._set_hp(group, monsters)
         self._set_armor(group, monsters)
         self._set_alignment(group, monsters)
-        self._set_race(group, monsters)
+        self._set_species(group, monsters)
         self._set_languages(group, monsters)
         self._set_xp(group, monsters)
         self._set_disposition(group, monsters)
@@ -163,8 +165,12 @@ class EncounterLoader:
 
         # Not overriding max hp at all
         else:
+            if self.hp_resolver:
+                max_hp = self.hp_resolver(monsters[0])
+            else:
+                max_hp = monsters[0]._max_hp
             for monster in monsters:
-                monster.max_hp = monster._max_hp
+                monster.max_hp = max_hp
                 monster.cur_hp = monster.max_hp
 
     def _set_armor(self, group, monsters):
@@ -181,10 +187,13 @@ class EncounterLoader:
             for monster in monsters:
                 monster.alignment = group["alignment"]
 
-    def _set_race(self, group, monsters):
+    def _set_species(self, group, monsters):
         if "race" in group:
             for monster in monsters:
-                monster.race = group["race"]
+                monster.species = group["race"]
+        if "species" in group:
+            for monster in monsters:
+                monster.species = group["species"]
 
     def _set_languages(self, group, monsters):
         if "languages" in group:
@@ -205,8 +214,8 @@ class EncounterLoader:
         for monster in monsters:
             if "skills" in group:
                 monster.skills.update(group["skills"])
-            if "features" in group:
-                monster.features.update(group["features"])
+            if "traits" in group:
+                monster.traits.update(group["traits"])
             if "actions" in group:
                 monster.actions.update(group["actions"])
             if "legendary_actions" in group:
