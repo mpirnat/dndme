@@ -43,7 +43,7 @@ Usage: {keyword}
         for character in characters.values():
             party_data[character.name] = {
                 "name": character.name,
-                "race": character.race,
+                "species": character.species,
                 "cclass": character.cclass,
                 "level": character.level,
                 "pronouns": character.pronouns,
