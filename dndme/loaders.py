@@ -272,7 +272,7 @@ class MonsterLoader:
         monsters = []
 
         for filename in monster_files:
-            monster = toml.load(open(filename, "r"))
+            monster = load_from_file(filename)
 
             if monster["name"] != monster_name:
                 continue
@@ -288,6 +288,10 @@ class MonsterLoader:
             break
 
         return monsters
+
+    def load_from_file(self, filename):
+        monster = toml.load(open(filename, "r"))
+        return monster
 
     def get_available_monster_files(self):
         monster_files = glob.glob("content/*/monsters/*.toml")
